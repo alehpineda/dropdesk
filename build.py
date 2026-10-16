@@ -73,7 +73,7 @@ if not os.path.exists("static/og.png"):
     im = Image.new("RGB", (1200, 630), (15, 17, 21)); dr = ImageDraw.Draw(im)
     dr.rectangle([0, 560, 1200, 630], fill=(58, 123, 213))
     dr.text((80, 200), "MTG Drops", font=font(130), fill=(232, 232, 234))
-    dr.text((84, 380), "Every upcoming Magic: The Gathering release", font=font(44), fill=(124, 196, 255))
+    dr.text((84, 380), "Every upcoming Magic: The Gathering release", font=font(38), fill=(124, 196, 255))
     dr.text((84, 575), "mtgdrops.com", font=font(36), fill=(255, 255, 255))
     im.save("static/og.png")
 shutil.copy("static/og.png", "dist/og.png")
