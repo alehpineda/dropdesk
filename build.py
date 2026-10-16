@@ -26,7 +26,7 @@ def page(title, desc, body, path):
 def card(r):
     st = "" if r["status"] == "confirmed" else f' <span class=st>{E(r["status"])}</span>'
     return f'<div class=card data-type="{E(r["type"])}"><span class=t>{E(r["type"])}</span>{st}<h3><a href="{BASE}/p/{r["slug"]}.html">{E(r["name"])}</a></h3><div>{r["release_date"]}</div><p>{E(r["note"])}</p></div>'
-FORM = '<form onsubmit="event.preventDefault();this.innerHTML=\'Thanks! (signup not connected yet)\'"><input type=email required placeholder="you@example.com"> <button>Get What\'s Dropping</button></form>'
+FORM = '<form action="https://buttondown.com/api/emails/embed-subscribe/alehpineda.dropdesk" method="post" target="popupwindow"><input type=email name=email required placeholder="you@example.com"> <button>Get What\'s Dropping</button></form>'
 shutil.rmtree("dist", ignore_errors=True); os.makedirs("dist/p")
 open("dist/style.css", "w").write(CSS)
 today = datetime.date.today().isoformat()
