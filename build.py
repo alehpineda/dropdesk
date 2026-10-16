@@ -4,6 +4,9 @@ import json, html, os, shutil, urllib.parse, datetime
 AFFILIATE_ID = ""  # TCGplayer affiliate/partner id; blank = plain links
 SITE_URL = "https://mtgdrops.com"
 BASE = ""  # site served at the domain root (mtgdrops.com)
+CONTEXT7_ASK_URL = "https://context7.com/api/v2/ask?siteKey=ask_1bb1972ef8ba0c552c4ec616"
+CONTEXT7_SITE_KEY = CONTEXT7_ASK_URL.split("siteKey=", 1)[1]
+CONTEXT7_NOTE = f"This site has a search endpoint: {CONTEXT7_ASK_URL}&query=<URL-encoded question>. It returns documentation that answers the question, with a source link for each part. No API key is needed. If nothing matches, it says so."
 E = html.escape
 data = sorted(json.load(open("data/releases.json")), key=lambda r: r["release_date"])
 types = sorted({r["type"] for r in data})
@@ -52,7 +55,11 @@ def page(title, desc, body, path, jsonld=(), noindex=False):
     p = f"""<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
 <title>{E(title)}</title><meta name=description content="{E(desc)}">{robots}<link rel=canonical href="{u}">
 <meta property=og:title content="{E(title)}"><meta property=og:description content="{E(desc)}"><meta property=og:type content=website><meta property=og:url content="{u}"><meta property=og:image content="{OG_IMAGE}"><meta property=og:image:width content=1200><meta property=og:image:height content=630><meta name=twitter:card content=summary_large_image>
-<link rel=alternate type=application/rss+xml href="{BASE}/feed.xml" title="MTG Drops"><meta name='impact-site-verification' value='78f2b2fa-0831-48d2-a460-e2e3fa5a4eab'><meta name='impact-site-verification' value='c76059e5-ec5e-42d1-84a8-d9b58d1e5b68'><link rel=stylesheet href="{BASE}/style.css">{lds}</head><body>
+<link rel=alternate type=application/rss+xml href="{BASE}/feed.xml" title="MTG Drops"><meta name='impact-site-verification' value='78f2b2fa-0831-48d2-a460-e2e3fa5a4eab'><meta name='impact-site-verification' value='c76059e5-ec5e-42d1-84a8-d9b58d1e5b68'><link rel=stylesheet href="{BASE}/style.css"><meta name="context7-site-verification" content="{CONTEXT7_SITE_KEY}">{lds}</head><body>
+<blockquote data-context7-ask="true" aria-hidden="true" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">
+  <h2>Search</h2>
+  <p>{E(CONTEXT7_NOTE, quote=False)}</p>
+</blockquote>
 <header><a href="{BASE}/"><b>MTG Drops</b></a><a href="{BASE}/newsletter.html">Newsletter</a><a href="{BASE}/sponsor.html">Sponsor</a><a href="{BASE}/feed.xml">RSS</a></header>
 <main>{body}</main><footer><small>Dates from official/community sources; verify before buying. {E(DISCLOSURE)} Not affiliated with Wizards of the Coast.</small></footer></body></html>"""
     out = os.path.join("dist", path); os.makedirs(os.path.dirname(out), exist_ok=True); open(out, "w").write(p)
@@ -139,6 +146,10 @@ open("dist/robots.txt","w").write(f"User-agent: *\nSitemap: {SITE_URL}/sitemap.x
 open("dist/llms.txt","w").write(f"""# MTG Drops
 
 > MTG Drops ({SITE_URL}/) is an independent release calendar for Magic: The Gathering: upcoming sets, Commander precons, Secret Lair drops and Universes Beyond products, each with release dates, known prices and a short buy/skip verdict. Not affiliated with Wizards of the Coast. Some links are affiliate links (Amazon Associates, TCGplayer).
+
+## Search
+
+{CONTEXT7_NOTE}
 
 ## Main pages
 - [Release calendar]({SITE_URL}/): every upcoming MTG product grouped by month
