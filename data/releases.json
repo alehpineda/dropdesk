@@ -7,7 +7,17 @@
     "window": "On sale Oct 19, 2026 at MagicSecretLair.com, only inside Festival in a Box: Atlanta 2026 ($249.99, limit 2, while supplies last)",
     "source": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition",
     "note": "First wide release, but only as part of Festival in a Box: Atlanta 2026 ($249.99, per Wizards): a 24-booster box plus the Secret Gallery: Atlanta foil drop and 4 promos. Cards become Commander-legal Nov 13. Buy if you want a Commander chaos draft night; skip if you only want singles. The box is $50 more than the Amsterdam 2026 one.",
-    "status": "confirmed"
+    "status": "confirmed",
+    "prices": [
+      {
+        "label": "Festival in a Box: Atlanta 2026 (only way to buy; includes the MBC box)",
+        "usd": 249.99,
+        "offer": false
+      }
+    ],
+    "contents": [
+      "24-booster Mystery Booster Commander Edition box (sold inside Festival in a Box: Atlanta 2026)"
+    ]
   },
   {
     "slug": "secret-lair-atlanta",
@@ -17,7 +27,18 @@
     "window": "Oct 19, 2026, 9 AM PT at MagicSecretLair.com · $249.99 · limit 2 per customer · while supplies last",
     "source": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition",
     "note": "Wizards confirmed it: $249.99 gets a Mystery Booster Commander Edition box, the 4-card Secret Gallery: Atlanta foil drop (Parallax Tide, Regrowth, Viridian Revel, Assassin's Trophy) and 4 promos. The Secret Gallery cards are modest singles, so you're really paying for the MBC box. Buy for the draft experience; skip if you're chasing value.",
-    "status": "confirmed"
+    "status": "confirmed",
+    "prices": [
+      {
+        "label": "Festival in a Box: Atlanta 2026",
+        "usd": 249.99
+      }
+    ],
+    "contents": [
+      "Mystery Booster Commander Edition box",
+      "Secret Gallery: Atlanta foil drop (Parallax Tide, Regrowth, Viridian Revel, Assassin's Trophy)",
+      "4 promos"
+    ]
   },
   {
     "slug": "secret-lair-chaos-vault-reality-fracture",
@@ -27,7 +48,21 @@
     "window": "Oct 23, 2026 in stores and at MagicSecretLair.com; Chaos Vault Bundle Bundles date TBA",
     "source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
     "note": "The first Secret Lair Bundle: 6 Play Boosters, 2 Collector Boosters, 2 of 10 Secret Lair mythics, 20 foil borderless lands and a Spindown. Wizards announced the product; the Oct 23 date comes from MTG Salvation and retailer listings, and the ~$189.99 price is from a retailer listing (not official MSRP). Wait for street prices unless you love the Secret Lair mythic art.",
-    "status": "confirmed"
+    "status": "confirmed",
+    "prices": [
+      {
+        "label": "Reality Fracture Secret Lair Bundle (retailer listing, not official MSRP)",
+        "usd": 189.99,
+        "offer": false
+      }
+    ],
+    "contents": [
+      "6 Play Boosters",
+      "2 Collector Boosters",
+      "2 of 10 Secret Lair mythics",
+      "20 foil borderless lands",
+      "Spindown"
+    ]
   },
   {
     "slug": "countdown-kit-marvels-history-of-heroes",
@@ -37,7 +72,16 @@
     "window": "Nov 2, 2026, 9 AM PT, only at MagicSecretLair.com · $199.99 · limited quantity",
     "source": "https://magic.wizards.com/en/news/announcements/secret-lair-countdown-kit-marvels-history-of-heroes",
     "note": "30 new-art Marvel reprints for $199.99 (about $6.67 a card). Wizards' Oct 16 announcement says all 30 cards are viewable in the article; earlier coverage (TurnZero HQ) had only Fierce Guardianship, Heroic Intervention and Fighter Class. Price out the singles you'd actually play. Wait unless you're a Marvel collector.",
-    "status": "confirmed"
+    "status": "confirmed",
+    "prices": [
+      {
+        "label": "Countdown Kit",
+        "usd": 199.99
+      }
+    ],
+    "contents": [
+      "30 new-art Marvel reprints"
+    ]
   },
   {
     "slug": "secret-lair-marvel-doomsdrop",
@@ -58,7 +102,21 @@
     "source": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
     "note": "Standard-legal UB set. Play Booster $6.99, Collector $37.99, Bundle $69.99 (MSRP). Buy for drafting/Trek fans; skip sealed speculation.",
     "status": "confirmed",
-    "amazon_query": "Magic The Gathering Star Trek MTG"
+    "amazon_query": "Magic The Gathering Star Trek MTG",
+    "prices": [
+      {
+        "label": "Play Booster",
+        "usd": 6.99
+      },
+      {
+        "label": "Collector Booster",
+        "usd": 37.99
+      },
+      {
+        "label": "Bundle",
+        "usd": 69.99
+      }
+    ]
   },
   {
     "slug": "star-trek-commander",
@@ -69,7 +127,23 @@
     "source": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
     "note": "Four decks at $74.99, Collector's Editions $159.99 MSRP. NerdSnack reports regular decks preordering near MSRP and Collector's Editions well above it — buy regular, skip CE at markup.",
     "status": "confirmed",
-    "amazon_query": "Star Trek Commander Deck MTG"
+    "amazon_query": "Star Trek Commander Deck MTG",
+    "prices": [
+      {
+        "label": "Commander Deck (each)",
+        "usd": 74.99
+      },
+      {
+        "label": "Collector's Edition (each)",
+        "usd": 159.99
+      }
+    ],
+    "contents": [
+      "Federation Fleet",
+      "Landing Party",
+      "Klingon Fury",
+      "We Are the Borg"
+    ]
   },
   {
     "slug": "spider-mania-commander",
@@ -166,7 +240,8 @@
     "window": null,
     "source": "https://mtgrocks.com/mtg-2027-release-schedule/",
     "note": "Date slot only; IP TBA.",
-    "status": "unconfirmed"
+    "status": "unconfirmed",
+    "placeholder": true
   },
   {
     "slug": "secret-lair-strange-school",
@@ -176,7 +251,20 @@
     "source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
     "status": "unconfirmed",
     "window": "Chaos Vault on MagicSecretLair.com, date TBA ('soon') · $29.99 non-foil / $39.99 foil; also in 3 Bundle Bundles",
-    "note": "5 mono-black reprints with horror-manga art. Announced Oct 13, 2026 with no sale date. All reprints, no new cards. Wait for the date and price out the singles."
+    "note": "5 mono-black reprints with horror-manga art. Announced Oct 13, 2026 with no sale date. All reprints, no new cards. Wait for the date and price out the singles.",
+    "prices": [
+      {
+        "label": "Non-foil",
+        "usd": 29.99
+      },
+      {
+        "label": "Foil",
+        "usd": 39.99
+      }
+    ],
+    "contents": [
+      "5 mono-black reprints with horror-manga art"
+    ]
   },
   {
     "slug": "secret-lair-duality-distorted",
@@ -186,6 +274,19 @@
     "source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
     "status": "unconfirmed",
     "window": "Chaos Vault on MagicSecretLair.com, date TBA ('soon') · $29.99 non-foil / $39.99 foil; also in 3 Bundle Bundles",
-    "note": "4 retro-art reprints by veteran artists riffing on their own classic pieces. Announced Oct 13, 2026 with no sale date. All reprints, no new cards. Wait for the date and price out the singles."
+    "note": "4 retro-art reprints by veteran artists riffing on their own classic pieces. Announced Oct 13, 2026 with no sale date. All reprints, no new cards. Wait for the date and price out the singles.",
+    "prices": [
+      {
+        "label": "Non-foil",
+        "usd": 29.99
+      },
+      {
+        "label": "Foil",
+        "usd": 39.99
+      }
+    ],
+    "contents": [
+      "4 retro-art reprints"
+    ]
   }
 ]
