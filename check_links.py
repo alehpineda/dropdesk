@@ -1,5 +1,5 @@
 import re,os,sys,posixpath
-BASE="/dropdesk"
+BASE=""
 bad=0
 for d,_,fs in os.walk("dist"):
   for f in fs:

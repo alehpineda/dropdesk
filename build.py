@@ -2,8 +2,8 @@
 """DropDesk static site builder. Usage: python3 build.py  -> dist/"""
 import json, html, os, shutil, urllib.parse, datetime
 AFFILIATE_ID = ""  # TCGplayer affiliate/partner id; blank = plain links
-SITE_URL = "https://alehpineda.github.io/dropdesk"
-BASE = "/dropdesk"  # URL path prefix for GitHub Pages
+SITE_URL = "https://mtgdrops.com"
+BASE = ""  # site served at the domain root (mtgdrops.com)
 E = html.escape
 data = sorted(json.load(open("data/releases.json")), key=lambda r: r["release_date"])
 types = sorted({r["type"] for r in data})
@@ -46,4 +46,5 @@ items = "".join(f"<item><title>{E(r['name'])} — {r['release_date']}</title><li
 open("dist/feed.xml", "w").write(f'<?xml version="1.0"?><rss version="2.0"><channel><title>DropDesk</title><link>{SITE_URL}/</link><description>Upcoming MTG releases</description>{items}</channel></rss>')
 open("dist/sitemap.xml","w").write('<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+"".join(f"<url><loc>{SITE_URL}/{p}</loc></url>" for p in ["","newsletter.html","sponsor.html"]+[f"p/{r['slug']}.html" for r in data])+"</urlset>")
 open("dist/robots.txt","w").write(f"User-agent: *\nSitemap: {SITE_URL}/sitemap.xml\n")
+open("dist/CNAME","w").write("mtgdrops.com\n")
 print(f"built {len(data)} products")
