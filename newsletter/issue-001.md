@@ -1,22 +1,34 @@
-# What's Dropping — Issue #001 (week of Oct 19, 2026)
+# MTG Drops — Issue #001 · Week of Oct 19, 2026
 
-Welcome to MTG Drops's first issue: every MTG product release on one calendar, each with a buy/skip note. Dates come from Wizards and community trackers; anything unconfirmed is marked.
+Hey there, and welcome to the very first MTG Drops! Every week we'll go through what's dropping in Magic and give you a quick call on each: buy, skip, or wait. Let's get into it.
 
-## This week / next
-- **Mon Oct 19 — Mystery Booster Commander Edition** (Gatherer lists Oct 19). A fun way to draft; singles buyers can skip.
-- **Mon Oct 19 — Secret Lair: Atlanta** (MagicCon Atlanta Festival in a Box; *details unconfirmed*).
-- **~Oct 23 — Reality Fracture Secret Lair Bundle / Chaos Vault drop** (*tentative*). Wait until the cards are shown.
+## The next three weeks
 
-## Coming up
-- **Nov 2 — Countdown Kit: Marvel's History of Heroes** (*unconfirmed*)
-- **~Nov 9 — Secret Lair: Marvel Doomsdrop** (*tentative*)
-- **Nov 13 — Magic: The Gathering | Star Trek** + 4 Commander decks. Prerelease Nov 6–12. MSRP: Play Booster $6.99, Commander deck $74.99, Collector's Edition deck $159.99.
-  **Our take:** buy the regular precon for your favorite crew; skip Collector's Editions selling well above MSRP.
-- **Dec 4 — Spider-Mania Commander deck** (*unconfirmed*)
-- **Dec 9 — The Zeta Set re-release**, single 24-hour order window (*unconfirmed*)
+**Mon Oct 19: Festival in a Box: Atlanta 2026 ($249.99, Secret Lair store, limit 2)**
+A full box of Mystery Booster Commander Edition (its first wide release), the 4-card Secret Gallery: Atlanta foil drop and 4 promos.
+**Call: BUY** if you want a Commander chaos draft night with friends. **SKIP** if you're after singles value, because the Secret Gallery cards are modest and the box costs $50 more than last time.
+[Check prices on TCGplayer](https://www.tcgplayer.com/search/magic/product?q=Mystery+Booster+Commander+Edition)
 
-## On the horizon (2027)
-Nauctis: The Sunken Realm (Feb 5) · Marvel: Darkhold Destiny (Apr 9, preorders already open — we'd wait for card reveals) · Kamigawa: Titanbreach (Jun 4) · unannounced Universes Beyond (Aug 6). Each 2027 set gets four Commander decks.
+**Fri Oct 23: Reality Fracture Secret Lair Bundle**
+6 Play Boosters, 2 Collector Boosters, 2 Secret Lair mythics, 20 foil borderless lands and a Spindown. Retailers list it around $189.99 (that price isn't official).
+**Call: WAIT** for street prices unless the Secret Lair mythic art has already won you over.
+[Check prices on TCGplayer](https://www.tcgplayer.com/search/magic/product?q=Reality+Fracture+Secret+Lair+Bundle)
+
+**Mon Nov 2: Secret Lair Countdown Kit: Marvel's History of Heroes ($199.99, 9 AM PT, Secret Lair store)**
+30 new-art Marvel reprints, about $6.67 a card. Fierce Guardianship and Heroic Intervention are among them.
+**Call: WAIT.** Price out the cards you'd actually play first. It's an easy yes only for Marvel collectors.
+[Check prices on TCGplayer](https://www.tcgplayer.com/search/magic/product?q=Marvel%27s+History+of+Heroes)
+
+**Also on deck:** Magic: The Gathering | Star Trek lands Nov 13 (prereleases Nov 6–12). Our take: grab the regular Commander deck for your favorite crew and skip Collector's Editions selling above MSRP.
+
+## ⚠️ Watch out
+
+**The Zeta Set doesn't need a panic buy.** Wizards confirmed it goes back on sale Dec 9 for a single 24-hour window, and every order in that window gets filled. Don't pay resellers a markup before then. Just know that shipping is estimated for the second half of 2027.
+
+Also on the rumor pile: the "Spider-Mania" Commander deck (Dec 4) and the Reality Fracture Chaos Vault drops (Strange School and Duality Distorted, $29.99/$39.99) have no confirmed dates yet. We'll tell you once they do.
 
 ---
-Full calendar: mtgdrops.com · Prices via TCGplayer (affiliate links support MTG Drops) · Want to sponsor? mtgdrops.com/sponsor.html
+
+See you next week!
+Full release calendar: [mtgdrops.com](https://mtgdrops.com) · Want to reach MTG players? [Sponsor MTG Drops](https://mtgdrops.com/sponsor.html)
+*TCGplayer links may be affiliate links, which help support MTG Drops.*
