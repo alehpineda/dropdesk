@@ -17,7 +17,8 @@
     ],
     "contents": [
       "24-booster Mystery Booster Commander Edition box (sold inside Festival in a Box: Atlanta 2026)"
-    ]
+    ],
+    "short_name": "Mystery Booster Commander"
   },
   {
     "slug": "secret-lair-atlanta",
@@ -38,7 +39,8 @@
       "Mystery Booster Commander Edition box",
       "Secret Gallery: Atlanta foil drop (Parallax Tide, Regrowth, Viridian Revel, Assassin's Trophy)",
       "4 promos"
-    ]
+    ],
+    "short_name": "Festival in a Box: Atlanta 2026"
   },
   {
     "slug": "secret-lair-chaos-vault-reality-fracture",
@@ -62,7 +64,8 @@
       "2 of 10 Secret Lair mythics",
       "20 foil borderless lands",
       "Spindown"
-    ]
+    ],
+    "short_name": "Reality Fracture Secret Lair Bundle"
   },
   {
     "slug": "countdown-kit-marvels-history-of-heroes",
@@ -81,7 +84,8 @@
     ],
     "contents": [
       "30 new-art Marvel reprints"
-    ]
+    ],
+    "short_name": "Marvel History of Heroes Countdown Kit"
   },
   {
     "slug": "secret-lair-marvel-doomsdrop",
@@ -91,7 +95,8 @@
     "window": null,
     "source": "https://mtg.wiki/page/Secret_Lair_Drop_Series:_Marvel:_Doomsdrop",
     "note": "Teased at NYCC 2026 as a multi-drop collection built around Doctor Doom. No date, price or card list yet (we used to list Nov 9; nothing official supports that date). Wait.",
-    "status": "unconfirmed"
+    "status": "unconfirmed",
+    "short_name": "Marvel: Doomsdrop Secret Lair"
   },
   {
     "slug": "star-trek",
@@ -116,7 +121,49 @@
         "label": "Bundle",
         "usd": 69.99
       }
-    ]
+    ],
+    "inside_source": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
+    "inside": [
+      [
+        "Play Booster ($6.99 MSRP; 30 per box)",
+        [
+          "14 cards: 7 commons (a stardates card replaces a common in 1 of 25 packs), 3 uncommons, 1 wildcard of any rarity, 1 traditional foil of any rarity, 1 rare or mythic rare, 1 land",
+          "1 non-foil double-sided token"
+        ]
+      ],
+      [
+        "Collector Booster ($37.99 MSRP; 12 per box)",
+        [
+          "15 cards: 5 traditional foil commons, 3 traditional foil uncommons, 1 foil uncommon or common, 1 traditional foil basic land, 1 traditional foil rare or mythic rare, 1 non-foil extended-art rare or mythic rare, 2 rare or mythic rare Booster Fun cards, 1 foil rare or mythic rare Booster Fun card",
+          "1 art card or traditional foil double-sided token",
+          "Only place to find the 7 actor-signed headliner cards (about 250 copies of each)"
+        ]
+      ],
+      [
+        "Bundle ($69.99 MSRP)",
+        [
+          "9 Play Boosters",
+          "15 traditional foil basic lands and 15 non-foil basic lands (5 full-art in each set)",
+          "1 traditional foil promo card, 2 reference cards, oversized spindown life counter, card-storage box"
+        ]
+      ],
+      [
+        "Other Star Trek products (MSRP)",
+        [
+          "Beam Me Up Bundle $99.99: 8 Play Boosters, 1 Collector Booster, 2 of 8 foil Spacecraft schematic promos, plus the Bundle lands and accessories",
+          "Draft Night $119.99: 12 Play Boosters, 1 Collector Booster, 90 basic lands, 10 tokens",
+          "Scene Box $41.99: 3 Play Boosters, 6 traditional foil borderless scene cards, 6 art cards, display easel",
+          "Prerelease Pack: 6 Play Boosters, 1 traditional foil rare or mythic rare, deck box, spindown die"
+        ]
+      ]
+    ],
+    "facts": [
+      "Set code TRK; legal in all formats. The Commander decks (TRC) and stardates cards (SDS) are legal in Commander, Legacy and Vintage.",
+      "Booster Fun treatments include 30 stardates reprints with Star Trek art, 29 LCARS frame cards plus 10 LCARS shock lands, 24 classic Enterprise poster-style cards and 25 borderless scene cards.",
+      "Mechanics: assimilate, face a dilemma, the federation ability word, and returning Spacecraft and station from Edge of Eternities.",
+      "Key dates: prerelease Nov 6–12, MTG Arena Nov 10, tabletop Nov 13, 2026; Magic Presents: To Boldly Go runs Nov 13, 2026–Jan 28, 2027."
+    ],
+    "short_name": "MTG Star Trek"
   },
   {
     "slug": "star-trek-commander",
@@ -143,7 +190,29 @@
       "Landing Party",
       "Klingon Fury",
       "We Are the Borg"
-    ]
+    ],
+    "inside_source": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
+    "inside": [
+      [
+        "Commander Deck ($74.99 MSRP)",
+        [
+          "Ready-to-play 100-card deck: 1 traditional foil borderless face commander and 99 non-foil cards, including 32 new-to-Magic cards",
+          "10 non-foil double-sided tokens, 1 reference card, 1 deck box"
+        ]
+      ],
+      [
+        "Collector's Edition Commander Deck ($159.99 MSRP)",
+        [
+          "Same 100-card list in surge foil: surge foil borderless face commander and 99 surge foil cards (32 new-to-Magic)",
+          "10 surge foil double-sided tokens, 1 reference card, 1 deck box"
+        ]
+      ]
+    ],
+    "facts": [
+      "Set code TRC; legal in Commander, Legacy and Vintage (individual cards also legal where already available in other formats).",
+      "Commander Party events: Round 1 Nov 20–26, Round 2 Dec 11–17, 2026."
+    ],
+    "short_name": "Star Trek Commander Decks"
   },
   {
     "slug": "spider-mania-commander",
@@ -154,7 +223,8 @@
     "source": "https://mtg.wiki/page/Template:Upcoming_events",
     "note": "Listed by mtg.wiki. Decklist not yet reviewed here; wait for the list. Still only a leak (@MTGOSalseo); Wizards hasn't confirmed it. Wait.",
     "status": "unconfirmed",
-    "amazon_query": "Spider-Mania Commander Deck MTG"
+    "amazon_query": "Spider-Mania Commander Deck MTG",
+    "short_name": "Spider-Mania Commander Deck"
   },
   {
     "slug": "zeta-set-rerelease",
@@ -197,7 +267,8 @@
     "source": "https://magic.wizards.com/en/news/announcements/marvel-darkhold-destiny-emerges-april-2027",
     "note": "Announced Oct 10, 2026; no cards shown yet. Preordering blind is a skip for now.",
     "status": "confirmed",
-    "amazon_query": "Marvel Darkhold Destiny MTG"
+    "amazon_query": "Marvel Darkhold Destiny MTG",
+    "short_name": "Marvel: Darkhold Destiny"
   },
   {
     "slug": "marvel-darkhold-destiny-commander",
@@ -208,7 +279,8 @@
     "source": "https://www.thepopverse.com/gaming-magic-the-gathering-2027-sets-commander-decks-magiccon-amsterdam",
     "note": "Every 2027 set gets four precons per Wizards' MagicCon Amsterdam announcement; details TBA.",
     "status": "unconfirmed",
-    "amazon_query": "Marvel Darkhold Destiny Commander Deck MTG"
+    "amazon_query": "Marvel Darkhold Destiny Commander Deck MTG",
+    "short_name": "Darkhold Destiny Commander Decks"
   },
   {
     "slug": "kamigawa-titanbreach",
@@ -230,7 +302,8 @@
     "source": "https://www.thepopverse.com/gaming-magic-the-gathering-2027-sets-commander-decks-magiccon-amsterdam",
     "note": "Four decks confirmed; details TBA.",
     "status": "confirmed",
-    "amazon_query": "Kamigawa Titanbreach Commander Deck MTG"
+    "amazon_query": "Kamigawa Titanbreach Commander Deck MTG",
+    "short_name": "Titanbreach Commander Decks"
   },
   {
     "slug": "unannounced-ub-aug-2027",
@@ -241,7 +314,8 @@
     "source": "https://mtgrocks.com/mtg-2027-release-schedule/",
     "note": "Date slot only; IP TBA.",
     "status": "unconfirmed",
-    "placeholder": true
+    "placeholder": true,
+    "short_name": "Unannounced Universes Beyond Set"
   },
   {
     "slug": "secret-lair-strange-school",
@@ -264,7 +338,8 @@
     ],
     "contents": [
       "5 mono-black reprints with horror-manga art"
-    ]
+    ],
+    "short_name": "Strange School Secret Lair"
   },
   {
     "slug": "secret-lair-duality-distorted",
@@ -287,6 +362,7 @@
     ],
     "contents": [
       "4 retro-art reprints"
-    ]
+    ],
+    "short_name": "Duality Distorted Secret Lair"
   }
 ]

@@ -40,6 +40,7 @@ def nice_date(r):
     if not dated(r): return "TBA"
     d = datetime.date.fromisoformat(r["release_date"]); return f"{MON[d.month-1]} {d.day}, {d.year}"
 def short_name(r):
+    if r.get("short_name"): return r["short_name"]
     n = r["name"].replace("Magic: The Gathering | ", "")
     return n.split(" (")[0].strip()
 def trim(s, n=155):
@@ -64,6 +65,8 @@ def page(title, desc, body, path, jsonld=(), noindex=False):
 <main>{body}</main><footer><small>Dates from official/community sources; verify before buying. {E(DISCLOSURE)} Not affiliated with Wizards of the Coast.</small></footer></body></html>"""
     out = os.path.join("dist", path); os.makedirs(os.path.dirname(out), exist_ok=True); open(out, "w").write(p)
 def card(r):
+    if r.get("placeholder"):
+        return f'<div class=card data-type="{E(r["type"])}"><span class=t>{E(r["type"])}</span> <span class=st>{E(r["status"])}</span><h3>{E(r["name"])}</h3><div>{nice_date(r)}</div><p>{E(r["note"])}</p></div>'
     st = "" if r["status"] == "confirmed" else f' <span class=st>{E(r["status"])}</span>'
     return f'<div class=card data-type="{E(r["type"])}"><span class=t>{E(r["type"])}</span>{st}<h3><a href="{BASE}/p/{r["slug"]}.html">{E(r["name"])}</a></h3><div>{nice_date(r)}</div><p>{E(r["note"])}</p>{amz_btn(r)}</div>'
 FORM = '<form action="https://buttondown.com/api/emails/embed-subscribe/alehpineda.dropdesk" method="post" target="popupwindow"><input type=email name=email required placeholder="you@example.com"> <button>Get What\'s Dropping</button></form>'
@@ -100,7 +103,7 @@ page("MTG Drops — Every upcoming MTG release, one calendar", "Upcoming Magic: 
      f"<h1>What's dropping in Magic</h1><p>Every upcoming MTG product, with a short buy/skip note.</p>{FORM}<p class=disc><small>{E(DISCLOSURE)}</small></p><div class=f>{btns}</div>" + months + js, "index.html", home_ld)
 def title_for(r):
     sn = short_name(r); m = mon_yyyy(r).replace("Date TBA", "TBA")
-    for t in (f"{sn} Release Date ({m}), Price & Preorder | MTG Drops", f"{sn} Release Date ({m}) | MTG Drops"):
+    for t in (f"{sn} Release Date ({m}), Price & Preorder | MTG Drops", f"{sn} Release Date ({m}) | MTG Drops", f"{sn} Release Date, {m} | MTG Drops", f"{sn} Release Date | MTG Drops", f"{sn} ({m}) | MTG Drops"):
         if len(t) <= 60: return t
     return t
 def related(r):
@@ -109,6 +112,15 @@ def related(r):
     pool = [x for x in pool if x is not r]
     key = lambda x: (0, abs((datetime.date.fromisoformat(x["release_date"]) - datetime.date.fromisoformat(r["release_date"])).days)) if dated(x) and dated(r) else ((1, 0) if not dated(x) else (2, 0))
     return sorted(pool, key=key)[:4]
+TYPE_INFO = {
+ "Secret Lair": ("What is a Secret Lair drop?", "Secret Lair is Wizards of the Coast's direct-to-fan line of limited Magic products, sold mainly at MagicSecretLair.com. Most drops are small sets of cards with alternate art, often reprints, sold for a limited time or while supplies last, and not restocked once they end. Cards are tournament-legal wherever the original card is legal. Because supply is limited, prices on the secondary market can move quickly in either direction after a drop closes."),
+ "Commander Precon": ("What is a Commander precon?", "A Commander precon (preconstructed deck) is a ready-to-play 100-card deck for Commander, Magic's most popular multiplayer format. Each deck is built around a legendary face commander, usually comes with tokens and a deck box, and can be played straight out of the box or used as a base to upgrade. Precons typically include a mix of new-to-Magic cards and reprints, so many players buy them both to play and for specific singles."),
+ "Universes Beyond": ("What is Universes Beyond?", "Universes Beyond is the Magic: The Gathering line that brings other franchises (films, TV, games and comics) into Magic cards. Some Universes Beyond releases are full sets with Play Boosters, Collector Boosters and Bundles that can be legal in Standard; others are Commander decks or Secret Lair drops. Check each product's legality notes before building a deck around it."),
+ "Main Set": ("What is a main Magic set?", "A main (premier) set is a Standard-legal Magic expansion released through the year. Main sets are typically sold as Play Boosters (designed for both drafting and opening), Collector Boosters (more foils and alternate-art cards), Bundles, and Commander decks released alongside the set. Prerelease events at local game stores usually run the week before the tabletop release."),
+ "Supplemental": ("What is a supplemental product?", "Supplemental products are Magic releases outside the main Standard sets, such as draft-focused remastered sets, Mystery Booster editions and special boxes. They are usually not Standard-legal and are often aimed at Commander or casual play. Availability and print runs vary, so check the official announcement for how and where each one is sold."),
+ "Special": ("What is a special release?", "Special releases are one-off or unusual Magic products that do not fit the regular set calendar, such as reprints, anniversary items or event-exclusive products. Sales methods, quantities and legality vary from product to product, so the official announcement is the best reference."),
+}
+HOWTO = ("How to pre-order", "Before release, most Magic products can be pre-ordered from local game stores (many offer preorder pricing or prerelease bundles), large online retailers, TCGplayer sellers and Amazon. Secret Lair drops are the exception: they are sold mainly at MagicSecretLair.com during a fixed sale window. Compare preorder prices with the MSRP listed above, check the retailer's ship date, and remember that dates marked unconfirmed can change. Prices in stores frequently drop after release, so preordering mainly makes sense if you want the product on day one or supply is limited.")
 def fmt(p): return f"${p['usd']:,.2f}"
 for r in data:
     sn = short_name(r); pu = f"{SITE_URL}/p/{r['slug']}.html"
@@ -116,6 +128,11 @@ for r in data:
     prices = r.get("prices") or []
     ptab = ("<table><tr><th>Item</th><th>Price (USD)</th></tr>" + "".join(f"<tr><td>{E(p['label'])}</td><td>{fmt(p)}</td></tr>" for p in prices) + "</table>") if prices else "<p>Price: TBA</p>"
     contents = ("<h2>What's inside</h2><ul>" + "".join(f"<li>{E(c)}</li>" for c in r["contents"]) + "</ul>") if r.get("contents") else ""
+    if r.get("inside"):
+        contents = "<h2>What's inside</h2>" + "".join(f"<h3>{E(h)}</h3><ul>" + "".join(f"<li>{E(i)}</li>" for i in items) + "</ul>" for h, items in r["inside"]) + (f'<p><small>Product contents per <a href="{E(r["inside_source"])}">Wizards of the Coast</a>.</small></p>' if r.get("inside_source") else "")
+    facts = ("<h2>Key facts</h2><ul>" + "".join(f"<li>{E(f)}</li>" for f in r["facts"]) + "</ul>") if r.get("facts") else ""
+    ti = TYPE_INFO.get(r["type"]); tinfo = f"<h2>{E(ti[0])}</h2><p>{E(ti[1])}</p>" if ti else ""
+    howto = f"<h2>{HOWTO[0]}</h2><p>{E(HOWTO[1])}</p>" if not r.get("placeholder") and (not dated(r) or r["release_date"] > today) else ""
     rel = related(r)
     relhtml = "<h2>Related releases</h2><ul>" + "".join(f'<li><a href="{BASE}/p/{x["slug"]}.html">{E(x["name"])}</a> — {nice_date(x)}</li>' for x in rel) + "</ul>"
     faq = [(f"When does {sn} release?", f"{nice_date(r)} ({r['status']})." + (f" {r['window']}." if r.get("window") else "") if dated(r) else f"The release date is TBA ({r['status']})." + (f" {r['window']}." if r.get("window") else "")),
@@ -126,8 +143,12 @@ for r in data:
     prod = {"@context": "https://schema.org", "@type": "Product", "name": r["name"], "url": pu, "image": OG_IMAGE, "category": r["type"], "brand": {"@type": "Brand", "name": "Wizards of the Coast"}, "description": trim(r["note"], 300)}
     if dated(r): prod["releaseDate"] = r["release_date"]
     offers = [p for p in prices if p.get("offer", True)]
+    avail = "https://schema.org/InStock" if dated(r) and r["release_date"] <= today else "https://schema.org/PreOrder"
     if offers:
-        prod["offers"] = [{"@type": "Offer", "name": p["label"], "price": f"{p['usd']:.2f}", "priceCurrency": "USD", "url": pu} for p in offers]
+        prod["offers"] = [{"@type": "Offer", "name": p["label"], "price": f"{p['usd']:.2f}", "priceCurrency": p.get("currency", "USD"), "availability": avail, "url": pu} for p in offers]
+        main_ld = prod
+    else:
+        main_ld = {"@context": "https://schema.org", "@type": "WebPage", "name": title_for(r), "url": pu, "description": trim(r["note"], 300), "isPartOf": {"@id": f"{SITE_URL}/#website"}, "about": {"@type": "Thing", "name": r["name"]}}
     bc = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "MTG Drops", "item": f"{SITE_URL}/"},
         {"@type": "ListItem", "position": 2, "name": r["type"], "item": f"{SITE_URL}/"},
@@ -135,14 +156,14 @@ for r in data:
     crumbs = f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › {E(r["type"])} › {E(sn)}</nav>'
     desc = f"{sn} release date: {nice_date(r)}. " + r["note"]
     page(title_for(r), desc,
-         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])})</p>{win}<h2>Price</h2>{ptab}{contents}<h2>Buy or skip?</h2><p>{E(r["note"])}</p><p><a href="{tcg(r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}{"<p class=disc><small>"+E(DISCLOSURE)+"</small></p>" if amazon(r) else ""}{relhtml}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p><p><small>Last updated: {today}</small></p>{FORM}',
-         f"p/{r['slug']}.html", [prod, bc], noindex=bool(r.get("placeholder")))
-page("What's Dropping newsletter | MTG Drops", "Weekly MTG release newsletter.", f"<h1>What's Dropping</h1><p>One email a week: what releases, what's on preorder, buy or skip.</p>{FORM}", "newsletter.html")
-page("Sponsor MTG Drops", "Sponsor the MTG Drops MTG release calendar and newsletter.", "<h1>Sponsor MTG Drops</h1><p>Reach Magic players planning their next purchase: calendar placements and the weekly What's Dropping newsletter.</p><ul><li>Newsletter top slot (weekly)</li><li>Featured calendar card</li><li>Product-page sponsor</li></ul><p>Contact: sponsors@mtgdrops.com (placeholder)</p>", "sponsor.html")
+         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])})</p>{win}<h2>Price</h2>{ptab}{contents}{facts}<h2>Buy or skip?</h2><p>{E(r["note"])}</p><p><a href="{tcg(r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}{"<p class=disc><small>"+E(DISCLOSURE)+"</small></p>" if amazon(r) else ""}{tinfo}{howto}{relhtml}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p><p><small>Last updated: {today}</small></p>{FORM}',
+         f"p/{r['slug']}.html", [main_ld, bc], noindex=bool(r.get("placeholder")))
+page("What's Dropping newsletter | MTG Drops", "Weekly MTG release newsletter.", f"<h1>What's Dropping</h1><p>One email a week: what releases, what's on preorder, buy or skip.</p><p>What's Dropping is a free weekly email from MTG Drops. Each issue covers the Magic: The Gathering products coming up next, new announcements from Wizards of the Coast (sets, Commander decks, Secret Lair drops and Universes Beyond), date and price changes, and a short buy-or-skip verdict for each product. It's short enough to read in a couple of minutes, and you can unsubscribe at any time from the link in every email.</p>{FORM}", "newsletter.html")
+page("Sponsor MTG Drops", "Sponsor the MTG Drops MTG release calendar and newsletter.", "<h1>Sponsor MTG Drops</h1><p>Reach Magic players planning their next purchase: calendar placements and the weekly What's Dropping newsletter.</p><ul><li>Newsletter top slot (weekly)</li><li>Featured calendar card</li><li>Product-page sponsor</li></ul><p>MTG Drops readers are Magic: The Gathering players checking release dates, prices and preorders, so sponsorships fit game stores, singles and sealed retailers, accessory makers and Magic content creators.</p><p>Contact: sponsors@mtgdrops.com (placeholder)</p>", "sponsor.html")
 items = "".join(f"<item><title>{E(r['name'])} — {r['release_date']}</title><link>{SITE_URL}/p/{r['slug']}.html</link><guid>{SITE_URL}/p/{r['slug']}.html</guid><description>{E(r['note'])}</description></item>" for r in up if not r.get("placeholder"))
 open("dist/feed.xml", "w").write(f'<?xml version="1.0"?><rss version="2.0"><channel><title>MTG Drops</title><link>{SITE_URL}/</link><description>Upcoming MTG releases</description>{items}</channel></rss>')
 open("dist/sitemap.xml","w").write('<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+"".join(f"<url><loc>{SITE_URL}/{p}</loc><lastmod>{today}</lastmod></url>" for p in ["","newsletter.html","sponsor.html"]+[f"p/{r['slug']}.html" for r in public])+"</urlset>")
-open("dist/robots.txt","w").write(f"User-agent: *\nSitemap: {SITE_URL}/sitemap.xml\n")
+open("dist/robots.txt","w").write(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n")
 open("dist/llms.txt","w").write(f"""# MTG Drops
 
 > MTG Drops ({SITE_URL}/) is an independent release calendar for Magic: The Gathering: upcoming sets, Commander precons, Secret Lair drops and Universes Beyond products, each with release dates, known prices and a short buy/skip verdict. Not affiliated with Wizards of the Coast. Some links are affiliate links (Amazon Associates, TCGplayer).
