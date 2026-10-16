@@ -6,11 +6,11 @@ Hey there, and welcome to the very first MTG Drops! Every week we'll go through 
 
 **Mon Oct 19: Festival in a Box: Atlanta 2026 ($249.99, Secret Lair store, limit 2)**
 A full box of Mystery Booster Commander Edition (its first wide release), the 4-card Secret Gallery: Atlanta foil drop and 4 promos.
-**Call: BUY** if you want a Commander chaos draft night with friends. **SKIP** if you're after singles value, because the Secret Gallery cards are modest and the box costs $50 more than last time.
+**Call: BUY** if you want a Commander chaos draft night with friends. **SKIP** if you're after singles value, because the Secret Gallery cards are modest and the box costs $50 more than the $199.99 Amsterdam 2026 box (per EDHREC).
 [Check prices on TCGplayer](https://www.tcgplayer.com/search/magic/product?q=Mystery+Booster+Commander+Edition)
 
 **Fri Oct 23: Reality Fracture Secret Lair Bundle**
-6 Play Boosters, 2 Collector Boosters, 2 Secret Lair mythics, 20 foil borderless lands and a Spindown. Retailers list it around $189.99 (that price isn't official).
+6 Play Boosters, 2 Collector Boosters, 2 Secret Lair mythics, 20 foil borderless lands and a Spindown. Oct 23 is per retailer listings and MTG Salvation, not a Wizards date; one retailer lists it at $189.99 (not official MSRP).
 **Call: WAIT** for street prices unless the Secret Lair mythic art has already won you over.
 [Check prices on TCGplayer](https://www.tcgplayer.com/search/magic/product?q=Reality+Fracture+Secret+Lair+Bundle)
 
