@@ -1,6 +1,6 @@
 # What's Dropping — Issue #001 (week of Oct 19, 2026)
 
-Welcome to DropDesk's first issue: every MTG product release on one calendar, each with a buy/skip note. Dates come from Wizards and community trackers; anything unconfirmed is marked.
+Welcome to MTG Drops's first issue: every MTG product release on one calendar, each with a buy/skip note. Dates come from Wizards and community trackers; anything unconfirmed is marked.
 
 ## This week / next
 - **Mon Oct 19 — Mystery Booster Commander Edition** (Gatherer lists Oct 19). A fun way to draft; singles buyers can skip.
@@ -19,4 +19,4 @@ Welcome to DropDesk's first issue: every MTG product release on one calendar, ea
 Nauctis: The Sunken Realm (Feb 5) · Marvel: Darkhold Destiny (Apr 9, preorders already open — we'd wait for card reveals) · Kamigawa: Titanbreach (Jun 4) · unannounced Universes Beyond (Aug 6). Each 2027 set gets four Commander decks.
 
 ---
-Full calendar: dropdesk.example · Prices via TCGplayer (affiliate links support DropDesk) · Want to sponsor? dropdesk.example/sponsor.html
+Full calendar: mtgdrops.com · Prices via TCGplayer (affiliate links support MTG Drops) · Want to sponsor? mtgdrops.com/sponsor.html
