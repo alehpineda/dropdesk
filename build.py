@@ -52,13 +52,13 @@ def trim(s, n=155):
     return s[:n-1].rsplit(" ", 1)[0].rstrip(",.;:—-") + "…"
 def url(path): return f"{SITE_URL}/" + (path[:-len("index.html")] if path.endswith("index.html") else path)
 def ld(obj): return '<script type="application/ld+json">' + json.dumps(obj, ensure_ascii=False).replace("</", "<\\/") + "</script>"
-def page(title, desc, body, path, jsonld=(), noindex=False):
-    desc = trim(desc); u = url(path)
+def page(title, desc, body, path, jsonld=(), noindex=False, og=None):
+    desc = trim(desc); u = url(path); og_img, og_w, og_h = og or (OG_IMAGE, 1200, 630)
     robots = "<meta name=robots content=noindex>" if noindex else ""
     lds = "".join(ld(o) for o in jsonld)
     p = f"""<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
 <title>{E(title)}</title><meta name=description content="{E(desc)}">{robots}<link rel=canonical href="{u}">
-<meta property=og:title content="{E(title)}"><meta property=og:description content="{E(desc)}"><meta property=og:type content=website><meta property=og:url content="{u}"><meta property=og:image content="{OG_IMAGE}"><meta property=og:image:width content=1200><meta property=og:image:height content=630><meta name=twitter:card content=summary_large_image>
+<meta property=og:title content="{E(title)}"><meta property=og:description content="{E(desc)}"><meta property=og:type content=website><meta property=og:url content="{u}"><meta property=og:image content="{og_img}"><meta property=og:image:width content={og_w}><meta property=og:image:height content={og_h}><meta name=twitter:card content=summary_large_image>
 <link rel=alternate type=application/rss+xml href="{BASE}/feed.xml" title="MTG Drops"><meta name='impact-site-verification' value='78f2b2fa-0831-48d2-a460-e2e3fa5a4eab'><meta name='impact-site-verification' value='c76059e5-ec5e-42d1-84a8-d9b58d1e5b68'><link rel=stylesheet href="{BASE}/style.css"><meta name="context7-site-verification" content="{CONTEXT7_SITE_KEY}">{lds}</head><body>
 <blockquote data-context7-ask="true" aria-hidden="true" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">
   <h2>Search</h2>
@@ -127,6 +127,58 @@ TYPE_INFO = {
 }
 HOWTO = ("How to pre-order", "Before release, most Magic products can be pre-ordered from local game stores (many offer preorder pricing or prerelease bundles), large online retailers, TCGplayer sellers and Amazon. Secret Lair drops are the exception: they are sold mainly at MagicSecretLair.com during a fixed sale window. Compare preorder prices with the MSRP listed above, check the retailer's ship date, and remember that dates marked unconfirmed can change. Prices in stores frequently drop after release, so preordering mainly makes sense if you want the product on day one or supply is limited.")
 def fmt(p): return f"${p['usd']:,.2f}"
+# ---- Per-product card images (static/products/<slug>-1x1.png 1200x1200, -og.png 1200x630) ----
+# Plain generated cards (name, type, release date, MTG Drops branding, a per-product colour); no Wizards art, nothing hotlinked.
+# Committed to the repo because CI has no Pillow: a card is regenerated only when Pillow is available and its text changed
+# (tracked in manifest.json); a missing/stale card with no Pillow falls back to the site banner (og.png).
+import hashlib, colorsys
+PCARD_DIR = "static/products"; PCARD_MAN = os.path.join(PCARD_DIR, "manifest.json")
+pcard_man = json.load(open(PCARD_MAN)) if os.path.exists(PCARD_MAN) else {}
+def pcard_spec(r): return {"name": short_name(r), "type": r["type"], "date": nice_date(r) if dated(r) else "Date TBA", "v": 1}
+def pcard_color(slug):
+    h = int(hashlib.sha1(slug.encode()).hexdigest()[:6], 16) / 0xFFFFFF
+    return tuple(int(c * 255) for c in colorsys.hls_to_rgb(h, 0.42, 0.55))
+def pcard_draw(spec, color, W, H, out):
+    from PIL import Image, ImageDraw, ImageFont
+    def font(sz, bold=True):
+        for f in (["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"] if bold else ["/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"]):
+            if os.path.exists(f): return ImageFont.truetype(f, sz)
+        return ImageFont.load_default()
+    im = Image.new("RGB", (W, H), (15, 17, 21)); dr = ImageDraw.Draw(im)
+    pad = 80; band = 28 if H < 900 else 36
+    dr.rectangle([0, 0, W, band], fill=color); dr.rectangle([0, H - 110, W, H], fill=color)
+    dr.text((pad, band + 50), spec["type"].upper(), font=font(44 if H < 900 else 52), fill=color)
+    size = 92 if H < 900 else 110; words = spec["name"].split()
+    while True:  # wrap the name to the card width, shrinking until it fits in the space above the date
+        f = font(size); lines, cur = [], ""
+        for w in words:
+            t = (cur + " " + w).strip()
+            if dr.textlength(t, font=f) <= W - 2 * pad or not cur: cur = t
+            else: lines.append(cur); cur = w
+        lines.append(cur)
+        top = band + 140 if H < 900 else band + 190; lh = int(size * 1.15)
+        if top + lh * len(lines) <= H - 110 - (150 if H < 900 else 220) or size <= 40: break
+        size -= 6
+    for i, ln in enumerate(lines): dr.text((pad, top + i * lh), ln, font=f, fill=(240, 240, 242))
+    dr.text((pad, H - 110 - (120 if H < 900 else 170)), ("Release: " if spec["date"] != "Date TBA" else "") + spec["date"], font=font(56 if H < 900 else 64, False), fill=(124, 196, 255))
+    dr.text((pad, H - 85), "MTG Drops", font=font(50), fill=(255, 255, 255))
+    t = "mtgdrops.com"; f2 = font(38, False); dr.text((W - pad - dr.textlength(t, font=f2), H - 75), t, font=f2, fill=(255, 255, 255))
+    im.save(out, optimize=True)
+def pcard(r):
+    """Return (square_url, wide_url) for a release's card, or None to fall back to og.png."""
+    spec = pcard_spec(r); key = hashlib.sha1(json.dumps(spec, sort_keys=True).encode()).hexdigest()[:12]
+    files = [os.path.join(PCARD_DIR, f"{r['slug']}-{k}.png") for k in ("1x1", "og")]
+    if pcard_man.get(r["slug"]) != key or not all(os.path.exists(f) for f in files):
+        try:
+            import PIL  # noqa: F401
+        except ImportError:
+            print(f"warning: product card for {r['slug']} missing/stale and Pillow unavailable; using og.png"); return None
+        os.makedirs(PCARD_DIR, exist_ok=True); c = pcard_color(r["slug"])
+        pcard_draw(spec, c, 1200, 1200, files[0]); pcard_draw(spec, c, 1200, 630, files[1])
+        pcard_man[r["slug"]] = key; json.dump(pcard_man, open(PCARD_MAN, "w"), indent=1, sort_keys=True)
+    os.makedirs("dist/products", exist_ok=True)
+    for f in files: shutil.copy(f, "dist/products/")
+    return tuple(f"{SITE_URL}/products/{os.path.basename(f)}" for f in files)
 SL_STORE = "https://secretlair.wizards.com/us/en"  # Wizards' own Secret Lair store (MagicSecretLair.com)
 SL_ONSALE_DAYS = 30  # with no known sale_end, a drop counts as "on sale now" for this many days after it opens
 def sl_bucket(r):
@@ -156,10 +208,12 @@ for r in data:
     faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in faq)
     # Product snippet markup only (Google: "Product snippets: for product pages where people can't directly purchase the product").
     # MTG Drops sells nothing, so no offer may name us or our page as the place to buy: each Offer is the publisher's
-    # (Wizards of the Coast) official price, with seller = Wizards and, for Secret Lair, the url of Wizards' own store.
+    # (Wizards of the Coast) official price. Secret Lair offers name seller = Wizards and Wizards' own store url (Wizards sells
+    # those directly); retail offers are the MSRP with no seller (game stores and other retailers sell them) and no url.
     # That keeps us out of merchant listings (no shippingDetails/hasMerchantReturnPolicy to claim) without inventing anything.
     # No review/aggregateRating: we have none, and Google only needs one of offers/review/aggregateRating.
-    prod = {"@context": "https://schema.org", "@type": "Product", "name": r["name"], "url": pu, "image": r.get("image") or OG_IMAGE, "category": r["type"], "brand": {"@type": "Brand", "name": "Wizards of the Coast"}, "description": trim(r["note"], 300)}
+    card = None if r.get("placeholder") else pcard(r)
+    prod = {"@context": "https://schema.org", "@type": "Product", "name": r["name"], "url": pu, "image": r.get("image") or (list(card) if card else OG_IMAGE), "category": r["type"], "brand": {"@type": "Brand", "name": "Wizards of the Coast"}, "description": trim(r["note"], 300)}
     if dated(r): prod["releaseDate"] = r["release_date"]
     offers = [p for p in prices if p.get("offer", True)]
     sl_direct = r["type"] == "Secret Lair"  # sold by Wizards itself at MagicSecretLair.com for a limited window
@@ -172,9 +226,9 @@ for r in data:
         odesc = "Wizards of the Coast MSRP; sold by game stores and other retailers. MTG Drops does not sell this product."
     if offers:
         def offer(p):
-            o = {"@type": "Offer", "name": p["label"], "price": f"{p['usd']:.2f}", "priceCurrency": p.get("currency", "USD"), "availability": avail,
-                 "seller": {"@type": "Organization", "name": "Wizards of the Coast", "url": "https://company.wizards.com/en"}, "description": odesc}
-            if sl_direct: o["url"] = SL_STORE
+            o = {"@type": "Offer", "name": p["label"], "price": f"{p['usd']:.2f}", "priceCurrency": p.get("currency", "USD"), "availability": avail, "description": odesc}
+            if sl_direct:  # Wizards really is the seller (MagicSecretLair.com); retail MSRPs name no seller, since stores sell those
+                o["seller"] = {"@type": "Organization", "name": "Wizards of the Coast", "url": "https://company.wizards.com/en"}; o["url"] = SL_STORE
             if sl_direct and dated(r) and r["release_date"] > today: o["availabilityStarts"] = r["release_date"]
             if r.get("sale_end"): o["priceValidUntil"] = r["sale_end"]
             return o
@@ -190,7 +244,7 @@ for r in data:
     desc = f"{sn} release date: {nice_date(r)}. " + r["note"]
     page(title_for(r), desc,
          f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])})</p>{win}<h2>Price</h2>{ptab}{contents}{facts}<h2>Buy or skip?</h2><p>{E(r["note"])}</p><p><a href="{tcg(r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}{"<p class=disc><small>"+E(DISCLOSURE)+"</small></p>" if amazon(r) else ""}{tinfo}{howto}{relhtml}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}<p><small>Last updated: {today}</small></p>{FORM}',
-         f"p/{r['slug']}.html", [main_ld, bc], noindex=bool(r.get("placeholder")))
+         f"p/{r['slug']}.html", [main_ld, bc], noindex=bool(r.get("placeholder")), og=(card[1], 1200, 630) if card else None)
 # ---- Secret Lair hub (/secret-lair.html): generated from releases.json, so data updates keep it current ----
 SL_SRC = {"about": "https://secretlair.wizards.com/us/en/about-us",
           "faq": "https://secretlair-support.wizards.com/hc/en-us/articles/45369886769300-About-Secret-Lair-FAQ",
