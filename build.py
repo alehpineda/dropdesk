@@ -22,7 +22,10 @@ def tcg(name):
 AMAZON_TAG = "mtgdrops-20"  # Amazon Associates tag
 DISCLOSURE = "As an Amazon Associate, MTG Drops earns from qualifying purchases. Some links on this site are affiliate links."
 def amazon(r):
-    # Search URL (not /dp/) to avoid dead product links; only purchasable retail products carry amazon_query
+    # Direct /dp/ link only when an owner-approved ASIN with recorded evidence (amazon_evidence) is present;
+    # otherwise a search URL, which never goes dead. Only purchasable retail products carry amazon_query.
+    if r.get("amazon_asin") and r.get("amazon_evidence"):
+        return "https://www.amazon.com/dp/" + urllib.parse.quote(r["amazon_asin"]) + "?tag=" + AMAZON_TAG
     if r.get("amazon_query"):
         return "https://www.amazon.com/s?k=" + urllib.parse.quote_plus(r["amazon_query"]) + "&tag=" + AMAZON_TAG
 def amz_btn(r):
