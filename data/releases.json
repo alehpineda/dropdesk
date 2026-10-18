@@ -273,7 +273,19 @@
     ],
     "short_name": "MTG Star Trek",
     "verdict": "buy",
-    "gift_for": "Star Trek fans and anyone who drafts with friends: a Bundle ($69.99 MSRP) or a few Play Boosters, not sealed boxes bought to speculate on"
+    "gift_for": "Star Trek fans and anyone who drafts with friends: a Bundle ($69.99 MSRP) or a few Play Boosters, not sealed boxes bought to speculate on",
+    "amazon_asin": "B0H6H1XTK6",
+    "amazon_evidence": {
+      "asin": "B0H6H1XTK6",
+      "amazon_title": "Magic: The Gathering | Star Trek Bundle",
+      "seller": "Buy box rotated during 2026-10-18 checks: the interrupted morning run recorded 'Ships from and sold by Amazon.com' at $71.32, and the search result still shows $71.32 with Amazon's Pre-order Price Guarantee; a later product-page fetch showed third-party seller Collectors Expedition at $69.45 with 7 other new offers from $69.25. Every price seen is within ~2% of the $69.99 MSRP, so no scalper markup.",
+      "price_seen_usd": [
+        69.45,
+        71.32
+      ],
+      "checked": "2026-10-18",
+      "match_reason": "The official Wizards of the Coast catalog listing: Manufacturer Wizards of the Coast, model/part D59020000, UPC 195166334356, set name Star Trek, pre-order for the Nov 13, 2026 release. Contents (9 Play Boosters, 1 alt-art Traditional Foil card, 15 foil + 15 regular lands with 5 full-art each, oversized Spindown, card box, 2 reference cards) match Wizards' Bundle. The Bundle is one of the three products priced on our page (MSRP $69.99) and the usual gift/draft buy, so it stands in as the set's single Amazon link."
+    }
   },
   {
     "slug": "star-trek-commander",
