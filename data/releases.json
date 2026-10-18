@@ -40,32 +40,86 @@
       "Secret Gallery: Atlanta foil drop (Parallax Tide, Regrowth, Viridian Revel, Assassin's Trophy)",
       "4 promos"
     ],
-    "short_name": "Festival in a Box: Atlanta 2026"
+    "short_name": "Festival in a Box: Atlanta 2026",
+    "inside": [
+      [
+        "Festival in a Box: Atlanta 2026",
+        [
+          "1x Mystery Booster Commander Edition box (24 boosters)",
+          "1x Secret Gallery: Atlanta Foil Edition Secret Lair drop",
+          "4x Festival in a Box promo cards"
+        ]
+      ],
+      [
+        "Secret Gallery: Atlanta Foil Edition (4 foil cards by Atlanta artists)",
+        [
+          "Parallax Tide",
+          "Regrowth",
+          "Viridian Revel",
+          "Assassin's Trophy"
+        ]
+      ],
+      [
+        "Festival in a Box promo cards",
+        [
+          "Dance of the Dead (full art, textless, foil)",
+          "Tana, the Bloodsower (full art, textless, foil)",
+          "Tymna the Weaver (full art, textless, foil)",
+          "Auspicious Aquarium (playtest card)"
+        ]
+      ]
+    ],
+    "inside_source": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition",
+    "field_sources": {
+      "release_date": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition",
+      "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition",
+      "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition"
+    }
   },
   {
     "slug": "secret-lair-chaos-vault-reality-fracture",
     "name": "Reality Fracture Secret Lair Bundle",
     "type": "Secret Lair",
     "release_date": "2026-10-23",
-    "window": "Oct 23, 2026 in stores and at MagicSecretLair.com; Chaos Vault Bundle Bundles date TBA",
-    "source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
-    "note": "The first Secret Lair Bundle: 6 Play Boosters, 2 Collector Boosters, 2 of 10 Secret Lair mythics, 20 foil borderless lands and a Spindown. Wizards announced the product; the Oct 23 date comes from MTG Salvation and retailer listings, and the ~$189.99 price is from a retailer listing (not official MSRP). Wait for street prices unless you love the Secret Lair mythic art.",
+    "window": "Oct 23, 2026 at local game stores, online retailers (TCGplayer, Amazon) and the Secret Lair storefront; Wizards says it may arrive after Oct 23 in some regions",
+    "source": "https://magic.wizards.com/en/news/feature/collecting-reality-fracture",
+    "note": "The first Secret Lair Bundle: 6 Play Boosters, 2 Collector Boosters, 2 of 10 traditional foil Secret Lair promos, 20 foil tower basics and a Spindown, at an official $89.99 MSRP (Wizards). Release is Oct 23 per Wizards' WPN notice, with delays possible in some regions. Pre-release retailer listings ran well above MSRP ($159.99–$189.99), so don't overpay: wait for MSRP stock unless you love the Secret Lair mythic art.",
     "status": "confirmed",
     "prices": [
       {
-        "label": "Reality Fracture Secret Lair Bundle (retailer listing, not official MSRP)",
-        "usd": 189.99,
-        "offer": false
+        "label": "Reality Fracture Secret Lair Bundle (MSRP)",
+        "usd": 89.99
       }
     ],
     "contents": [
-      "6 Play Boosters",
-      "2 Collector Boosters",
-      "2 of 10 Secret Lair mythics",
-      "20 foil borderless lands",
-      "Spindown"
+      "6 Reality Fracture Play Boosters",
+      "2 Reality Fracture Collector Boosters",
+      "2 of 10 traditional foil Secret Lair Bundle promo cards",
+      "20 traditional foil tower basic lands",
+      "1 Spindown die",
+      "1 card-storage box"
     ],
-    "short_name": "Reality Fracture Secret Lair Bundle"
+    "short_name": "Reality Fracture Secret Lair Bundle",
+    "inside": [
+      [
+        "Reality Fracture Secret Lair Bundle",
+        [
+          "6 Reality Fracture Play Boosters",
+          "2 Reality Fracture Collector Boosters",
+          "2 of 10 traditional foil Secret Lair Bundle promo cards",
+          "20 traditional foil tower basic lands",
+          "1 Spindown die",
+          "1 card-storage box"
+        ]
+      ]
+    ],
+    "inside_source": "https://magic.wizards.com/en/news/feature/collecting-reality-fracture",
+    "field_sources": {
+      "release_date": "https://wpn.wizards.com/en/news/reality-fracture-product-delays-in-select-regions",
+      "prices": "https://magic.wizards.com/en/news/feature/collecting-reality-fracture",
+      "contents": "https://magic.wizards.com/en/news/feature/collecting-reality-fracture"
+    },
+    "amazon_query": "Reality Fracture Secret Lair Bundle"
   },
   {
     "slug": "countdown-kit-marvels-history-of-heroes",
@@ -74,7 +128,7 @@
     "release_date": "2026-11-02",
     "window": "Nov 2, 2026, 9 AM PT, only at MagicSecretLair.com · $199.99 · limited quantity",
     "source": "https://magic.wizards.com/en/news/announcements/secret-lair-countdown-kit-marvels-history-of-heroes",
-    "note": "30 new-art Marvel reprints for $199.99 (about $6.67 a card). Wizards' Oct 16 announcement says all 30 cards are viewable in the article; earlier coverage (TurnZero HQ) had only Fierce Guardianship, Heroic Intervention and Fighter Class. Price out the singles you'd actually play. Wait unless you're a Marvel collector.",
+    "note": "30 Marvel-art cards for $199.99 (about $6.67 a card), on sale Nov 2 at MagicSecretLair.com in limited quantity. Wizards revealed the full list on Oct 16: mostly reprints (Fierce Guardianship, Force of Virtue, Opposition Agent, Snuff Out, Damn, Lightning Bolt) plus 2 early Darkhold Destiny uncommons. Price out the singles you'd actually play. Wait unless you're a Marvel collector.",
     "status": "confirmed",
     "prices": [
       {
@@ -83,9 +137,53 @@
       }
     ],
     "contents": [
-      "30 new-art Marvel reprints"
+      "30 individually packaged cards, each randomly non-foil, foil or surge foil",
+      "Includes 2 early Marvel: Darkhold Destiny uncommons (Doctor Strange, Master of Magic; Beta Ray Bill), legal from Apr 2, 2027"
     ],
-    "short_name": "Marvel History of Heroes Countdown Kit"
+    "short_name": "Marvel History of Heroes Countdown Kit",
+    "inside": [
+      [
+        "Secret Lair Countdown Kit: Marvel's History of Heroes (30 cards)",
+        [
+          "Molten Duplication",
+          "Fierce Guardianship",
+          "Unbreakable Formation",
+          "Timber Protector",
+          "Biorhythm",
+          "Tainted Pact",
+          "With Great Power . . .",
+          "Vigor",
+          "Mjölnir, Storm Hammer",
+          "Doctor Strange, Master of Magic",
+          "Champion's Helm",
+          "Force of Virtue",
+          "Heroic Intervention",
+          "Fighter Class",
+          "Court of Bounty",
+          "Devastation",
+          "Unholy Heat",
+          "Villainous Wrath",
+          "Damning Verdict",
+          "Primal Might",
+          "Damn",
+          "Genesis Wave",
+          "Fiery Confluence",
+          "Rogue's Gloves",
+          "Beta Ray Bill",
+          "Snuff Out",
+          "Titanic Ultimatum",
+          "Opposition Agent",
+          "Collective Effort",
+          "Lightning Bolt"
+        ]
+      ]
+    ],
+    "inside_source": "https://magic.wizards.com/en/news/announcements/secret-lair-countdown-kit-marvels-history-of-heroes",
+    "field_sources": {
+      "release_date": "https://magic.wizards.com/en/news/announcements/secret-lair-countdown-kit-marvels-history-of-heroes",
+      "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-countdown-kit-marvels-history-of-heroes",
+      "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-countdown-kit-marvels-history-of-heroes"
+    }
   },
   {
     "slug": "secret-lair-marvel-doomsdrop",
@@ -93,10 +191,14 @@
     "type": "Secret Lair",
     "release_date": "TBA",
     "window": null,
-    "source": "https://mtg.wiki/page/Secret_Lair_Drop_Series:_Marvel:_Doomsdrop",
-    "note": "Teased at NYCC 2026 as a multi-drop collection built around Doctor Doom. No date, price or card list yet (we used to list Nov 9; nothing official supports that date). Wait.",
+    "source": "https://www.marvel.com/articles/culture-lifestyle/magic-the-gathering-marvel-darkhold-destiny-original-story-tie-in-comic",
+    "note": "Teased at NYCC 2026 (Marvel's Oct 9 announcement) as a drop that will 'predominantly feature' Doctor Doom with other Marvel guests; the Secret Lair storefront lists it as Coming Soon. No official date, price or card list yet (we used to list Nov 9; nothing official supports that date). Wait.",
     "status": "unconfirmed",
-    "short_name": "Marvel: Doomsdrop Secret Lair"
+    "short_name": "Marvel: Doomsdrop Secret Lair",
+    "field_sources": {
+      "announcement": "https://www.marvel.com/articles/culture-lifestyle/magic-the-gathering-marvel-darkhold-destiny-original-story-tie-in-comic",
+      "storefront listing (Coming Soon)": "https://secretlair.wizards.com/us/en/"
+    }
   },
   {
     "slug": "star-trek",
@@ -325,7 +427,7 @@
     "source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
     "status": "unconfirmed",
     "window": "Chaos Vault on MagicSecretLair.com, date TBA ('soon') · $29.99 non-foil / $39.99 foil; also in 3 Bundle Bundles",
-    "note": "5 mono-black reprints with horror-manga art. Announced Oct 13, 2026 with no sale date. All reprints, no new cards. Wait for the date and price out the singles.",
+    "note": "5 mono-black reprints (Attrition, Bitter Ordeal, Ophiomancer, Sign in Blood, Soul Spike) with black-and-white horror-manga art. Announced Oct 13, 2026; Wizards says it launches in the Chaos Vault 'soon', with no date yet. All reprints, no new cards. Wait for the date and price out the singles.",
     "prices": [
       {
         "label": "Non-foil",
@@ -337,9 +439,30 @@
       }
     ],
     "contents": [
-      "5 mono-black reprints with horror-manga art"
+      "Attrition",
+      "Bitter Ordeal",
+      "Ophiomancer",
+      "Sign in Blood",
+      "Soul Spike"
     ],
-    "short_name": "Strange School Secret Lair"
+    "short_name": "Strange School Secret Lair",
+    "inside": [
+      [
+        "怪異学校 — Strange School (5 cards, black-and-white art by Japanese artists)",
+        [
+          "Attrition",
+          "Bitter Ordeal",
+          "Ophiomancer",
+          "Sign in Blood",
+          "Soul Spike"
+        ]
+      ]
+    ],
+    "inside_source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
+    "field_sources": {
+      "prices": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
+      "contents": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture"
+    }
   },
   {
     "slug": "secret-lair-duality-distorted",
@@ -349,7 +472,7 @@
     "source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
     "status": "unconfirmed",
     "window": "Chaos Vault on MagicSecretLair.com, date TBA ('soon') · $29.99 non-foil / $39.99 foil; also in 3 Bundle Bundles",
-    "note": "4 retro-art reprints by veteran artists riffing on their own classic pieces. Announced Oct 13, 2026 with no sale date. All reprints, no new cards. Wait for the date and price out the singles.",
+    "note": "4 retro-frame reprints (Thoughtseize, Desperate Ritual, Pyroblast, Tribute to the World Tree), each by an artist reimagining one of their earlier pieces. Announced Oct 13, 2026; Wizards says it launches in the Chaos Vault 'soon', with no date yet. All reprints, no new cards. Wait for the date and price out the singles.",
     "prices": [
       {
         "label": "Non-foil",
@@ -361,8 +484,443 @@
       }
     ],
     "contents": [
-      "4 retro-art reprints"
+      "Thoughtseize",
+      "Desperate Ritual",
+      "Pyroblast",
+      "Tribute to the World Tree"
     ],
-    "short_name": "Duality Distorted Secret Lair"
+    "short_name": "Duality Distorted Secret Lair",
+    "inside": [
+      [
+        "Duality Distorted (4 retro-frame cards)",
+        [
+          "Thoughtseize",
+          "Desperate Ritual",
+          "Pyroblast",
+          "Tribute to the World Tree"
+        ]
+      ]
+    ],
+    "inside_source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
+    "field_sources": {
+      "prices": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
+      "contents": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture"
+    }
+  },
+  {
+    "slug": "secret-lair-reality-fracture-bundle-bundles",
+    "name": "Chaos Vault: Reality Fracture Secret Lair Bundle Bundles",
+    "type": "Secret Lair",
+    "release_date": "TBA",
+    "status": "unconfirmed",
+    "window": "Chaos Vault on MagicSecretLair.com, date TBA ('soon')",
+    "source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
+    "note": "Three Chaos Vault packages, each a Reality Fracture Secret Lair Bundle plus the Strange School and Duality Distorted drops: $159.98 non-foil, $179.98 foil, $234.99 for both editions. Our math: the $89.99 bundle MSRP plus the drops at $29.99/$39.99 comes to $149.97, $169.97 and $229.95, so these packages cost $5 to $10 more than buying everything separately at list price. Skip unless the bundle is hard to find at MSRP. Wait for the date.",
+    "prices": [
+      {
+        "label": "Non-Foil Edition",
+        "usd": 159.98
+      },
+      {
+        "label": "Foil Edition",
+        "usd": 179.98
+      },
+      {
+        "label": "Everything Edition",
+        "usd": 234.99
+      }
+    ],
+    "contents": [
+      "1 Reality Fracture Secret Lair Bundle",
+      "Strange School and Duality Distorted (non-foil, foil, or both editions)"
+    ],
+    "inside": [
+      [
+        "Non-Foil Edition ($159.98)",
+        [
+          "1x Reality Fracture Secret Lair Bundle",
+          "1x 怪異学校 — Strange School Non-Foil Edition",
+          "1x Duality Distorted Non-Foil Edition"
+        ]
+      ],
+      [
+        "Foil Edition ($179.98)",
+        [
+          "1x Reality Fracture Secret Lair Bundle",
+          "1x 怪異学校 — Strange School Foil Edition",
+          "1x Duality Distorted Foil Edition"
+        ]
+      ],
+      [
+        "Everything Edition ($234.99)",
+        [
+          "1x Reality Fracture Secret Lair Bundle",
+          "1x Strange School Non-Foil + 1x Foil Edition",
+          "1x Duality Distorted Non-Foil + 1x Foil Edition"
+        ]
+      ]
+    ],
+    "inside_source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
+    "field_sources": {
+      "prices": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
+      "contents": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
+      "storefront listing (Coming Soon)": "https://secretlair.wizards.com/us/en/"
+    },
+    "short_name": "Reality Fracture Bundle Bundles"
+  },
+  {
+    "slug": "secret-lair-corn-maze-superdrop",
+    "name": "Secret Lair: Corn Maze Superdrop",
+    "type": "Secret Lair",
+    "release_date": "2026-10-12",
+    "status": "confirmed",
+    "window": "On sale since Oct 12, 2026, 9 AM PT, only at MagicSecretLair.com · while supplies last · free foil Maze of Ith promo per $199 spent (while supplies last)",
+    "source": "https://magic.wizards.com/en/news/announcements/secret-lair-corn-maze-superdrop",
+    "note": "8 Halloween-season drops at $29.99 non-foil / $39.99 foil each: three Jim Henson's Labyrinth drops, KPop Demon Hunters, Marvel Zombies, Veronique Meignaud, See Machine artifact lands and a Treefolk drop. No buy/skip verdict from us on this one yet. Price out the singles you'd play before buying a whole drop.",
+    "prices": [
+      {
+        "label": "Each drop, non-foil",
+        "usd": 29.99
+      },
+      {
+        "label": "Each drop, foil",
+        "usd": 39.99
+      },
+      {
+        "label": "Pumpkin Spiced Non-Foil Bundle (8 drops)",
+        "usd": 239.92
+      },
+      {
+        "label": "Full Moon Foil Bundle (8 drops)",
+        "usd": 319.92
+      },
+      {
+        "label": "A-Maize-Ing Everything Bundle (16)",
+        "usd": 539.99
+      }
+    ],
+    "contents": [
+      "8 drops: Labyrinth: Fear Me, Love Me; Labyrinth: Should You Need Us; Labyrinth: Through the Labyrinth; KPop Demon Hunters: How It's Done; Marvel: Zombies; Artist Series: Veronique Meignaud; Manufactured Grounds by See Machine; Peace, Love, & Treefolk"
+    ],
+    "inside": [
+      [
+        "Jim Henson's Labyrinth: Fear Me, Love Me",
+        [
+          "Muxus, Goblin Grandee",
+          "Boggart Shenanigans",
+          "Dance with Calamity",
+          "Goblin Rabblemaster",
+          "Claim the Firstborn",
+          "Trinisphere"
+        ]
+      ],
+      [
+        "Jim Henson's Labyrinth: Should You Need Us",
+        [
+          "Jodah, the Unifier",
+          "Lu Xun, Scholar General (reversible)",
+          "Kami of the Crescent Moon",
+          "Kogla, the Titan Ape",
+          "Shigeki, Jukai Visionary",
+          "Wort, Boggart Auntie"
+        ]
+      ],
+      [
+        "Jim Henson's Labyrinth: Through the Labyrinth",
+        [
+          "Timely Ward",
+          "Chronomantic Escape",
+          "Delayed Blast Fireball",
+          "Tempt with Discovery",
+          "Leveler",
+          "Thran Temporal Gateway",
+          "Rogue's Passage"
+        ]
+      ],
+      [
+        "KPop Demon Hunters: How It's Done",
+        [
+          "Dawn's Truce",
+          "Unbreakable Formation",
+          "Freed from the Real",
+          "Swan Song",
+          "Demonic Counsel",
+          "Tempt with Immortality",
+          "Underworld Breach"
+        ]
+      ],
+      [
+        "Marvel: Zombies",
+        [
+          "Unstoppable Slasher",
+          "Zombie Apocalypse",
+          "Vogar, Necropolis Tyrant",
+          "God-Eternal Bontu",
+          "Wilhelt, the Rotcleaver",
+          "Varina, Lich Queen"
+        ]
+      ],
+      [
+        "Artist Series: Veronique Meignaud",
+        [
+          "Bloodsoaked Champion",
+          "Voldaren Pariah // Abolisher of Bloodlines",
+          "Ashnod's Altar",
+          "Cabal Stronghold"
+        ]
+      ],
+      [
+        "Manufactured Grounds by See Machine",
+        [
+          "Ancient Den",
+          "Seat of the Synod",
+          "Vault of Whispers",
+          "Great Furnace",
+          "Tree of Tales"
+        ]
+      ],
+      [
+        "Peace, Love, & Treefolk",
+        [
+          "Dauntless Dourbark",
+          "Leaf-Crowned Elder",
+          "Timber Protector",
+          "Treefolk Harbinger",
+          "Doran, the Siege Tower"
+        ]
+      ]
+    ],
+    "inside_source": "https://magic.wizards.com/en/news/announcements/secret-lair-corn-maze-superdrop",
+    "field_sources": {
+      "release_date": "https://magic.wizards.com/en/news/announcements/secret-lair-corn-maze-superdrop",
+      "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-corn-maze-superdrop",
+      "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-corn-maze-superdrop"
+    },
+    "short_name": "Corn Maze Superdrop"
+  },
+  {
+    "slug": "secret-lair-most-powerful-superdrop",
+    "name": "Secret Lair: The Most Powerful Superdrop in the Universe (Masters of the Universe)",
+    "type": "Secret Lair",
+    "release_date": "2026-09-14",
+    "status": "confirmed",
+    "window": "Went on sale Sep 14, 2026, 9 AM PT, only at MagicSecretLair.com · free foil Swan Song promo per $149 spent (while supplies last)",
+    "source": "https://magic.wizards.com/en/news/announcements/secret-lair-the-most-powerful-superdrop-in-the-universe",
+    "note": "5 Masters of the Universe drops at $29.99 non-foil / $39.99 foil each, including a full-art textless Sol Ring (She-Ra drop) and Sword of War and Peace (Sold Separately). No buy/skip verdict from us on this one yet. Check stock on MagicSecretLair.com and compare with secondary-market prices.",
+    "prices": [
+      {
+        "label": "Each drop, non-foil",
+        "usd": 29.99
+      },
+      {
+        "label": "Each drop, foil",
+        "usd": 39.99
+      },
+      {
+        "label": "I Have the Power Non-Foil Bundle (5 drops)",
+        "usd": 149.95
+      },
+      {
+        "label": "For the Honor of Grayskull Foil Bundle (5 drops)",
+        "usd": 199.95
+      },
+      {
+        "label": "The Most Powerful Everything Bundle (10)",
+        "usd": 334.99
+      }
+    ],
+    "contents": [
+      "5 drops: By the Power of Grayskull!; Nyah-ha-ha!; She-Ra, Princess of Power; Allies and Enemies of Eternia; Sold Separately"
+    ],
+    "inside": [
+      [
+        "By the Power of Grayskull!",
+        [
+          "Winota, Joiner of Forces",
+          "Crackle with Power",
+          "Delina, Wild Mage",
+          "Bruenor Battlehammer",
+          "Konda's Banner"
+        ]
+      ],
+      [
+        "Nyah-ha-ha!",
+        [
+          "Tinybones, the Pickpocket",
+          "Tasha's Hideous Laughter",
+          "Bottomless Pit",
+          "Necrogen Mists",
+          "Breach the Multiverse"
+        ]
+      ],
+      [
+        "She-Ra, Princess of Power",
+        [
+          "Sisay, Weatherlight Captain",
+          "Silence",
+          "Emiel the Blessed",
+          "Hajar, Loyal Bodyguard",
+          "Kutzil, Malamet Exemplar",
+          "Sol Ring (full art, textless)"
+        ]
+      ],
+      [
+        "Allies and Enemies of Eternia",
+        [
+          "Sakashima the Impostor",
+          "Kona, Rescue Beastie",
+          "Ertai Resurrected",
+          "Derevi, Empyrial Tactician",
+          "Samut, Voice of Dissent",
+          "Tetsuo, Imperial Champion"
+        ]
+      ],
+      [
+        "Sold Separately",
+        [
+          "Fortune, Loyal Steed",
+          "The Gitrog, Ravenous Ride",
+          "Throne of the God-Pharaoh",
+          "Sword of War and Peace",
+          "Command Tower (double sided)"
+        ]
+      ]
+    ],
+    "inside_source": "https://magic.wizards.com/en/news/announcements/secret-lair-the-most-powerful-superdrop-in-the-universe",
+    "field_sources": {
+      "release_date": "https://magic.wizards.com/en/news/announcements/secret-lair-the-most-powerful-superdrop-in-the-universe",
+      "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-the-most-powerful-superdrop-in-the-universe",
+      "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-the-most-powerful-superdrop-in-the-universe"
+    },
+    "short_name": "Most Powerful Superdrop"
+  },
+  {
+    "slug": "secret-lair-perfectly-normal-superdrop",
+    "name": "Secret Lair: A Perfectly Normal Superdrop",
+    "type": "Secret Lair",
+    "release_date": "2026-08-31",
+    "status": "confirmed",
+    "window": "Went on sale Aug 31, 2026, 9 AM PT, only at MagicSecretLair.com · free foil Command Tower promo per $199 spent (while supplies last)",
+    "source": "https://magic.wizards.com/en/news/announcements/secret-lair-a-perfectly-normal-superdrop",
+    "note": "8 drops at $29.99 non-foil / $39.99 foil each: four Marvel drops (Earth's Mightiest Pets, Hulk SMASH!, Dan Hipp, True Believers in Love), Lofi Girl, Robin Eisenberg, Gene Luen Yang and Ian Miller. No buy/skip verdict from us on this one yet. Check stock on MagicSecretLair.com and compare with secondary-market prices.",
+    "prices": [
+      {
+        "label": "Each drop, non-foil",
+        "usd": 29.99
+      },
+      {
+        "label": "Each drop, foil",
+        "usd": 39.99
+      },
+      {
+        "label": "A Completely Ordinary Non-Foil Bundle (8 drops)",
+        "usd": 224.99
+      },
+      {
+        "label": "A Perfectly Normal Marvel Bundle (8)",
+        "usd": 259.99
+      },
+      {
+        "label": "A Very Regular Foil Bundle (8 drops)",
+        "usd": 299.99
+      },
+      {
+        "label": "A Perfectly Normal Everything Bundle (16)",
+        "usd": 519.99
+      }
+    ],
+    "contents": [
+      "8 drops: Artist Series: Ian Miller; Featuring: Gene Luen Yang; Cosmic Chill by Robin Eisenberg; Lofi Girl: Beats to Cast To; Marvel: Earth's Mightiest Pets; Marvel: Hulk SMASH!; Marvel: Dan Hipp; Marvel: True Believers in Love"
+    ],
+    "inside": [
+      [
+        "Artist Series: Ian Miller",
+        [
+          "Shivan Dragon",
+          "Animar, Soul of Elements",
+          "Korvold, Fae-Cursed King",
+          "Tsabo Tavoc"
+        ]
+      ],
+      [
+        "Featuring: Gene Luen Yang",
+        [
+          "Kibo, Uktabi Prince",
+          "Ilharg, the Raze-Boar",
+          "Kazuul, Tyrant of the Cliffs",
+          "Dosan, the Falling Leaf",
+          "Quest for Renewal"
+        ]
+      ],
+      [
+        "Cosmic Chill by Robin Eisenberg",
+        [
+          "Orvar, the All-Form",
+          "Sage of Hours",
+          "See Double",
+          "Slip Through Space",
+          "Sway of the Stars"
+        ]
+      ],
+      [
+        "Lofi Girl: Beats to Cast To",
+        [
+          "Felidar Guardian",
+          "Starfield of Nyx",
+          "Careful Study",
+          "Merchant Scroll",
+          "Paradise Mantle"
+        ]
+      ],
+      [
+        "Marvel: Earth's Mightiest Pets",
+        [
+          "Ephemerate",
+          "Shark Typhoon",
+          "Lightning Bolt",
+          "Searing Blaze",
+          "Commune with Dinosaurs",
+          "Titanic Ultimatum"
+        ]
+      ],
+      [
+        "Marvel: Hulk SMASH!",
+        [
+          "Anger",
+          "Gratuitous Violence",
+          "Rishkar's Expertise",
+          "Search for Tomorrow",
+          "Unnatural Growth"
+        ]
+      ],
+      [
+        "Marvel: Dan Hipp",
+        [
+          "Mystical Dispute",
+          "An Offer You Can't Refuse",
+          "Training Grounds",
+          "Endrek Sahr, Master Breeder",
+          "Bristly Bill, Spine Sower"
+        ]
+      ],
+      [
+        "Marvel: True Believers in Love",
+        [
+          "Happily Ever After",
+          "True Love's Kiss",
+          "Run Away Together",
+          "Savor the Moment",
+          "Grave Pact",
+          "Thrill of Possibility"
+        ]
+      ]
+    ],
+    "inside_source": "https://magic.wizards.com/en/news/announcements/secret-lair-a-perfectly-normal-superdrop",
+    "field_sources": {
+      "release_date": "https://magic.wizards.com/en/news/announcements/secret-lair-a-perfectly-normal-superdrop",
+      "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-a-perfectly-normal-superdrop",
+      "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-a-perfectly-normal-superdrop"
+    },
+    "short_name": "Perfectly Normal Superdrop"
   }
 ]
