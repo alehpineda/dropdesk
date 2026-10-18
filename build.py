@@ -124,6 +124,12 @@ TYPE_INFO = {
 }
 HOWTO = ("How to pre-order", "Before release, most Magic products can be pre-ordered from local game stores (many offer preorder pricing or prerelease bundles), large online retailers, TCGplayer sellers and Amazon. Secret Lair drops are the exception: they are sold mainly at MagicSecretLair.com during a fixed sale window. Compare preorder prices with the MSRP listed above, check the retailer's ship date, and remember that dates marked unconfirmed can change. Prices in stores frequently drop after release, so preordering mainly makes sense if you want the product on day one or supply is limited.")
 def fmt(p): return f"${p['usd']:,.2f}"
+SL_STORE = "https://secretlair.wizards.com/us/en"  # Wizards' own Secret Lair store (MagicSecretLair.com)
+SL_ONSALE_DAYS = 30  # with no known sale_end, a drop counts as "on sale now" for this many days after it opens
+def sl_bucket(r):
+    if not dated(r) or r["release_date"] > today: return "up"
+    if r.get("sale_end"): return "now" if r["sale_end"] >= today else "past"
+    return "now" if (TODAY - datetime.date.fromisoformat(r["release_date"])).days <= SL_ONSALE_DAYS else "past"
 for r in data:
     sn = short_name(r); pu = f"{SITE_URL}/p/{r['slug']}.html"
     win = f"<p><b>Window:</b> {E(r['window'])}</p>" if r.get("window") else ""
@@ -145,12 +151,31 @@ for r in data:
            (f"Should I buy {sn}?", r["note"])]
     if r.get("contents"): faq.append((f"What's in {sn}?", "; ".join(r["contents"]) + "."))
     faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in faq)
-    prod = {"@context": "https://schema.org", "@type": "Product", "name": r["name"], "url": pu, "image": OG_IMAGE, "category": r["type"], "brand": {"@type": "Brand", "name": "Wizards of the Coast"}, "description": trim(r["note"], 300)}
+    # Product snippet markup only (Google: "Product snippets: for product pages where people can't directly purchase the product").
+    # MTG Drops sells nothing, so no offer may name us or our page as the place to buy: each Offer is the publisher's
+    # (Wizards of the Coast) official price, with seller = Wizards and, for Secret Lair, the url of Wizards' own store.
+    # That keeps us out of merchant listings (no shippingDetails/hasMerchantReturnPolicy to claim) without inventing anything.
+    # No review/aggregateRating: we have none, and Google only needs one of offers/review/aggregateRating.
+    prod = {"@context": "https://schema.org", "@type": "Product", "name": r["name"], "url": pu, "image": r.get("image") or OG_IMAGE, "category": r["type"], "brand": {"@type": "Brand", "name": "Wizards of the Coast"}, "description": trim(r["note"], 300)}
     if dated(r): prod["releaseDate"] = r["release_date"]
     offers = [p for p in prices if p.get("offer", True)]
-    avail = "https://schema.org/InStock" if dated(r) and r["release_date"] <= today else "https://schema.org/PreOrder"
+    sl_direct = r["type"] == "Secret Lair"  # sold by Wizards itself at MagicSecretLair.com for a limited window
+    if sl_direct:
+        b = sl_bucket(r)  # same rule the hub page uses for on sale now / upcoming / ended
+        avail = {"now": "https://schema.org/InStock", "past": "https://schema.org/Discontinued"}.get(b, "https://schema.org/OutOfStock")  # not on sale yet: no preorders
+        odesc = "Official Wizards of the Coast price at MagicSecretLair.com (limited-time sale). MTG Drops does not sell this product."
+    else:
+        avail = "https://schema.org/InStock" if dated(r) and r["release_date"] <= today else "https://schema.org/PreOrder"
+        odesc = "Wizards of the Coast MSRP; sold by game stores and other retailers. MTG Drops does not sell this product."
     if offers:
-        prod["offers"] = [{"@type": "Offer", "name": p["label"], "price": f"{p['usd']:.2f}", "priceCurrency": p.get("currency", "USD"), "availability": avail, "url": pu} for p in offers]
+        def offer(p):
+            o = {"@type": "Offer", "name": p["label"], "price": f"{p['usd']:.2f}", "priceCurrency": p.get("currency", "USD"), "availability": avail,
+                 "seller": {"@type": "Organization", "name": "Wizards of the Coast", "url": "https://company.wizards.com/en"}, "description": odesc}
+            if sl_direct: o["url"] = SL_STORE
+            if sl_direct and dated(r) and r["release_date"] > today: o["availabilityStarts"] = r["release_date"]
+            if r.get("sale_end"): o["priceValidUntil"] = r["sale_end"]
+            return o
+        prod["offers"] = [offer(p) for p in offers]
         main_ld = prod
     else:
         main_ld = {"@context": "https://schema.org", "@type": "WebPage", "name": title_for(r), "url": pu, "description": trim(r["note"], 300), "isPartOf": {"@id": f"{SITE_URL}/#website"}, "about": {"@type": "Thing", "name": r["name"]}}
@@ -168,12 +193,7 @@ SL_SRC = {"about": "https://secretlair.wizards.com/us/en/about-us",
           "faq": "https://secretlair-support.wizards.com/hc/en-us/articles/45369886769300-About-Secret-Lair-FAQ",
           "lpr": "https://magic.wizards.com/en/news/announcements/speeding-up-secret-lair-shipping",
           "queue": "https://magic.wizards.com/en/news/announcements/secret-lair-corn-maze-superdrop"}
-SL_ONSALE_DAYS = 30  # with no known sale_end, a drop counts as "on sale now" for this many days after it opens
 sl = [r for r in data if r["type"] == "Secret Lair" and not r.get("placeholder")]
-def sl_bucket(r):
-    if not dated(r) or r["release_date"] > today: return "up"
-    if r.get("sale_end"): return "now" if r["sale_end"] >= today else "past"
-    return "now" if (TODAY - datetime.date.fromisoformat(r["release_date"])).days <= SL_ONSALE_DAYS else "past"
 sl_now = sorted([r for r in sl if sl_bucket(r) == "now"], key=lambda r: r["release_date"], reverse=True)
 sl_up = [r for r in sl if sl_bucket(r) == "up"]  # data is date-sorted; TBA sorts last
 sl_past = sorted([r for r in sl if sl_bucket(r) == "past"], key=lambda r: r["release_date"], reverse=True)
