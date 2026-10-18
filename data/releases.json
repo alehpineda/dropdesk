@@ -18,7 +18,8 @@
     "contents": [
       "24-booster Mystery Booster Commander Edition box (sold inside Festival in a Box: Atlanta 2026)"
     ],
-    "short_name": "Mystery Booster Commander"
+    "short_name": "Mystery Booster Commander",
+    "verdict": "buy"
   },
   {
     "slug": "secret-lair-atlanta",
@@ -74,7 +75,9 @@
       "release_date": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition",
       "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition",
       "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition"
-    }
+    },
+    "verdict": "buy",
+    "gift_for": "a Commander playgroup that wants a chaos-draft night: the $249.99 Festival in a Box is the only way to get a Mystery Booster Commander box (limit 2, while supplies last, so it may sell out before the holidays)"
   },
   {
     "slug": "secret-lair-chaos-vault-reality-fracture",
@@ -119,7 +122,8 @@
       "prices": "https://magic.wizards.com/en/news/feature/collecting-reality-fracture",
       "contents": "https://magic.wizards.com/en/news/feature/collecting-reality-fracture"
     },
-    "amazon_query": "Reality Fracture Secret Lair Bundle"
+    "amazon_query": "Reality Fracture Secret Lair Bundle",
+    "verdict": "wait"
   },
   {
     "slug": "countdown-kit-marvels-history-of-heroes",
@@ -183,7 +187,8 @@
       "release_date": "https://magic.wizards.com/en/news/announcements/secret-lair-countdown-kit-marvels-history-of-heroes",
       "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-countdown-kit-marvels-history-of-heroes",
       "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-countdown-kit-marvels-history-of-heroes"
-    }
+    },
+    "verdict": "wait"
   },
   {
     "slug": "secret-lair-marvel-doomsdrop",
@@ -198,7 +203,8 @@
     "field_sources": {
       "announcement": "https://www.marvel.com/articles/culture-lifestyle/magic-the-gathering-marvel-darkhold-destiny-original-story-tie-in-comic",
       "storefront listing (Coming Soon)": "https://secretlair.wizards.com/us/en/"
-    }
+    },
+    "verdict": "wait"
   },
   {
     "slug": "star-trek",
@@ -265,7 +271,9 @@
       "Mechanics: assimilate, face a dilemma, the federation ability word, and returning Spacecraft and station from Edge of Eternities.",
       "Key dates: prerelease Nov 6–12, MTG Arena Nov 10, tabletop Nov 13, 2026; Magic Presents: To Boldly Go runs Nov 13, 2026–Jan 28, 2027."
     ],
-    "short_name": "MTG Star Trek"
+    "short_name": "MTG Star Trek",
+    "verdict": "buy",
+    "gift_for": "Star Trek fans and anyone who drafts with friends: a Bundle ($69.99 MSRP) or a few Play Boosters, not sealed boxes bought to speculate on"
   },
   {
     "slug": "star-trek-commander",
@@ -314,7 +322,9 @@
       "Set code TRC; legal in Commander, Legacy and Vintage (individual cards also legal where already available in other formats).",
       "Commander Party events: Round 1 Nov 20–26, Round 2 Dec 11–17, 2026."
     ],
-    "short_name": "Star Trek Commander Decks"
+    "short_name": "Star Trek Commander Decks",
+    "verdict": "buy",
+    "gift_for": "Commander players, especially Trek fans: a regular $74.99 deck is ready to play out of the box (skip the marked-up Collector's Editions)"
   },
   {
     "slug": "spider-mania-commander",
@@ -326,7 +336,8 @@
     "note": "Listed by mtg.wiki. Decklist not yet reviewed here; wait for the list. Still only a leak (@MTGOSalseo); Wizards hasn't confirmed it. Wait.",
     "status": "unconfirmed",
     "amazon_query": "Spider-Mania Commander Deck MTG",
-    "short_name": "Spider-Mania Commander Deck"
+    "short_name": "Spider-Mania Commander Deck",
+    "verdict": "wait"
   },
   {
     "slug": "zeta-set-rerelease",
@@ -462,7 +473,8 @@
     "field_sources": {
       "prices": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
       "contents": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture"
-    }
+    },
+    "verdict": "wait"
   },
   {
     "slug": "secret-lair-duality-distorted",
@@ -505,7 +517,8 @@
     "field_sources": {
       "prices": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
       "contents": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture"
-    }
+    },
+    "verdict": "wait"
   },
   {
     "slug": "secret-lair-reality-fracture-bundle-bundles",
@@ -566,7 +579,8 @@
       "contents": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
       "storefront listing (Coming Soon)": "https://secretlair.wizards.com/us/en/"
     },
-    "short_name": "Reality Fracture Bundle Bundles"
+    "short_name": "Reality Fracture Bundle Bundles",
+    "verdict": "skip"
   },
   {
     "slug": "secret-lair-corn-maze-superdrop",
