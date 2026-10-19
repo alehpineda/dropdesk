@@ -477,7 +477,7 @@
   },
   {
     "slug": "marvel-darkhold-destiny-commander",
-    "name": "Marvel: Darkhold Destiny Commander Decks (4)",
+    "name": "Marvel: Darkhold Destiny Commander Decks (Strange Academy, Gods of Asgard, Midnight Sons, Lords of Hel)",
     "type": "Commander Precon",
     "release_date": "2027-04-09",
     "window": "Preorders open (per Wizards)",
@@ -485,6 +485,7 @@
     "note": "Four official decks at $74.99 MSRP each (Collector's Edition $159.99): Strange Academy (Doctor Strange; spellcasters and blink), Gods of Asgard (Thor; power 4 or greater), Midnight Sons (Blade; Vampires and life gain) and Lords of Hel (Hela; tokens and sacrifice). Each has 30 new-to-Magic cards, but no decklists or commanders are revealed yet, so it's too early for a verdict.",
     "status": "confirmed",
     "amazon_query": "Marvel Darkhold Destiny Commander Deck MTG",
+    "tcg_query": "Darkhold Destiny Commander",
     "short_name": "Darkhold Destiny Commander Decks",
     "prices": [
       {
