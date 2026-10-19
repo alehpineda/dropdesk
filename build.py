@@ -535,7 +535,7 @@ open("dist/llms.txt","w").write(f"""# MTG Drops
 - [Release calendar]({SITE_URL}/): every upcoming MTG product grouped by month
 - [Secret Lair drops]({SITE_URL}/secret-lair.html): Secret Lair schedule (on sale now, upcoming, recent), prices and buy/skip verdicts
 - [Guides]({SITE_URL}/guides/): release roundups and gift picks
-""" + "".join(f"- [{t}]({url(p)}): {d}\n" for p, t, d in GUIDES) + """- [Newsletter]({SITE_URL}/newsletter.html): weekly "What's Dropping" email
+""" + "".join(f"- [{t}]({url(p)}): {d}\n" for p, t, d in GUIDES) + f"""- [Newsletter]({SITE_URL}/newsletter.html): weekly "What's Dropping" email
 - [Sponsor]({SITE_URL}/sponsor.html): media kit, sponsorship placements and disclosure policy (contact sponsors@mtgdrops.com)
 - [RSS feed]({SITE_URL}/feed.xml)
 - [Sitemap]({SITE_URL}/sitemap.xml)
