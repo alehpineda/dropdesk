@@ -390,22 +390,156 @@
     "release_date": "2027-04-09",
     "window": "Preorders open now (per Wizards)",
     "source": "https://magic.wizards.com/en/news/announcements/marvel-darkhold-destiny-emerges-april-2027",
-    "note": "Announced Oct 10, 2026; no cards shown yet. Preordering blind is a skip for now.",
+    "note": "Universes Beyond set with an all-new Marvel story (announced Oct 10, 2026). Booster Pack $6.99, Collector Booster $37.99, Bundle $69.99, Arcanum Bundle $99.99 (MSRP, per Wizards). Only a handful of cards are revealed so far, so there's no verdict yet; no need to preorder blind this early.",
     "status": "confirmed",
     "amazon_query": "Marvel Darkhold Destiny MTG",
-    "short_name": "Marvel: Darkhold Destiny"
+    "short_name": "Marvel: Darkhold Destiny",
+    "prices": [
+      {
+        "label": "Booster Pack",
+        "usd": 6.99
+      },
+      {
+        "label": "Collector Booster",
+        "usd": 37.99
+      },
+      {
+        "label": "Scene Box (each)",
+        "usd": 41.99
+      },
+      {
+        "label": "Bundle",
+        "usd": 69.99
+      },
+      {
+        "label": "Arcanum Bundle",
+        "usd": 99.99
+      },
+      {
+        "label": "Draft Night",
+        "usd": 119.99
+      }
+    ],
+    "inside_source": "https://wpn.wizards.com/en/products/marvel-darkhold-destiny",
+    "inside": [
+      [
+        "Booster Pack ($6.99 MSRP; 30 per display)",
+        [
+          "14 Magic cards; Wizards says they are balanced for Limited play"
+        ]
+      ],
+      [
+        "Collector Booster ($37.99 MSRP; 12 per display)",
+        [
+          "12 Magic cards: rares/mythics and traditional foils, source material cards, silver foil cards, midnight raised foil team-ups, and a chance at a headliner cosmic foil"
+        ]
+      ],
+      [
+        "Bundle ($69.99 MSRP)",
+        [
+          "9 Booster Packs",
+          "1 traditional foil promo card",
+          "15 non-foil basic lands, 10 traditional foil basic lands, 5 non-foil full-art basic lands",
+          "Oversized Spindown life counter, card storage box, 2 reference cards"
+        ]
+      ],
+      [
+        "Arcanum Bundle ($99.99 MSRP)",
+        [
+          "8 Booster Packs and 1 Collector Booster",
+          "1 traditional foil mythic rare promo card plus 2 of 6 traditional foil promo cards",
+          "10 traditional foil and 10 non-foil basic lands; 5 traditional foil and 5 non-foil full-art lands",
+          "Oversized Arcanum Bundle Spindown life counter and card box"
+        ]
+      ],
+      [
+        "Other products (MSRP)",
+        [
+          "Draft Night $119.99: 12 Booster Packs, 1 Collector Booster, 90 basic lands (a Pick-Two draft for four)",
+          "Scene Boxes $41.99 each (Assault on Asgard, Skirmish at the Sanctum): 3 Booster Packs, 6 traditional foil scene cards, 6 art-only scene cards, display easel",
+          "Prerelease Pack: 6 Booster Packs, 1 traditional foil rare/mythic rare, Spindown life counter"
+        ]
+      ]
+    ],
+    "facts": [
+      "Release Apr 9, 2027; Wizards' WPN listing gives Prerelease Packs an early-access date of Apr 2, 2027.",
+      "Original story written with Marvel; a tie-in Marvel Comics series by Jackson Lanzing and Collin Kelly releases digitally in Feb 2027 and in print in Apr 2027.",
+      "Revealed so far include The Darkhold, Hela, Mistress of Darkness, Rise from the Nether, Magik, Illyana Rasputin and the scene card Gargantos, the Endbringer.",
+      "Four Commander decks release alongside it (Strange Academy, Gods of Asgard, Midnight Sons, Lords of Hel)."
+    ],
+    "field_sources": {
+      "release_date": "https://magic.wizards.com/en/news/announcements/marvel-darkhold-destiny-emerges-april-2027",
+      "prices": "https://wpn.wizards.com/en/products/marvel-darkhold-destiny",
+      "contents": "https://wpn.wizards.com/en/products/marvel-darkhold-destiny",
+      "revealed cards": "https://magic.wizards.com/en/news/announcements/marvel-darkhold-destiny-emerges-april-2027",
+      "products": "https://magic.wizards.com/en/products/marvel/marvel-darkhold-destiny"
+    }
   },
   {
     "slug": "marvel-darkhold-destiny-commander",
     "name": "Marvel: Darkhold Destiny Commander Decks (4)",
     "type": "Commander Precon",
     "release_date": "2027-04-09",
-    "window": null,
-    "source": "https://www.thepopverse.com/gaming-magic-the-gathering-2027-sets-commander-decks-magiccon-amsterdam",
-    "note": "Every 2027 set gets four precons per Wizards' MagicCon Amsterdam announcement; details TBA.",
-    "status": "unconfirmed",
+    "window": "Preorders open (per Wizards)",
+    "source": "https://wpn.wizards.com/en/products/marvel-darkhold-destiny",
+    "note": "Four official decks at $74.99 MSRP each (Collector's Edition $159.99): Strange Academy (Doctor Strange; spellcasters and blink), Gods of Asgard (Thor; power 4 or greater), Midnight Sons (Blade; Vampires and life gain) and Lords of Hel (Hela; tokens and sacrifice). Each has 30 new-to-Magic cards, but no decklists or commanders are revealed yet, so it's too early for a verdict.",
+    "status": "confirmed",
     "amazon_query": "Marvel Darkhold Destiny Commander Deck MTG",
-    "short_name": "Darkhold Destiny Commander Decks"
+    "short_name": "Darkhold Destiny Commander Decks",
+    "prices": [
+      {
+        "label": "Commander Deck (each)",
+        "usd": 74.99
+      },
+      {
+        "label": "Collector's Edition Commander Deck (each)",
+        "usd": 159.99
+      }
+    ],
+    "contents": [
+      "Strange Academy",
+      "Gods of Asgard",
+      "Midnight Sons",
+      "Lords of Hel"
+    ],
+    "inside_source": "https://wpn.wizards.com/en/products/marvel-darkhold-destiny",
+    "inside": [
+      [
+        "Commander Deck ($74.99 MSRP; 4 versions)",
+        [
+          "100-card Commander deck with 30 new-to-Magic cards",
+          "10 double-sided token cards",
+          "Deck box, strategy insert, reference card"
+        ]
+      ],
+      [
+        "Collector's Edition Commander Deck ($159.99 MSRP)",
+        [
+          "100-card surge foil Commander deck with 30 new-to-Magic cards",
+          "10 double-sided surge foil token cards",
+          "Deck box, strategy insert, reference card"
+        ]
+      ],
+      [
+        "The four decks (per Wizards' product copy)",
+        [
+          "Strange Academy: Doctor Strange; blink spellcasters to repeat battlefield-entry effects",
+          "Gods of Asgard: Thor; build forces of power 4 or more",
+          "Midnight Sons: Blade; gain life through Vampires and spend it on battlefield effects",
+          "Lords of Hel: Hela; sacrifice effects plus token generation"
+        ]
+      ]
+    ],
+    "facts": [
+      "Release Apr 9, 2027, alongside the main Marvel: Darkhold Destiny set.",
+      "Decklists and face commanders have not been revealed yet; the deck themes above come from Wizards' product descriptions."
+    ],
+    "field_sources": {
+      "release_date": "https://wpn.wizards.com/en/products/marvel-darkhold-destiny",
+      "prices": "https://wpn.wizards.com/en/products/marvel-darkhold-destiny",
+      "contents": "https://wpn.wizards.com/en/products/marvel-darkhold-destiny",
+      "deck names": "https://magic.wizards.com/en/products/marvel/marvel-darkhold-destiny/card-image-gallery"
+    }
   },
   {
     "slug": "kamigawa-titanbreach",
