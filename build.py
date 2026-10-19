@@ -65,7 +65,7 @@ def page(title, desc, body, path, jsonld=(), noindex=False, og=None):
   <p>{E(CONTEXT7_NOTE, quote=False)}</p>
 </blockquote>
 <header><a href="{BASE}/"><b>MTG Drops</b></a><a href="{BASE}/secret-lair.html">Secret Lair</a><a href="{BASE}/guides/">Guides</a><a href="{BASE}/newsletter.html">Newsletter</a><a href="{BASE}/sponsor.html">Sponsor</a><a href="{BASE}/feed.xml">RSS</a></header>
-<main>{body}</main><footer><p><small><a href="{BASE}/">Release calendar</a> · <a href="{BASE}/secret-lair.html">Secret Lair drops</a> · <a href="{BASE}/guides/">Guides</a> · <a href="{BASE}/newsletter.html">Newsletter</a> · <a href="{BASE}/feed.xml">RSS</a></small></p><small>Dates from official/community sources; verify before buying. {E(DISCLOSURE)} Not affiliated with Wizards of the Coast.</small></footer></body></html>"""
+<main>{body}</main><footer><p><small><a href="{BASE}/">Release calendar</a> · <a href="{BASE}/secret-lair.html">Secret Lair drops</a> · <a href="{BASE}/guides/">Guides</a> · <a href="{BASE}/newsletter.html">Newsletter</a> · <a href="{BASE}/sponsor.html">Sponsor</a> · <a href="{BASE}/feed.xml">RSS</a></small></p><small>Dates from official/community sources; verify before buying. {E(DISCLOSURE)} Not affiliated with Wizards of the Coast.</small></footer></body></html>"""
     out = os.path.join("dist", path); os.makedirs(os.path.dirname(out), exist_ok=True); open(out, "w").write(p)
 def card(r):
     if r.get("placeholder"):
@@ -473,7 +473,52 @@ page("MTG Guides: Release Roundups & Gift Picks | MTG Drops", "MTG Drops guides:
       {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": url(p), "name": t} for i, (p, t, d) in enumerate(GUIDES)]},
       {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "MTG Drops", "item": f"{SITE_URL}/"}, {"@type": "ListItem", "position": 2, "name": "Guides", "item": gi_url}]}])
 page("What's Dropping newsletter | MTG Drops", "Weekly MTG release newsletter.", f"<h1>What's Dropping</h1><p>One email a week: what releases, what's on preorder, buy or skip.</p><p>What's Dropping is a free weekly email from MTG Drops. Each issue covers the Magic: The Gathering products coming up next, new announcements from Wizards of the Coast (sets, Commander decks, Secret Lair drops and Universes Beyond), date and price changes, and a short buy-or-skip verdict for each product. It's short enough to read in a couple of minutes, and you can unsubscribe at any time from the link in every email.</p>{FORM}", "newsletter.html")
-page("Sponsor MTG Drops", "Sponsor the MTG Drops MTG release calendar and newsletter.", "<h1>Sponsor MTG Drops</h1><p>Reach Magic players planning their next purchase: calendar placements and the weekly What's Dropping newsletter.</p><ul><li>Newsletter top slot (weekly)</li><li>Featured calendar card</li><li>Product-page sponsor</li></ul><p>MTG Drops readers are Magic: The Gathering players checking release dates, prices and preorders, so sponsorships fit game stores, singles and sealed retailers, accessory makers and Magic content creators.</p><p>Contact: sponsors@mtgdrops.com (placeholder)</p>", "sponsor.html")
+# ---- Sponsor media kit (/sponsor.html). No traffic, subscriber or price figures are published here: stats on request, rates by quote. ----
+SPONSOR_EMAIL = "sponsors@mtgdrops.com"
+sp_url = url("sponsor.html")
+SP_TITLE = "Sponsor MTG Drops: Media Kit & Sponsorship Policy | MTG Drops"
+SP_DESC = "MTG Drops media kit: reach Magic: The Gathering players tracking releases, Secret Lair drops and Commander precons. Newsletter, banner and featured calendar placements."
+SP_PLACEMENTS = [
+ ("Newsletter sponsor slot", "A sponsor slot in What's Dropping, our free weekly release email, shown near the top of the issue and labeled Sponsored: a short message and a link."),
+ ("Site banner", "A labeled sponsor banner on the release calendar home page and the Secret Lair hub, the pages readers check when a new drop or set is announced."),
+ ("Featured calendar listing", "A highlighted, Sponsored-labeled card in the release calendar for a store, product or event. Featured listings sit alongside our normal listings and never replace or reorder Wizards of the Coast release data."),
+ ("Product or guide page sponsor", "A labeled sponsor line on a relevant product page or buying guide, for example a store with stock of a particular Commander deck. Available for selected pages."),
+]
+SP_FIT = ["Local game stores and online retailers of sealed product and singles", "Accessory makers: sleeves, deck boxes, playmats, storage", "Card grading, shipping and collection tools", "Magic content creators, podcasts and events"]
+SP_POLICY = [
+ "Every paid placement is labeled Sponsored, on the site and in the newsletter, right next to the placement, so readers can tell it apart from our own content.",
+ "Sponsor links carry rel=\"sponsored\" so search engines can identify them too.",
+ "Sponsors never buy coverage or a verdict. Release dates, prices and buy/wait/skip verdicts are set by MTG Drops from official and reputable sources, and a sponsor's own products get the same verdicts as everyone else's.",
+ "If we write about a product or company that is currently sponsoring us, we say so in that piece.",
+ "Sponsorship is separate from our affiliate links. Some links on MTG Drops are affiliate links (Amazon Associates; TCGplayer links are marked sponsored), and we disclose that on every page where they appear: " + DISCLOSURE,
+ "We may decline any sponsorship that doesn't fit our readers. Sponsors do not receive newsletter subscribers' email addresses.",
+]
+SP_ASK = ["Your company and what you'd like to promote", "Which placement(s) interest you and your preferred dates or weeks", "Your landing page URL", "Any campaign goals (awareness, a launch, a sale, an event)"]
+sp_faq = [
+ ("How much does it cost to sponsor MTG Drops?", f"Rates depend on the placement and dates. Contact {SPONSOR_EMAIL} for a quote."),
+ ("How many readers does MTG Drops have?", f"Current site traffic and newsletter stats are available on request from {SPONSOR_EMAIL}."),
+ ("Are sponsored placements labeled?", "Yes. Every paid placement is labeled Sponsored, and sponsor links use rel=\"sponsored\". Sponsors cannot buy a verdict or change our release data."),
+ ("Who reads MTG Drops?", "Magic: The Gathering players who track upcoming releases: people planning set and Commander precon purchases, Secret Lair buyers watching sale dates, and gift buyers checking what's worth getting."),
+]
+sp_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › Sponsor</nav><h1>Sponsor MTG Drops</h1>'
+  f'<p>Reach Magic: The Gathering players while they plan their next purchase. Email <a href="mailto:{SPONSOR_EMAIL}">{SPONSOR_EMAIL}</a> for current stats and a quote.</p>'
+  f'<h2>What MTG Drops is</h2><p>{E(ABOUT)} Every product has a release date, known prices, sources and a short buy/wait/skip verdict; the <a href="{BASE}/secret-lair.html">Secret Lair hub</a> tracks drops on sale now and coming up, and our <a href="{BASE}/guides/">guides</a> cover seasonal releases and big sets. <a href="{BASE}/newsletter.html">What\'s Dropping</a> is the free weekly email version.</p>'
+  "<h2>Who reads it</h2><ul><li>MTG players tracking upcoming sets and Universes Beyond releases, and deciding what to preorder</li><li>Secret Lair buyers watching sale dates, prices and what's worth it</li><li>Commander players comparing precons before they buy</li><li>Gift buyers looking for a safe Magic purchase</li></ul>"
+  "<p>Our readers arrive with buying intent, so sponsorships fit:</p><ul>" + "".join(f"<li>{E(x)}</li>" for x in SP_FIT) + "</ul>"
+  f'<p><b>Audience numbers:</b> current traffic and newsletter stats are available on request at <a href="mailto:{SPONSOR_EMAIL}">{SPONSOR_EMAIL}</a>. We don\'t publish estimates.</p>'
+  "<h2>Placements</h2>" + "".join(f"<div class=card><h3>{E(t)}</h3><p>{E(d)}</p><p><b>Rate:</b> contact us</p></div>" for t, d in SP_PLACEMENTS)
+  + "<h2>Rates</h2><p>We quote each sponsorship based on placement, dates and length. There's no public rate card yet: contact us and we'll reply with availability and pricing.</p>"
+  "<h2>Sponsorship and disclosure policy</h2><ul>" + "".join(f"<li>{E(x)}</li>" for x in SP_POLICY) + "</ul>"
+  f'<h2>How to book</h2><p>Email <a href="mailto:{SPONSOR_EMAIL}">{SPONSOR_EMAIL}</a> with:</p><ul>' + "".join(f"<li>{E(x)}</li>" for x in SP_ASK) + "</ul>"
+  "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in sp_faq)
+  + f'<p><small>MTG Drops is independent and not affiliated with Wizards of the Coast. Last updated: {today}</small></p>')
+sp_ld = [
+ {"@context": "https://schema.org", "@type": "WebPage", "name": SP_TITLE, "url": sp_url, "description": SP_DESC, "dateModified": today, "isPartOf": {"@id": f"{SITE_URL}/#website"}, "about": {"@id": f"{SITE_URL}/#org"}},
+ {"@context": "https://schema.org", **ORG, "contactPoint": {"@type": "ContactPoint", "contactType": "advertising and sponsorships", "email": SPONSOR_EMAIL, "availableLanguage": "English"}},
+ {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "MTG Drops", "item": f"{SITE_URL}/"}, {"@type": "ListItem", "position": 2, "name": "Sponsor", "item": sp_url}]},
+ {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in sp_faq]},
+]
+page(SP_TITLE, SP_DESC, sp_body, "sponsor.html", sp_ld)
 items = "".join(f"<item><title>{E(r['name'])} — {r['release_date']}</title><link>{SITE_URL}/p/{r['slug']}.html</link><guid>{SITE_URL}/p/{r['slug']}.html</guid><description>{E(r['note'])}</description></item>" for r in up if not r.get("placeholder"))
 open("dist/feed.xml", "w").write(f'<?xml version="1.0"?><rss version="2.0"><channel><title>MTG Drops</title><link>{SITE_URL}/</link><description>Upcoming MTG releases</description>{items}</channel></rss>')
 open("dist/sitemap.xml","w").write('<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+"".join(f"<url><loc>{SITE_URL}/{p}</loc><lastmod>{today}</lastmod></url>" for p in ["","secret-lair.html","guides/"]+[g[0] for g in GUIDES]+["newsletter.html","sponsor.html"]+[f"p/{r['slug']}.html" for r in public])+"</urlset>")
@@ -491,6 +536,7 @@ open("dist/llms.txt","w").write(f"""# MTG Drops
 - [Secret Lair drops]({SITE_URL}/secret-lair.html): Secret Lair schedule (on sale now, upcoming, recent), prices and buy/skip verdicts
 - [Guides]({SITE_URL}/guides/): release roundups and gift picks
 """ + "".join(f"- [{t}]({url(p)}): {d}\n" for p, t, d in GUIDES) + """- [Newsletter]({SITE_URL}/newsletter.html): weekly "What's Dropping" email
+- [Sponsor]({SITE_URL}/sponsor.html): media kit, sponsorship placements and disclosure policy (contact sponsors@mtgdrops.com)
 - [RSS feed]({SITE_URL}/feed.xml)
 - [Sitemap]({SITE_URL}/sitemap.xml)
 
