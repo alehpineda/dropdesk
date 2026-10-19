@@ -105,7 +105,7 @@ home_ld = [{"@context": "https://schema.org", "@type": "WebSite", "@id": f"{SITE
            {"@context": "https://schema.org", **ORG},
            {"@context": "https://schema.org", "@type": "ItemList", "name": "Upcoming Magic: The Gathering releases", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate([r for r in up if not r.get("placeholder")])]}]
 page("MTG Drops — Every upcoming MTG release, one calendar", HOME_DESC,
-     f"<h1>What's dropping in Magic</h1><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p><p>Every upcoming MTG product, with a short buy/skip note. New: <a href=\"{BASE}/guides/mtg-releases-fall-holiday-2026.html\">every MTG product releasing this fall/holiday 2026</a>, with gift picks, and the <a href=\"{BASE}/secret-lair.html\">Secret Lair drop schedule</a>.</p>{FORM}<p class=disc><small>{E(DISCLOSURE)}</small></p><div class=f>{btns}</div>" + months + js, "index.html", home_ld)
+     f"<h1>What's dropping in Magic</h1><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p><p>Every upcoming MTG product, with a short buy/skip note. New: <a href=\"{BASE}/guides/mtg-releases-fall-holiday-2026.html\">every MTG product releasing this fall/holiday 2026</a>, with gift picks, the <a href=\"{BASE}/guides/star-trek-mtg-release-guide.html\">MTG Star Trek release guide</a>, and the <a href=\"{BASE}/secret-lair.html\">Secret Lair drop schedule</a>.</p>{FORM}<p class=disc><small>{E(DISCLOSURE)}</small></p><div class=f>{btns}</div>" + months + js, "index.html", home_ld)
 def title_for(r):
     sn = short_name(r); m = mon_yyyy(r).replace("Date TBA", "TBA")
     for t in (f"{sn} Release Date ({m}), Price & Preorder | MTG Drops", f"{sn} Release Date ({m}) | MTG Drops", f"{sn} Release Date, {m} | MTG Drops", f"{sn} Release Date | MTG Drops", f"{sn} ({m}) | MTG Drops", f"{sn} | MTG Drops"):
@@ -196,6 +196,7 @@ for r in data:
     fs = r.get("field_sources") or {}
     fsrc = ("<p><small>Sources by field: " + " · ".join(f'{E(k.replace("_", " "))}: <a href="{E(v)}">{E(urllib.parse.urlsplit(v).netloc)}</a>' for k, v in fs.items()) + "</small></p>") if fs else ""
     hubl = f'<p>See every drop on one page: <a href="{BASE}/secret-lair.html">Secret Lair drops: schedule, prices &amp; verdicts</a>.</p>' if r["type"] == "Secret Lair" else ""
+    if r["slug"] in ("star-trek", "star-trek-commander"): hubl += f'<p>Planning your Star Trek buys? Read the <a href="{BASE}/guides/star-trek-mtg-release-guide.html">MTG Star Trek release guide</a>: every product, MSRP, Commander deck and key date.</p>'
     facts = ("<h2>Key facts</h2><ul>" + "".join(f"<li>{E(f)}</li>" for f in r["facts"]) + "</ul>") if r.get("facts") else ""
     ti = TYPE_INFO.get(r["type"]); tinfo = f"<h2>{E(ti[0])}</h2><p>{E(ti[1])}</p>" if ti else ""
     howto = f"<h2>{HOWTO[0]}</h2><p>{E(HOWTO[1])}</p>" if not r.get("placeholder") and (not dated(r) or r["release_date"] > today) else ""
@@ -353,7 +354,7 @@ if nxt_set: g_faq.append(("What is the next MTG set after 2026?", f"{nxt_set['na
 g_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › <a href="{BASE}/guides/">Guides</a> › Fall/Holiday 2026</nav><h1>{E(G_H1)}</h1>'
   f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
   f'<p><b>Last updated:</b> {today} · {len(g_items)} products from October to December 2026</p>'
-  f'<p>Every Magic: The Gathering product on our calendar for October, November and December 2026: sets, Commander decks, Secret Lair drops, bundles and special releases, with release dates, MSRPs and our buy/skip verdict. Secret Lair sales are tracked on the <a href="{BASE}/secret-lair.html">Secret Lair hub</a>.</p>'
+  f'<p>Every Magic: The Gathering product on our calendar for October, November and December 2026: sets, Commander decks, Secret Lair drops, bundles and special releases, with release dates, MSRPs and our buy/skip verdict. Secret Lair sales are tracked on the <a href="{BASE}/secret-lair.html">Secret Lair hub</a>, and November\'s biggest release has its own <a href="{BASE}/guides/star-trek-mtg-release-guide.html">Star Trek release guide</a>.</p>'
   "<h2>Best picks for gifts</h2>" + ("<p>Only products we already rate as a buy, and who each one suits:</p><ul>" + "".join(f'<li><a href="{BASE}/p/{r["slug"]}.html">{E(short_name(r))}</a> ({nice_date(r)}): for {E(r["gift_for"])}.</li>' for r in g_gifts) + "</ul>" if g_gifts else "<p>No buy-rated products this season yet.</p>")
   + "".join(f"<h2>{g_month_name(m)}</h2>" + ("".join(guide_item(r) for r in rs) if rs else "<p>Nothing scheduled yet.</p>") for m, rs in g_by.items())
   + ("<h2>Announced, no date yet</h2><p>Announced but not yet scheduled, so these may or may not land before the end of 2026.</p>" + "".join(guide_item(r) for r in g_tba) if g_tba else "")
@@ -376,7 +377,92 @@ g_ld = [
 ]
 G_DESC = "Every MTG release for October, November and December 2026: sets, Commander decks, Secret Lair drops and bundles, with dates, prices, verdicts and gift picks."
 page(G_TITLE, G_DESC, g_body, G_SLUG, g_ld)
-GUIDES = [(G_SLUG, G_H1, "Every Magic product from October to December 2026, grouped by month, with prices, buy/skip verdicts and holiday gift picks.")]
+# ---- Guide 2: Star Trek release guide (facts from Wizards' Collecting Star Trek article and WPN product listing; verdicts from releases.json) ----
+ST_SRC = {"collect": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
+          "wpn": "https://wpn.wizards.com/en/products/star-trek"}
+st_set = next(r for r in data if r["slug"] == "star-trek"); st_cmd = next(r for r in data if r["slug"] == "star-trek-commander")
+ST_SLUG = "guides/star-trek-mtg-release-guide.html"; st_url = url(ST_SLUG)
+ST_TITLE = "MTG Star Trek Release Guide: Prices & What to Buy | MTG Drops"
+ST_H1 = f"Magic: The Gathering | Star Trek Release Guide ({nice_date(st_set)})"
+ST_PUBLISHED = "2026-10-19"
+def st_a(k, t="Wizards"): return f'<a href="{ST_SRC[k]}">{E(t)}</a>'
+# Every product and MSRP below is from Wizards' Collecting article (MSRP list) and matches the WPN product listing.
+ST_PRODUCTS = [
+ ("Play Booster", 6.99, "14 cards: 7 commons (a stardates card replaces a common in 1 of 25 packs), 3 uncommons, 1 wildcard, 1 traditional foil of any rarity, 1 rare or mythic rare, 1 land, plus a double-sided token. 30 per box."),
+ ("Collector Booster", 37.99, "15 cards, mostly foils and Booster Fun: 5 traditional foil commons, 3 traditional foil uncommons, 1 foil common or uncommon, 1 traditional foil basic, 1 traditional foil rare/mythic, 1 extended-art rare/mythic, 3 Booster Fun rares/mythics (1 foil), plus an art card or foil token. 12 per box. The only place the 7 actor-signed headliner cards appear."),
+ ("Bundle", 69.99, "9 Play Boosters, 15 traditional foil + 15 non-foil basic lands (5 full-art in each), 1 traditional foil promo card, oversized spindown life counter, card-storage box, 2 reference cards."),
+ ("Beam Me Up Bundle", 99.99, "8 Play Boosters, 1 Collector Booster, 2 of 8 traditional foil Spacecraft schematic promo cards, the same 30 lands and accessories as the Bundle."),
+ ("Draft Night", 119.99, "12 Play Boosters, 1 Collector Booster, 90 basic lands, 10 double-sided tokens and a draft insert."),
+ ("Scene Box (each)", 41.99, "Two versions (Enterprise-Q and Divergent Timeline): 3 Play Boosters, 6 traditional foil borderless scene cards, 6 art cards and a display easel."),
+ ("Commander Deck (each)", 74.99, "Four decks; each is a ready-to-play 100-card deck with a traditional foil borderless face commander, 32 new-to-Magic cards, 10 double-sided tokens and a deck box."),
+ ("Collector's Edition Commander Deck (each)", 159.99, "The same 100 cards in surge foil, including the face commander and the 10 tokens."),
+]
+ST_DECKS = [("Federation Fleet", "Jean-Luc Picard", "strengthen your crew and charge your starships"),
+            ("Landing Party", "Commander Spock", "bonuses for controlling differently named lands, plus landfall"),
+            ("Klingon Fury", "Worf", "attack several opponents at once to grow your Warriors"),
+            ("We Are the Borg", "the Borg Queen", "Borg tokens and assimilating your opponents' creatures")]
+ST_DATES = [("Prerelease events (local game stores)", "Nov 6–12, 2026"), ("MTG Arena release", "Nov 10, 2026"), ("Global tabletop release", "Nov 13, 2026"),
+            ("MagicCon: Atlanta and World Championship 32", "Nov 13–15, 2026"), ("Magic Presents: To Boldly Go", "Nov 13, 2026 – Jan 28, 2027"),
+            ("Commander Party, Round 1", "Nov 20–26, 2026"), ("Commander Party, Round 2", "Dec 11–17, 2026")]
+pb = next(p for p in ST_PRODUCTS if p[0] == "Play Booster")[1]; cb = next(p for p in ST_PRODUCTS if p[0] == "Collector Booster")[1]
+st_math = [("Bundle", f"9 Play Boosters alone are {fmt({'usd': 9*pb})} at MSRP, so the Bundle's {fmt({'usd': 69.99})} adds lands, a foil promo, a spindown and a storage box for about {fmt({'usd': 69.99-9*pb})}."),
+           ("Beam Me Up Bundle", f"{fmt({'usd': 99.99})}, {fmt({'usd': 30.00})} more than the Bundle: you swap 1 Play Booster for 1 Collector Booster ({fmt({'usd': cb})} MSRP) and get 2 Spacecraft schematic promos instead of the single Bundle promo."),
+           ("Draft Night", f"12 Play Boosters plus 1 Collector Booster are {fmt({'usd': 12*pb+cb})} at MSRP; the box is {fmt({'usd': 119.99})} and adds 90 lands and tokens.")]
+st_vs = {"buy": "Buy", "wait": "Wait", "skip": "Skip", "mixed": "Mixed"}
+st_faq = [
+ ("When does MTG Star Trek release?", f"The global tabletop release is {nice_date(st_set)}. Prerelease events run Nov 6–12, 2026, and the set arrives on MTG Arena on Nov 10, 2026 (Wizards)."),
+ ("How much does MTG Star Trek cost?", "Wizards' MSRPs: " + "; ".join(f"{n} {fmt({'usd': u})}" for n, u, _ in ST_PRODUCTS) + ". Store prices vary."),
+ ("What are the Star Trek Commander decks?", "Four decks: " + "; ".join(f"{n} (led by {c}: {t})" for n, c, t in ST_DECKS) + f". Each is {fmt({'usd': 74.99})}, or {fmt({'usd': 159.99})} for the surge foil Collector's Edition."),
+ ("Is MTG Star Trek legal in Standard?", "Yes. The main set (TRK) is legal in all formats. The Commander decks (TRC) and the stardates reprints (SDS) are legal in Commander, Legacy and Vintage, and individual cards are also legal wherever they were already legal (Wizards)."),
+ ("Where do you find the signed Star Trek cards?", "Only in Collector Boosters. There are 7 different actor-signed headliner cards, about 250 copies of each, in Collector Boosters of any language (the signed cards are always in English). Wizards has not published per-pack odds."),
+ ("Is there a Star Trek Beginner Box?", "Not any more: Wizards removed the Beginner Box from its Star Trek product article after the product was cancelled."),
+ ("What should I buy from MTG Star Trek?", f"Our verdict on the set: {st_vs.get(st_set.get('verdict'), 'no verdict yet')}, for {st_set.get('gift_for', 'drafting and Trek fans')}. On the Commander decks: {st_vs.get(st_cmd.get('verdict'), 'no verdict yet')}, for {st_cmd.get('gift_for', 'Commander players')}."),
+]
+st_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › <a href="{BASE}/guides/">Guides</a> › Star Trek</nav><h1>{E(ST_H1)}</h1>'
+  f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
+  f'<p><b>Last updated:</b> {today} · release {nice_date(st_set)} ({E(st_set["status"])})</p>'
+  f'<p>Magic: The Gathering | Star Trek is a Universes Beyond set that releases on {nice_date(st_set)}, ahead of Star Trek\'s 60th anniversary. This guide covers every product, Wizards\' MSRPs, the four Commander decks, the key dates and what we think is worth buying. Facts are from Wizards\' {st_a("collect", "Collecting Magic: The Gathering | Star Trek")} article and the {st_a("wpn", "Wizards Play Network product listing")}; full product pages: <a href="{BASE}/p/{st_set["slug"]}.html">{E(st_set["name"])}</a> and <a href="{BASE}/p/{st_cmd["slug"]}.html">Star Trek Commander Decks</a>.</p>'
+  "<h2>Key dates</h2><table><tr><th>Event</th><th>Date</th></tr>" + "".join(f"<tr><td>{E(a)}</td><td>{E(b)}</td></tr>" for a, b in ST_DATES) + f'</table><p><small>Dates per {st_a("collect")}.</small></p>'
+  "<h2>Every product and price</h2><table><tr><th>Product</th><th>MSRP (USD)</th><th>What's inside</th></tr>" + "".join(f"<tr><td>{E(n)}</td><td>{fmt({'usd': u})}</td><td>{E(c)}</td></tr>" for n, u, c in ST_PRODUCTS)
+  + f'</table><p><small>MSRPs and contents per {st_a("collect")} and the {st_a("wpn", "WPN listing")}. Stores set their own prices.</small></p>'
+  "<h2>The four Commander decks</h2><p>Each deck is themed after a Star Trek crew, fleet or army (deck themes per Wizards' product descriptions):</p><ul>" + "".join(f"<li><b>{E(n)}</b>, led by {E(c)}: {E(t)}.</li>" for n, c, t in ST_DECKS)
+  + f'</ul><p>Every deck is {fmt({"usd": 74.99})} MSRP, or {fmt({"usd": 159.99})} for the Collector\'s Edition, which has the same list in surge foil ({st_a("wpn")}).</p>'
+  "<h2>Legality and mechanics</h2>"
+  f'<p>The main set (TRK) is legal in all formats, including Standard. The Commander decks (TRC) and the 30 stardates reprints (SDS) are legal in Commander, Legacy and Vintage. New and returning mechanics include assimilate, face a dilemma, the federation ability word, and Spacecraft with station, returning from Edge of Eternities ({st_a("collect")}).</p>'
+  "<h2>Booster Fun and chase cards</h2><ul>"
+  "<li>7 actor-signed headliner cards, about 250 copies of each, only in Collector Boosters.</li>"
+  "<li>30 stardates cards: reprints of cards from Magic's history with Star Trek art (non-foil in both booster types, traditional foil only in Collector Boosters).</li>"
+  "<li>29 LCARS frame cards and all 10 shock lands in an LCARS frame (surge foil versions only in Collector Boosters).</li>"
+  "<li>24 classic Enterprise poster-style cards and 25 borderless scene cards, plus 6 new-to-Magic scene cards in each Scene Box.</li>"
+  f'</ul><p><small>Per {st_a("collect")}.</small></p>'
+  "<h2>Event promos</h2>"
+  f'<p>WPN Commander events give a Highly Illogical or Munitions Enthusiast promo; Magic Presents: To Boldly Go gives a traditional foil Solemn Simulacrum; Standard Showdown winners get a Burst Lightning or a second promo Wizards hasn\'t revealed yet. All while supplies last ({st_a("collect")}).</p>'
+  "<h2>What to buy</h2>"
+  f'<div class=card><h3><a href="{BASE}/p/{st_set["slug"]}.html">{E(st_set["name"])}</a></h3><p>{vtag(st_set)}{E(st_set["note"])}</p>' + (f'<p><b>Good gift for:</b> {E(st_set["gift_for"])}.</p>' if st_set.get("gift_for") else "") + f'{amz_btn(st_set)}</div>'
+  f'<div class=card><h3><a href="{BASE}/p/{st_cmd["slug"]}.html">{E(st_cmd["name"])}</a></h3><p>{vtag(st_cmd)}{E(st_cmd["note"])}</p>' + (f'<p><b>Good gift for:</b> {E(st_cmd["gift_for"])}.</p>' if st_cmd.get("gift_for") else "") + f'{amz_btn(st_cmd)}</div>'
+  "<h3>Value at MSRP</h3><p>Simple arithmetic from Wizards' MSRPs, so you can compare the boxes:</p><ul>" + "".join(f"<li><b>{E(a)}:</b> {E(b)}</li>" for a, b in st_math) + "</ul>"
+  "<p>If you want to collect the signed cards or the surge foil Booster Fun, that is Collector Booster territory; for drafting or a first taste of the set, Play Boosters, a Bundle or Draft Night are the cheaper way in. Prices in stores often fall after release, so preordering mainly makes sense if you want the product on day one.</p>"
+  f'<p class=disc><small>{E(DISCLOSURE)}</small></p>'
+  "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in st_faq)
+  + f'<p>More releases: <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a>, the <a href="{BASE}/secret-lair.html">Secret Lair drop schedule</a> and the full <a href="{BASE}/">release calendar</a>.</p>'
+  + f"<h2>Get the weekly release email</h2><p>What's Dropping covers what's releasing next, date and price changes, and a buy-or-skip verdict for each product.</p>{FORM}<p><small>Last updated: {today}</small></p>")
+ST_DESC = "MTG Star Trek release guide: Nov 13, 2026 release date, every product and MSRP, the four Commander decks, key dates, signed cards and what to buy."
+st_ld = [
+ {"@context": "https://schema.org", "@type": "Article", "headline": ST_H1, "url": st_url, "mainEntityOfPage": st_url, "image": OG_IMAGE, "datePublished": ST_PUBLISHED, "dateModified": today,
+  "author": {"@id": f"{SITE_URL}/#org"}, "publisher": {"@id": f"{SITE_URL}/#org"}, "isPartOf": {"@id": f"{SITE_URL}/#website"},
+  "about": {"@type": "Thing", "name": st_set["name"]}, "description": ST_DESC, "citation": list(ST_SRC.values())},
+ {"@context": "https://schema.org", **ORG},
+ {"@context": "https://schema.org", "@type": "ItemList", "name": "Magic: The Gathering | Star Trek products", "numberOfItems": 2,
+  "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate([st_set, st_cmd])]},
+ {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+   {"@type": "ListItem", "position": 1, "name": "MTG Drops", "item": f"{SITE_URL}/"},
+   {"@type": "ListItem", "position": 2, "name": "Guides", "item": f"{SITE_URL}/guides/"},
+   {"@type": "ListItem", "position": 3, "name": "Star Trek release guide", "item": st_url}]},
+ {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in st_faq]},
+]
+page(ST_TITLE, ST_DESC, st_body, ST_SLUG, st_ld)
+GUIDES = [(G_SLUG, G_H1, "Every Magic product from October to December 2026, grouped by month, with prices, buy/skip verdicts and holiday gift picks."),
+          (ST_SLUG, ST_H1, "Everything in the Nov 13, 2026 Star Trek set: every product and MSRP, the four Commander decks, key dates, signed cards and what to buy.")]
 gi_url = url("guides/index.html")
 page("MTG Guides: Release Roundups & Gift Picks | MTG Drops", "MTG Drops guides: Magic: The Gathering release roundups, buying guides and gift picks, generated from our release calendar.",
      f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › Guides</nav><h1>MTG Drops Guides</h1><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
