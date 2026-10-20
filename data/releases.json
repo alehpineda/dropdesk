@@ -6,7 +6,7 @@
     "release_date": "2026-10-19",
     "window": "Went on sale Oct 19, 2026 at MagicSecretLair.com, only inside Festival in a Box: Atlanta 2026 ($249.99, limit 2). The store now lists it as no longer available",
     "source": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition",
-    "note": "First wide release, but only inside Festival in a Box: Atlanta 2026 ($249.99, per Wizards): a 24-booster box plus the Secret Gallery: Atlanta foil drop and 4 promos. It sold out in about 20 minutes (MTG Rocks), and the official store lists it as no longer available. Cards become Commander-legal Nov 13. Skip eBay resale (MTG Rocks saw listings over $450); MTG Rocks expects the set to return with future MagicCon Festival in a Box releases.",
+    "note": "First wide release, but only inside Festival in a Box: Atlanta 2026 ($249.99, per Wizards): a 24-booster box plus the Secret Gallery: Atlanta foil drop and 4 promos. It sold out in about 20 minutes (MTG Rocks), and the official store lists it as no longer available. Cards become Commander-legal Nov 13. Wait: don't overpay on eBay (MTG Rocks saw listings over $450, near double the $249.99 price); MTG Rocks expects the set to return with future MagicCon Festival in a Box releases, so wait for that.",
     "status": "confirmed",
     "prices": [
       {
@@ -19,7 +19,7 @@
       "24-booster Mystery Booster Commander Edition box (sold inside Festival in a Box: Atlanta 2026)"
     ],
     "short_name": "Mystery Booster Commander",
-    "verdict": "skip",
+    "verdict": "wait",
     "field_sources": {
       "availability": "https://secretlair.wizards.com/us/en/product/1254817/festival-in-a-box-atlanta-2026",
       "sell-out and resale prices": "https://mtgrocks.com/mystery-booster-commander-edition-sells-out-in-20-minutes/"
@@ -32,7 +32,7 @@
     "release_date": "2026-10-19",
     "window": "Went on sale Oct 19, 2026, 9 AM PT at MagicSecretLair.com for $249.99 (limit 2). The store now lists it as no longer available; shipping begins Oct 21",
     "source": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition",
-    "note": "Sold out: the official store lists it as no longer available, and MTG Rocks reports it sold out in about 20 minutes, with eBay listings over $450. It held a Mystery Booster Commander Edition box, the 4-card Secret Gallery: Atlanta foil drop (Parallax Tide, Regrowth, Viridian Revel, Assassin's Trophy) and 4 promos for $249.99. Skip resale at nearly double the price; MTG Rocks expects Mystery Booster Commander to return with future MagicCon Festival in a Box releases.",
+    "note": "Sold out: the official store lists it as no longer available, and MTG Rocks reports it sold out in about 20 minutes, with eBay listings over $450. It held a Mystery Booster Commander Edition box, the 4-card Secret Gallery: Atlanta foil drop (Parallax Tide, Regrowth, Viridian Revel, Assassin's Trophy) and 4 promos for $249.99. Wait: resale runs near double the $249.99 price, so don't overpay; MTG Rocks expects Mystery Booster Commander to return with future MagicCon Festival in a Box releases, so wait for that.",
     "status": "confirmed",
     "prices": [
       {
@@ -82,7 +82,7 @@
       "availability": "https://secretlair.wizards.com/us/en/product/1254817/festival-in-a-box-atlanta-2026",
       "sell-out and resale prices": "https://mtgrocks.com/mystery-booster-commander-edition-sells-out-in-20-minutes/"
     },
-    "verdict": "skip"
+    "verdict": "wait"
   },
   {
     "slug": "secret-lair-chaos-vault-reality-fracture",
