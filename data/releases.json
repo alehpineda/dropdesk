@@ -4,9 +4,9 @@
     "name": "Mystery Booster Commander Edition",
     "type": "Supplemental",
     "release_date": "2026-10-19",
-    "window": "On sale Oct 19, 2026 at MagicSecretLair.com, only inside Festival in a Box: Atlanta 2026 ($249.99, limit 2, while supplies last)",
+    "window": "Went on sale Oct 19, 2026 at MagicSecretLair.com, only inside Festival in a Box: Atlanta 2026 ($249.99, limit 2). The store now lists it as no longer available",
     "source": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition",
-    "note": "First wide release, but only as part of Festival in a Box: Atlanta 2026 ($249.99, per Wizards): a 24-booster box plus the Secret Gallery: Atlanta foil drop and 4 promos. Cards become Commander-legal Nov 13. Buy if you want a Commander chaos draft night; skip if you only want singles. The box is $50 more than the Amsterdam 2026 one.",
+    "note": "First wide release, but only inside Festival in a Box: Atlanta 2026 ($249.99, per Wizards): a 24-booster box plus the Secret Gallery: Atlanta foil drop and 4 promos. It sold out in about 20 minutes (MTG Rocks), and the official store lists it as no longer available. Cards become Commander-legal Nov 13. Skip eBay resale (MTG Rocks saw listings over $450); MTG Rocks expects the set to return with future MagicCon Festival in a Box releases.",
     "status": "confirmed",
     "prices": [
       {
@@ -19,16 +19,20 @@
       "24-booster Mystery Booster Commander Edition box (sold inside Festival in a Box: Atlanta 2026)"
     ],
     "short_name": "Mystery Booster Commander",
-    "verdict": "buy"
+    "verdict": "skip",
+    "field_sources": {
+      "availability": "https://secretlair.wizards.com/us/en/product/1254817/festival-in-a-box-atlanta-2026",
+      "sell-out and resale prices": "https://mtgrocks.com/mystery-booster-commander-edition-sells-out-in-20-minutes/"
+    }
   },
   {
     "slug": "secret-lair-atlanta",
     "name": "Festival in a Box: Atlanta 2026 (Secret Gallery: Atlanta Foil Edition)",
     "type": "Secret Lair",
     "release_date": "2026-10-19",
-    "window": "Oct 19, 2026, 9 AM PT at MagicSecretLair.com · $249.99 · limit 2 per customer · while supplies last",
+    "window": "Went on sale Oct 19, 2026, 9 AM PT at MagicSecretLair.com for $249.99 (limit 2). The store now lists it as no longer available; shipping begins Oct 21",
     "source": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition",
-    "note": "Wizards confirmed it: $249.99 gets a Mystery Booster Commander Edition box, the 4-card Secret Gallery: Atlanta foil drop (Parallax Tide, Regrowth, Viridian Revel, Assassin's Trophy) and 4 promos. The Secret Gallery cards are modest singles, so you're really paying for the MBC box. Buy for the draft experience; skip if you're chasing value.",
+    "note": "Sold out: the official store lists it as no longer available, and MTG Rocks reports it sold out in about 20 minutes, with eBay listings over $450. It held a Mystery Booster Commander Edition box, the 4-card Secret Gallery: Atlanta foil drop (Parallax Tide, Regrowth, Viridian Revel, Assassin's Trophy) and 4 promos for $249.99. Skip resale at nearly double the price; MTG Rocks expects Mystery Booster Commander to return with future MagicCon Festival in a Box releases.",
     "status": "confirmed",
     "prices": [
       {
@@ -74,19 +78,20 @@
     "field_sources": {
       "release_date": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition",
       "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition",
-      "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition"
+      "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-heads-south-with-festival-in-a-box-atlanta-2026-and-mystery-booster-commander-edition",
+      "availability": "https://secretlair.wizards.com/us/en/product/1254817/festival-in-a-box-atlanta-2026",
+      "sell-out and resale prices": "https://mtgrocks.com/mystery-booster-commander-edition-sells-out-in-20-minutes/"
     },
-    "verdict": "buy",
-    "gift_for": "a Commander playgroup that wants a chaos-draft night: the $249.99 Festival in a Box is the only way to get a Mystery Booster Commander box (limit 2, while supplies last, so it may sell out before the holidays)"
+    "verdict": "skip"
   },
   {
     "slug": "secret-lair-chaos-vault-reality-fracture",
     "name": "Reality Fracture Secret Lair Bundle",
     "type": "Secret Lair",
     "release_date": "2026-10-23",
-    "window": "Oct 23, 2026 at local game stores, online retailers (TCGplayer, Amazon) and the Secret Lair storefront; Wizards says it may arrive after Oct 23 in some regions",
+    "window": "Oct 23, 2026 at local game stores, online retailers (TCGplayer, Amazon) and the Secret Lair storefront; on Oct 19 Wizards said it is delayed globally and may arrive shortly after Oct 23, with timing varying locally",
     "source": "https://magic.wizards.com/en/news/feature/collecting-reality-fracture",
-    "note": "The first Secret Lair Bundle: 6 Play Boosters, 2 Collector Boosters, 2 of 10 traditional foil Secret Lair promos, 20 foil tower basics and a Spindown, at an official $89.99 MSRP (Wizards). Release is Oct 23 per Wizards' WPN notice, with delays possible in some regions. Pre-release retailer listings ran well above MSRP ($159.99–$189.99), so don't overpay: wait for MSRP stock unless you love the Secret Lair mythic art.",
+    "note": "The first Secret Lair Bundle: 6 Play Boosters, 2 Collector Boosters, 2 of 10 traditional foil Secret Lair promos, 20 foil tower basics and a Spindown, at an official $89.99 MSRP (Wizards). Release is Oct 23, but Wizards said on Oct 19 that it is delayed globally and may arrive shortly after that date. Pre-release retailer listings ran well above MSRP ($159.99–$189.99), so don't overpay: wait for MSRP stock unless you love the Secret Lair mythic art.",
     "status": "confirmed",
     "prices": [
       {
@@ -118,7 +123,7 @@
     ],
     "inside_source": "https://magic.wizards.com/en/news/feature/collecting-reality-fracture",
     "field_sources": {
-      "release_date": "https://wpn.wizards.com/en/news/reality-fracture-product-delays-in-select-regions",
+      "release_date": "https://magic.wizards.com/en/news/announcements/reality-fracture-secret-lair-bundle-delayed",
       "prices": "https://magic.wizards.com/en/news/feature/collecting-reality-fracture",
       "contents": "https://magic.wizards.com/en/news/feature/collecting-reality-fracture"
     },
@@ -211,7 +216,7 @@
     "name": "Magic: The Gathering | Star Trek",
     "type": "Universes Beyond",
     "release_date": "2026-11-13",
-    "window": "Prerelease Nov 6–12, 2026; Arena Nov 10; preorders open",
+    "window": "Prerelease Nov 6–12, 2026; Arena Nov 10; preorders open. Play Boosters and Prerelease Packs are on track everywhere; Collector Boosters, Bundles, Beam Me Up Bundles and Draft Night may arrive after Nov 13 in Europe or Asia-Pacific (Wizards, Oct 16)",
     "source": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
     "note": "Standard-legal UB set. Play Booster $6.99, Collector $37.99, Bundle $69.99 (MSRP). Buy for drafting/Trek fans; skip sealed speculation.",
     "status": "confirmed",
@@ -285,6 +290,9 @@
       ],
       "checked": "2026-10-18",
       "match_reason": "The official Wizards of the Coast catalog listing: Manufacturer Wizards of the Coast, model/part D59020000, UPC 195166334356, set name Star Trek, pre-order for the Nov 13, 2026 release. Contents (9 Play Boosters, 1 alt-art Traditional Foil card, 15 foil + 15 regular lands with 5 full-art each, oversized Spindown, card box, 2 reference cards) match Wizards' Bundle. The Bundle is one of the three products priced on our page (MSRP $69.99) and the usual gift/draft buy, so it stands in as the set's single Amazon link."
+    },
+    "field_sources": {
+      "regional delays": "https://magic.wizards.com/en/news/announcements/star-trek-product-delays-in-select-regions"
     }
   },
   {
@@ -292,9 +300,9 @@
     "name": "Star Trek Commander Decks (Federation Fleet, Landing Party, Klingon Fury, We Are the Borg)",
     "type": "Commander Precon",
     "release_date": "2026-11-13",
-    "window": "Preorders open",
+    "window": "Preorders open. Wizards said on Oct 16 that the Commander decks are delayed in North America and may arrive after the Nov 13 release; English decks in Europe may also arrive after Nov 13",
     "source": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
-    "note": "Four decks at $74.99, Collector's Editions $159.99 MSRP. NerdSnack reports regular decks preordering near MSRP and Collector's Editions well above it — buy regular, skip CE at markup.",
+    "note": "Four decks at $74.99, Collector's Editions $159.99 MSRP. NerdSnack reports regular decks preordering near MSRP and Collector's Editions well above it — buy regular, skip CE at markup. Heads-up: in North America the decks may not be on shelves on Nov 13 (Wizards, Oct 16), so check your preorder's ship date.",
     "status": "confirmed",
     "amazon_query": "Star Trek Commander Deck MTG",
     "prices": [
@@ -336,7 +344,10 @@
     ],
     "short_name": "Star Trek Commander Decks",
     "verdict": "buy",
-    "gift_for": "Commander players, especially Trek fans: a regular $74.99 deck is ready to play out of the box (skip the marked-up Collector's Editions)"
+    "gift_for": "Commander players, especially Trek fans: a regular $74.99 deck is ready to play out of the box (skip the marked-up Collector's Editions)",
+    "field_sources": {
+      "delays": "https://magic.wizards.com/en/news/announcements/star-trek-product-delays-in-select-regions"
+    }
   },
   {
     "slug": "spider-mania-commander",
@@ -673,7 +684,7 @@
     "type": "Secret Lair",
     "release_date": "TBA",
     "status": "unconfirmed",
-    "window": "Chaos Vault on MagicSecretLair.com, date TBA ('soon')",
+    "window": "Chaos Vault on MagicSecretLair.com, date TBA ('soon'). The Secret Lair Bundle inside ships on normal Secret Lair fulfillment timing (Wizards, Oct 19)",
     "source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
     "note": "Three Chaos Vault packages, each a Reality Fracture Secret Lair Bundle plus the Strange School and Duality Distorted drops: $159.98 non-foil, $179.98 foil, $234.99 for both editions. Our math: the $89.99 bundle MSRP plus the drops at $29.99/$39.99 comes to $149.97, $169.97 and $229.95, so these packages cost $5 to $10 more than buying everything separately at list price. Skip unless the bundle is hard to find at MSRP. Wait for the date.",
     "prices": [
@@ -724,7 +735,8 @@
     "field_sources": {
       "prices": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
       "contents": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
-      "storefront listing (Coming Soon)": "https://secretlair.wizards.com/us/en/"
+      "storefront listing (Coming Soon)": "https://secretlair.wizards.com/us/en/",
+      "fulfillment": "https://magic.wizards.com/en/news/announcements/reality-fracture-secret-lair-bundle-delayed"
     },
     "short_name": "Reality Fracture Bundle Bundles",
     "verdict": "skip"
