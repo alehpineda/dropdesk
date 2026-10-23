@@ -339,6 +339,7 @@
       ]
     ],
     "facts": [
+      "Face commanders and colors (Wizards, Oct 20): Federation Fleet, Jean-Luc Picard, Luminary (blue-red-white); Landing Party, Commander Spock (green-white-blue); Klingon Fury, Worf, Defiant Commander (red-white-black); We Are the Borg, The Borg Queen (white-blue-black). Full decklists haven't been revealed yet.",
       "Set code TRC; legal in Commander, Legacy and Vintage (individual cards also legal where already available in other formats).",
       "Commander Party events: Round 1 Nov 20–26, Round 2 Dec 11–17, 2026."
     ],
@@ -346,7 +347,8 @@
     "verdict": "buy",
     "gift_for": "Commander players, especially Trek fans: a regular $74.99 deck is ready to play out of the box (skip the marked-up Collector's Editions)",
     "field_sources": {
-      "delays": "https://magic.wizards.com/en/news/announcements/star-trek-product-delays-in-select-regions"
+      "delays": "https://magic.wizards.com/en/news/announcements/star-trek-product-delays-in-select-regions",
+      "face commanders and colors": "https://magic.wizards.com/en/news/announcements/star-trek-commander-decklists"
     }
   },
   {
@@ -747,9 +749,9 @@
     "type": "Secret Lair",
     "release_date": "2026-10-12",
     "status": "confirmed",
-    "window": "On sale since Oct 12, 2026, 9 AM PT, only at MagicSecretLair.com · while supplies last · free foil Maze of Ith promo per $199 spent (while supplies last)",
+    "window": "On sale since Oct 12, 2026, 9 AM PT, only at MagicSecretLair.com · while supplies last · free foil Maze of Ith promo per $199 spent (while supplies last) · US orders expected to ship Dec 15, 2026 – Mar 15, 2027 (EU/UK from Jan 19, 2027)",
     "source": "https://magic.wizards.com/en/news/announcements/secret-lair-corn-maze-superdrop",
-    "note": "8 Halloween-season drops at $29.99 non-foil / $39.99 foil each: three Jim Henson's Labyrinth drops, KPop Demon Hunters, Marvel Zombies, Veronique Meignaud, See Machine artifact lands and a Treefolk drop. No buy/skip verdict from us on this one yet. Price out the singles you'd play before buying a whole drop.",
+    "note": "8 Halloween-season drops at $29.99 non-foil / $39.99 foil each: three Jim Henson's Labyrinth drops, KPop Demon Hunters, Marvel Zombies, Veronique Meignaud, See Machine artifact lands and a Treefolk drop. No buy/skip verdict from us on this one yet. Price out the singles you'd play before buying a whole drop. Don't count on it as a holiday gift: Wizards expects US orders to ship Dec 15, 2026 – Mar 15, 2027.",
     "prices": [
       {
         "label": "Each drop, non-foil",
@@ -867,7 +869,8 @@
     "field_sources": {
       "release_date": "https://magic.wizards.com/en/news/announcements/secret-lair-corn-maze-superdrop",
       "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-corn-maze-superdrop",
-      "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-corn-maze-superdrop"
+      "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-corn-maze-superdrop",
+      "shipping": "https://secretlair-support.wizards.com/hc/en-us/articles/5149533669652-Secret-Lair-Production-and-Shipping-Status"
     },
     "short_name": "Corn Maze Superdrop"
   },

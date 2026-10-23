@@ -382,7 +382,7 @@ ST_SRC = {"collect": "https://magic.wizards.com/en/news/feature/collecting-star-
           "wpn": "https://wpn.wizards.com/en/products/star-trek"}
 st_set = next(r for r in data if r["slug"] == "star-trek"); st_cmd = next(r for r in data if r["slug"] == "star-trek-commander")
 ST_SLUG = "guides/star-trek-mtg-release-guide.html"; st_url = url(ST_SLUG)
-ST_TITLE = "MTG Star Trek Release Guide: Prices & What to Buy | MTG Drops"
+ST_TITLE = "MTG Star Trek Release Guide: Prices, What to Buy | MTG Drops"
 ST_H1 = f"Magic: The Gathering | Star Trek Release Guide ({nice_date(st_set)})"
 ST_PUBLISHED = "2026-10-19"
 def st_a(k, t="Wizards"): return f'<a href="{ST_SRC[k]}">{E(t)}</a>'
@@ -476,7 +476,7 @@ page("What's Dropping newsletter | MTG Drops", "Weekly MTG release newsletter.",
 # ---- Sponsor media kit (/sponsor.html). No traffic, subscriber or price figures are published here: stats on request, rates by quote. ----
 SPONSOR_EMAIL = "sponsors@mtgdrops.com"
 sp_url = url("sponsor.html")
-SP_TITLE = "Sponsor MTG Drops: Media Kit & Sponsorship Policy | MTG Drops"
+SP_TITLE = "Sponsor MTG Drops: Media Kit & Sponsor Policy | MTG Drops"
 SP_DESC = "MTG Drops media kit: reach Magic: The Gathering players tracking releases, Secret Lair drops and Commander precons. Newsletter, banner and featured calendar placements."
 SP_PLACEMENTS = [
  ("Newsletter sponsor slot", "A sponsor slot in What's Dropping, our free weekly release email, shown near the top of the issue and labeled Sponsored: a short message and a link."),
