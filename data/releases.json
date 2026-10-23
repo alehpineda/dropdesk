@@ -23,7 +23,9 @@
     "field_sources": {
       "availability": "https://secretlair.wizards.com/us/en/product/1254817/festival-in-a-box-atlanta-2026",
       "sell-out and resale prices": "https://mtgrocks.com/mystery-booster-commander-edition-sells-out-in-20-minutes/"
-    }
+    },
+    "last_checked": "2026-10-23",
+    "sold_out": true
   },
   {
     "slug": "secret-lair-atlanta",
@@ -82,7 +84,9 @@
       "availability": "https://secretlair.wizards.com/us/en/product/1254817/festival-in-a-box-atlanta-2026",
       "sell-out and resale prices": "https://mtgrocks.com/mystery-booster-commander-edition-sells-out-in-20-minutes/"
     },
-    "verdict": "wait"
+    "verdict": "wait",
+    "last_checked": "2026-10-23",
+    "sold_out": true
   },
   {
     "slug": "secret-lair-chaos-vault-reality-fracture",
@@ -128,7 +132,9 @@
       "contents": "https://magic.wizards.com/en/news/feature/collecting-reality-fracture"
     },
     "amazon_query": "Reality Fracture Secret Lair Bundle",
-    "verdict": "wait"
+    "verdict": "wait",
+    "last_checked": "2026-10-23",
+    "delayed": true
   },
   {
     "slug": "countdown-kit-marvels-history-of-heroes",
@@ -193,7 +199,8 @@
       "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-countdown-kit-marvels-history-of-heroes",
       "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-countdown-kit-marvels-history-of-heroes"
     },
-    "verdict": "wait"
+    "verdict": "wait",
+    "last_checked": "2026-10-17"
   },
   {
     "slug": "secret-lair-marvel-doomsdrop",
@@ -209,7 +216,8 @@
       "announcement": "https://www.marvel.com/articles/culture-lifestyle/magic-the-gathering-marvel-darkhold-destiny-original-story-tie-in-comic",
       "storefront listing (Coming Soon)": "https://secretlair.wizards.com/us/en/"
     },
-    "verdict": "wait"
+    "verdict": "wait",
+    "last_checked": "2026-10-17"
   },
   {
     "slug": "star-trek",
@@ -292,8 +300,11 @@
       "match_reason": "The official Wizards of the Coast catalog listing: Manufacturer Wizards of the Coast, model/part D59020000, UPC 195166334356, set name Star Trek, pre-order for the Nov 13, 2026 release. Contents (9 Play Boosters, 1 alt-art Traditional Foil card, 15 foil + 15 regular lands with 5 full-art each, oversized Spindown, card box, 2 reference cards) match Wizards' Bundle. The Bundle is one of the three products priced on our page (MSRP $69.99) and the usual gift/draft buy, so it stands in as the set's single Amazon link."
     },
     "field_sources": {
-      "regional delays": "https://magic.wizards.com/en/news/announcements/star-trek-product-delays-in-select-regions"
-    }
+      "regional delays": "https://magic.wizards.com/en/news/announcements/star-trek-product-delays-in-select-regions",
+      "prerelease": "https://magic.wizards.com/en/news/feature/collecting-star-trek"
+    },
+    "last_checked": "2026-10-23",
+    "prerelease": "Nov 6–12, 2026"
   },
   {
     "slug": "star-trek-commander",
@@ -349,7 +360,8 @@
     "field_sources": {
       "delays": "https://magic.wizards.com/en/news/announcements/star-trek-product-delays-in-select-regions",
       "face commanders and colors": "https://magic.wizards.com/en/news/announcements/star-trek-commander-decklists"
-    }
+    },
+    "last_checked": "2026-10-23"
   },
   {
     "slug": "spider-mania-commander",
@@ -362,7 +374,8 @@
     "status": "unconfirmed",
     "amazon_query": "Spider-Mania Commander Deck MTG",
     "short_name": "Spider-Mania Commander Deck",
-    "verdict": "wait"
+    "verdict": "wait",
+    "last_checked": "2026-10-17"
   },
   {
     "slug": "zeta-set-rerelease",
@@ -372,7 +385,8 @@
     "window": "Dec 9, 2026: single 24-hour order window; every order filled; shipping estimated 2H 2027",
     "source": "https://magic.wizards.com/en/news/announcements/an-update-on-the-zeta-set-sale",
     "note": "Wizards confirmed a 24-hour print-to-demand window, so there's no need to rush or pay scalper prices. Orders are estimated to ship in the second half of 2027.",
-    "status": "confirmed"
+    "status": "confirmed",
+    "last_checked": "2026-10-16"
   },
   {
     "slug": "nauctis-the-sunken-realm",
@@ -383,7 +397,8 @@
     "source": "https://magic.wizards.com/en/news/announcements/everything-announced-for-the-magic-multiverse-in-2027",
     "note": "Undersea in-universe set. Cards unrevealed (first look at MagicCon Atlanta). Hold until previews.",
     "status": "confirmed",
-    "amazon_query": "Nauctis The Sunken Realm MTG"
+    "amazon_query": "Nauctis The Sunken Realm MTG",
+    "last_checked": "2026-10-16"
   },
   {
     "slug": "nauctis-commander",
@@ -394,7 +409,9 @@
     "source": "https://www.thepopverse.com/gaming-magic-the-gathering-2027-sets-commander-decks-magiccon-amsterdam",
     "note": "Four decks confirmed; names, colors and prices TBA. Wait for lists.",
     "status": "confirmed",
-    "amazon_query": "Nauctis Commander Deck MTG"
+    "amazon_query": "Nauctis Commander Deck MTG",
+    "last_checked": "2026-10-16",
+    "preorder_call": "This is a preorder-stage page: Wizards has confirmed four decks, but no decklists, commanders or prices yet, so there is no verdict and preordering means buying blind. We'll make the call once the lists and prices are out."
   },
   {
     "slug": "marvel-darkhold-destiny",
@@ -486,7 +503,8 @@
       "contents": "https://wpn.wizards.com/en/products/marvel-darkhold-destiny",
       "revealed cards": "https://magic.wizards.com/en/news/announcements/marvel-darkhold-destiny-emerges-april-2027",
       "products": "https://magic.wizards.com/en/products/marvel/marvel-darkhold-destiny"
-    }
+    },
+    "last_checked": "2026-10-19"
   },
   {
     "slug": "marvel-darkhold-destiny-commander",
@@ -553,7 +571,9 @@
       "prices": "https://wpn.wizards.com/en/products/marvel-darkhold-destiny",
       "contents": "https://wpn.wizards.com/en/products/marvel-darkhold-destiny",
       "deck names": "https://magic.wizards.com/en/products/marvel/marvel-darkhold-destiny/card-image-gallery"
-    }
+    },
+    "last_checked": "2026-10-19",
+    "preorder_call": "This is a preorder-stage page: Wizards has published the deck names and MSRPs, but no decklists or face commanders yet, so there is no verdict. We'll make the call once the lists are out."
   },
   {
     "slug": "kamigawa-titanbreach",
@@ -564,7 +584,8 @@
     "source": "https://magic.wizards.com/en/news/announcements/everything-announced-for-the-magic-multiverse-in-2027",
     "note": "Kamigawa x Ikoria crossover. Nothing revealed beyond the premise; wait.",
     "status": "confirmed",
-    "amazon_query": "Kamigawa Titanbreach MTG"
+    "amazon_query": "Kamigawa Titanbreach MTG",
+    "last_checked": "2026-10-16"
   },
   {
     "slug": "kamigawa-titanbreach-commander",
@@ -576,7 +597,9 @@
     "note": "Four decks confirmed; details TBA.",
     "status": "confirmed",
     "amazon_query": "Kamigawa Titanbreach Commander Deck MTG",
-    "short_name": "Titanbreach Commander Decks"
+    "short_name": "Titanbreach Commander Decks",
+    "last_checked": "2026-10-16",
+    "preorder_call": "This is a preorder-stage page: Wizards has confirmed four decks, but no decklists, commanders or prices yet, so there is no verdict and preordering means buying blind. We'll make the call once the lists and prices are out."
   },
   {
     "slug": "unannounced-ub-aug-2027",
@@ -588,7 +611,8 @@
     "note": "Date slot only; IP TBA.",
     "status": "unconfirmed",
     "placeholder": true,
-    "short_name": "Unannounced Universes Beyond Set"
+    "short_name": "Unannounced Universes Beyond Set",
+    "last_checked": "2026-10-16"
   },
   {
     "slug": "secret-lair-strange-school",
@@ -634,7 +658,8 @@
       "prices": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
       "contents": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture"
     },
-    "verdict": "wait"
+    "verdict": "wait",
+    "last_checked": "2026-10-17"
   },
   {
     "slug": "secret-lair-duality-distorted",
@@ -678,7 +703,8 @@
       "prices": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
       "contents": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture"
     },
-    "verdict": "wait"
+    "verdict": "wait",
+    "last_checked": "2026-10-17"
   },
   {
     "slug": "secret-lair-reality-fracture-bundle-bundles",
@@ -741,7 +767,8 @@
       "fulfillment": "https://magic.wizards.com/en/news/announcements/reality-fracture-secret-lair-bundle-delayed"
     },
     "short_name": "Reality Fracture Bundle Bundles",
-    "verdict": "skip"
+    "verdict": "skip",
+    "last_checked": "2026-10-20"
   },
   {
     "slug": "secret-lair-corn-maze-superdrop",
@@ -872,7 +899,8 @@
       "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-corn-maze-superdrop",
       "shipping": "https://secretlair-support.wizards.com/hc/en-us/articles/5149533669652-Secret-Lair-Production-and-Shipping-Status"
     },
-    "short_name": "Corn Maze Superdrop"
+    "short_name": "Corn Maze Superdrop",
+    "last_checked": "2026-10-23"
   },
   {
     "slug": "secret-lair-most-powerful-superdrop",
@@ -968,7 +996,8 @@
       "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-the-most-powerful-superdrop-in-the-universe",
       "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-the-most-powerful-superdrop-in-the-universe"
     },
-    "short_name": "Most Powerful Superdrop"
+    "short_name": "Most Powerful Superdrop",
+    "last_checked": "2026-10-17"
   },
   {
     "slug": "secret-lair-perfectly-normal-superdrop",
@@ -1097,6 +1126,25 @@
       "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-a-perfectly-normal-superdrop",
       "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-a-perfectly-normal-superdrop"
     },
-    "short_name": "Perfectly Normal Superdrop"
+    "short_name": "Perfectly Normal Superdrop",
+    "last_checked": "2026-10-17"
+  },
+  {
+    "slug": "zhalfir",
+    "name": "Zhalfir",
+    "type": "Main Set",
+    "release_date": "2027-10-01",
+    "window": null,
+    "source": "https://magic.wizards.com/en/news/announcements/everything-announced-for-the-magic-multiverse-in-2027",
+    "note": "Wizards' Oct 1, 2027 premier set, set on the returning plane of Zhalfir. Wizards is keeping the details under wraps for now: no products, prices or card previews yet, so no verdict.",
+    "status": "confirmed",
+    "placeholder": true,
+    "short_name": "Zhalfir",
+    "field_sources": {
+      "release_date": "https://magic.wizards.com/en/news/announcements/everything-announced-for-the-magic-multiverse-in-2027",
+      "also listed (Draftsim)": "https://draftsim.com/mtg-release-schedule/",
+      "also listed (Playgroup.gg)": "https://playgroup.gg/sets"
+    },
+    "last_checked": "2026-10-23"
   }
 ]
