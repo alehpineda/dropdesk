@@ -304,7 +304,26 @@
       "prerelease": "https://magic.wizards.com/en/news/feature/collecting-star-trek"
     },
     "last_checked": "2026-10-23",
-    "prerelease": "Nov 6–12, 2026"
+    "prerelease": "Nov 6–12, 2026",
+    "buy_guide_intro": "Release is Nov 13, 2026, with prereleases at local stores Nov 6–12, and preorders are open now.",
+    "buy_guide": [
+      [
+        "Play Boosters",
+        "$6.99 MSRP for 14 cards; the pick for drafting and prerelease play, and on track for Nov 13 everywhere."
+      ],
+      [
+        "Collector Boosters",
+        "$37.99 MSRP; only worth it if you're chasing foil Booster Fun cards or the actor-signed headliners, not as a sealed investment, and they may arrive after Nov 13 in Europe or Asia-Pacific."
+      ],
+      [
+        "Bundles / Beam Me Up Bundles",
+        "$69.99 MSRP (9 Play Boosters plus lands and accessories) or $99.99 MSRP (8 Play Boosters, 1 Collector Booster, 2 foil Spacecraft promos); the easiest gift for a Trek fan, though both may ship late in Europe or Asia-Pacific."
+      ],
+      [
+        "Commander decks",
+        "$74.99 MSRP each for four ready-to-play decks; buy regular decks and skip marked-up $159.99 Collector's Editions, and in North America check your preorder's ship date, since Wizards says they may arrive after Nov 13."
+      ]
+    ]
   },
   {
     "slug": "star-trek-commander",
