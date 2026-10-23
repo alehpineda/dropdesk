@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """MTG Drops static site builder. Usage: python3 build.py  -> dist/"""
-import json, html, os, shutil, urllib.parse, datetime
+import json, html, os, re, shutil, urllib.parse, datetime, hashlib
 AFFILIATE_ID = ""  # TCGplayer affiliate/partner id; blank = plain links
 SITE_URL = "https://mtgdrops.com"
 BASE = ""  # site served at the domain root (mtgdrops.com)
@@ -31,10 +31,35 @@ def amazon(r):
 def amz_btn(r):
     u = amazon(r)
     if not u: return ""
-    label = "Buy on Amazon" if r["release_date"] <= datetime.date.today().isoformat() else "Pre-order on Amazon"
+    label = "Buy on Amazon" if r["release_date"] <= today and not r.get("delayed") else "Pre-order on Amazon"
     return f'<p><a class=amz href="{E(u)}" rel="sponsored nofollow noopener" target="_blank">{label}</a></p>'
-TODAY = datetime.date.today()
+TODAY = datetime.date.fromisoformat(os.environ["BUILD_DATE"]) if os.environ.get("BUILD_DATE") else datetime.date.today()  # BUILD_DATE: testing only
 today = TODAY.isoformat()
+# ---- Page dates (sitemap lastmod, visible "Last updated", dateModified) ----
+# Each page is rendered with the placeholder PD wherever its own date goes, hashed (title + description + JSON-LD + main
+# body; the shared header/footer/head boilerplate is not hashed), and the date only moves when that hash changes.
+# data/page_dates.json is committed. The daily CI rebuild also restores the previous CI run's file from the Actions cache
+# (PAGE_DATES_CACHE), so a page whose content changed only because time passed keeps the first day it changed.
+PD = "__PAGE_DATE__"
+PAGE_DATES_FILE = "data/page_dates.json"
+page_dates = json.load(open(PAGE_DATES_FILE)) if os.path.exists(PAGE_DATES_FILE) else {}
+_pdc = os.environ.get("PAGE_DATES_CACHE")
+cache_dates = json.load(open(_pdc)) if _pdc and os.path.exists(_pdc) else {}
+new_dates = {}
+def page_date(path, h):
+    c = [e["date"] for e in (page_dates.get(path), cache_dates.get(path)) if e and e.get("hash") == h]
+    d = min(c) if c else today
+    new_dates[path] = {"hash": h, "date": d}; return d
+def tdate(d=PD): return f'<time datetime="{d}">{d}</time>'
+SL_STORE = "https://secretlair.wizards.com/us/en"  # Wizards' own Secret Lair store (MagicSecretLair.com)
+SL_ONSALE_DAYS = 30  # with no known sale_end, a drop counts as "on sale now" for this many days after it opens
+def sl_bucket(r):
+    if r.get("delayed"): return "up"  # announced date passed but stock hasn't arrived: still upcoming, never "on sale now"
+    if r.get("sold_out") and dated(r) and r["release_date"] <= today: return "past"
+    if not dated(r) or r["release_date"] > today: return "up"
+    if r.get("sale_end"): return "now" if r["sale_end"] >= today else "past"
+    return "now" if (TODAY - datetime.date.fromisoformat(r["release_date"])).days <= SL_ONSALE_DAYS else "past"
+def is_up(r): return r["release_date"] >= today or bool(r.get("delayed"))  # TBA sorts after digits, so counts as upcoming
 OG_IMAGE = f"{SITE_URL}/og.png"
 MON = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
 def dated(r): return r["release_date"][:4].isdigit()
@@ -59,19 +84,44 @@ def page(title, desc, body, path, jsonld=(), noindex=False, og=None):
     p = f"""<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
 <title>{E(title)}</title><meta name=description content="{E(desc)}">{robots}<link rel=canonical href="{u}">
 <meta property=og:title content="{E(title)}"><meta property=og:description content="{E(desc)}"><meta property=og:type content=website><meta property=og:url content="{u}"><meta property=og:image content="{og_img}"><meta property=og:image:width content={og_w}><meta property=og:image:height content={og_h}><meta name=twitter:card content=summary_large_image>
-<link rel=alternate type=application/rss+xml href="{BASE}/feed.xml" title="MTG Drops"><meta name='impact-site-verification' value='78f2b2fa-0831-48d2-a460-e2e3fa5a4eab'><meta name='impact-site-verification' value='c76059e5-ec5e-42d1-84a8-d9b58d1e5b68'><link rel=stylesheet href="{BASE}/style.css"><meta name="context7-site-verification" content="{CONTEXT7_SITE_KEY}">{lds}</head><body>
+<link rel=alternate type=application/rss+xml href="{BASE}/feed.xml" title="MTG Drops"><meta name='impact-site-verification' value='78f2b2fa-0831-48d2-a460-e2e3fa5a4eab'><meta name='impact-site-verification' value='c76059e5-ec5e-42d1-84a8-d9b58d1e5b68'><link rel=icon href="{BASE}/favicon.ico" sizes=any><link rel=icon type=image/png sizes=192x192 href="{BASE}/icon-192.png"><link rel=apple-touch-icon href="{BASE}/icon-192.png"><link rel=stylesheet href="{BASE}/style.css"><meta name="context7-site-verification" content="{CONTEXT7_SITE_KEY}">{lds}</head><body>
 <blockquote data-context7-ask="true" aria-hidden="true" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">
   <h2>Search</h2>
   <p>{E(CONTEXT7_NOTE, quote=False)}</p>
 </blockquote>
 <header><a href="{BASE}/"><b>MTG Drops</b></a><a href="{BASE}/secret-lair.html">Secret Lair</a><a href="{BASE}/guides/">Guides</a><a href="{BASE}/newsletter.html">Newsletter</a><a href="{BASE}/sponsor.html">Sponsor</a><a href="{BASE}/feed.xml">RSS</a></header>
 <main>{body}</main><footer><p><small><a href="{BASE}/">Release calendar</a> · <a href="{BASE}/secret-lair.html">Secret Lair drops</a> · <a href="{BASE}/guides/">Guides</a> · <a href="{BASE}/newsletter.html">Newsletter</a> · <a href="{BASE}/sponsor.html">Sponsor</a> · <a href="{BASE}/feed.xml">RSS</a> · Contact: <a href="mailto:contact@mtgdrops.com">contact@mtgdrops.com</a></small></p><small>Dates from official/community sources; verify before buying. {E(DISCLOSURE)} Not affiliated with Wizards of the Coast.</small></footer></body></html>"""
+    p = p.replace(PD, page_date(path, hashlib.sha256("\x1f".join([title, desc, lds, body]).encode()).hexdigest()[:16]))
     out = os.path.join("dist", path); os.makedirs(os.path.dirname(out), exist_ok=True); open(out, "w").write(p)
+def badges(r):
+    b = "" if r["status"] == "confirmed" else f' <span class=st>{E(r["status"])}</span>'
+    if r.get("sold_out"): b += ' <span class=st>sold out</span>'
+    if r.get("delayed"): b += ' <span class=st>delayed</span>'
+    return b
+def when(r):  # visible date, plus the prerelease window when one is announced
+    return nice_date(r) + (f' · Prerelease {E(r["prerelease"])}' if r.get("prerelease") else "")
+def nice_iso(d): d = datetime.date.fromisoformat(d); return f"{MON[d.month-1]} {d.day}, {d.year}"
+def srcs(r):
+    out = []
+    for u in [r["source"]] + list((r.get("field_sources") or {}).values()):
+        if u and u not in out: out.append(u)
+    return out
+def checked(r, with_sources=True):
+    """Visible 'Last checked' line: the date this entry's facts were last verified against its sources (releases.json last_checked)."""
+    lc = r.get("last_checked")
+    if not lc: return ""
+    s = ""
+    if with_sources:
+        seen = {}; links = []
+        for u in srcs(r)[:4]:
+            host = urllib.parse.urlsplit(u).netloc.replace("www.", ""); seen[host] = seen.get(host, 0) + 1
+            links.append(f'<a href="{E(u)}" rel=nofollow>{E(host)}{"" if seen[host] == 1 else " (" + str(seen[host]) + ")"}</a>')
+        s = " · Sources: " + ", ".join(links)
+    return f'<p class=lc><small>Last checked {tdate(lc).replace(">" + lc + "<", ">" + nice_iso(lc) + "<")}{s}</small></p>'
 def card(r):
     if r.get("placeholder"):
-        return f'<div class=card data-type="{E(r["type"])}"><span class=t>{E(r["type"])}</span> <span class=st>{E(r["status"])}</span><h3>{E(r["name"])}</h3><div>{nice_date(r)}</div><p>{E(r["note"])}</p></div>'
-    st = "" if r["status"] == "confirmed" else f' <span class=st>{E(r["status"])}</span>'
-    return f'<div class=card data-type="{E(r["type"])}"><span class=t>{E(r["type"])}</span>{st}<h3><a href="{BASE}/p/{r["slug"]}.html">{E(r["name"])}</a></h3><div>{nice_date(r)}</div><p>{E(r["note"])}</p>{amz_btn(r)}</div>'
+        return f'<div class=card data-type="{E(r["type"])}"><span class=t>{E(r["type"])}</span> <span class=st>{E(r["status"])}</span><h3>{E(r["name"])}</h3><div>{when(r)}</div><p>{E(r["note"])}</p>{checked(r)}</div>'
+    return f'<div class=card data-type="{E(r["type"])}"><span class=t>{E(r["type"])}</span>{badges(r)}<h3><a href="{BASE}/p/{r["slug"]}.html">{E(r["name"])}</a></h3><div>{when(r)}</div><p>{E(r["note"])}</p>{amz_btn(r)}{checked(r)}</div>'
 FORM = '<form action="https://buttondown.com/api/emails/embed-subscribe/alehpineda.dropdesk" method="post" target="popupwindow"><input type=email name=email required placeholder="you@example.com"> <button>Get What\'s Dropping</button></form>'
 shutil.rmtree("dist", ignore_errors=True); os.makedirs("dist/p")
 open("dist/style.css", "w").write(CSS + "\ntable{border-collapse:collapse}td,th{border:1px solid #2d3546;padding:.3rem .6rem;text-align:left}nav.bc{font-size:.85rem}")
@@ -90,22 +140,54 @@ if not os.path.exists("static/og.png"):
     dr.text((84, 575), "mtgdrops.com", font=font(36), fill=(255, 255, 255))
     im.save("static/og.png")
 shutil.copy("static/og.png", "dist/og.png")
-up = [r for r in data if r["release_date"] >= today]  # includes TBA (sorts after digits)
-up = up + [r for r in data if r["release_date"] < today]
+# Favicons: committed at static/favicon.ico (16/32/48) and static/icon-192.png (generated once with Pillow if missing)
+if not (os.path.exists("static/favicon.ico") and os.path.exists("static/icon-192.png")):
+    from PIL import Image, ImageDraw, ImageFont
+    im = Image.new("RGB", (192, 192), (58, 123, 213)); dr = ImageDraw.Draw(im)
+    fnt = next((ImageFont.truetype(f, 120) for f in ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"] if os.path.exists(f)), ImageFont.load_default())
+    w = dr.textlength("M", font=fnt); dr.text(((192 - w) / 2, 22), "M", font=fnt, fill=(255, 255, 255))
+    im.save("static/icon-192.png", optimize=True); im.save("static/favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
+for f in ("favicon.ico", "icon-192.png"): shutil.copy(os.path.join("static", f), os.path.join("dist", f))
+up = [r for r in data if is_up(r)]  # includes TBA (sorts after digits) and delayed items
+up = up + [r for r in data if not is_up(r)]
 public = [r for r in data if not r.get("placeholder")]
 btns = '<button class=on data-f="">All</button>' + "".join(f'<button data-f="{E(t)}">{E(t)}</button>' for t in types)
 js = "<script>document.querySelectorAll('.f button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.f button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.card').forEach(c=>c.style.display=!b.dataset.f||c.dataset.type==b.dataset.f?'':'none')})</script>"
 groups = {}
-for r in up: groups.setdefault(mon_yyyy(r) if r["release_date"] >= today else "Already released", []).append(r)
+for r in up: groups.setdefault(mon_yyyy(r) if is_up(r) else "Already released", []).append(r)
 months = "".join(f"<h2>{E(g)}</h2>" + "".join(card(r) for r in rs) for g, rs in groups.items())
 ABOUT = "MTG Drops is a free Magic: The Gathering release calendar: every upcoming set, Commander precon, Universes Beyond and Secret Lair drop, with dates, prices, buy/skip verdicts and a weekly newsletter. Not affiliated with Wizards of the Coast, and not a Discord bot or eBay monitor."
 HOME_DESC = "MTG Drops: free Magic: The Gathering release calendar. Every set, precon, Universes Beyond and Secret Lair drop, with dates, prices and buy/skip verdicts."
 ORG = {"@type": "Organization", "@id": f"{SITE_URL}/#org", "name": "MTG Drops", "url": f"{SITE_URL}/", "logo": OG_IMAGE, "description": ABOUT}
+def fmt(p): return f"${p['usd']:,.2f}"
+# ---- Home FAQ: generated from releases.json; the FAQPage text is the visible answer text with links stripped ----
+def plain(h): return html.unescape(re.sub(r"<[^>]+>", "", h))
+def plink(r, t=None): return f'<a href="{BASE}/p/{r["slug"]}.html">{E(t or short_name(r))}</a>' if not r.get("placeholder") else E(t or short_name(r))
+SETS = ("Main Set", "Universes Beyond")
+h_next = next((r for r in public if dated(r) and r["release_date"] > today and r["type"] in SETS), None)
+h_2027 = [r for r in data if r["release_date"][:4] == "2027" and r["type"] in SETS and r["status"] == "confirmed"]
+h_cmd27 = [r for r in public if r["release_date"][:4] == "2027" and r["type"] == "Commander Precon"]
+h_sl = next((r for r in data if r["type"] == "Secret Lair" and not r.get("placeholder") and dated(r) and sl_bucket(r) == "up" and not r.get("delayed")), None)
+h_sold = [r for r in public if r.get("sold_out")]
+def and_list(xs): return xs[0] if len(xs) == 1 else ", ".join(xs[:-1]) + " and " + xs[-1]
+home_faq = []
+if h_next: home_faq.append(("What is the next MTG set?", f'{plink(h_next, h_next["name"])} releases {nice_date(h_next)} ({E(h_next["status"])})' + (f', with prerelease events {E(h_next["prerelease"])}' if h_next.get("prerelease") else "") + "."))
+if h_2027: home_faq.append(("What MTG sets release in 2027?", f"{len(h_2027)} sets are confirmed for 2027: " + and_list([f"{plink(r, r['name'])} ({nice_date(r)})" for r in h_2027]) + "."
+                             + (" Commander decks are confirmed alongside " + and_list([plink(r) for r in h_cmd27]) + ", with decklists still to come." if h_cmd27 else "")))
+if h_sl: home_faq.append(("When is the next Secret Lair drop?", f'{plink(h_sl, h_sl["name"])} goes on sale {nice_date(h_sl)}' + (f' at {fmt(h_sl["prices"][0])}' if h_sl.get("prices") else "") + f'. See every drop on the <a href="{BASE}/secret-lair.html">Secret Lair schedule</a>.'))
+if h_sold: home_faq.append(("Which recent MTG releases are sold out?", and_list([plink(r) + f" ({nice_date(r)})" for r in h_sold]) + " sold out at the official store. Check each page before paying resale prices."))
+home_faq.append(("How often is the MTG Drops calendar updated?", "We check official Wizards of the Coast announcements and reputable MTG news every Tuesday and Friday. Each entry shows the date it was last checked and links to its sources."))
+home_faq_html = "<h2>MTG release FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{a}</p>" for q, a in home_faq)
+ICS_LINKS = {"calendar.ics": "every MTG release", "secret-lair.ics": "Secret Lair drops only"}
+def ics_link(f): return (f'<a href="https://calendar.google.com/calendar/r?cid=webcal://mtgdrops.com/{f}" rel=nofollow>Add to Google Calendar</a> · '
+                         f'<a href="webcal://mtgdrops.com/{f}" rel=nofollow>Apple / Outlook (webcal)</a> · <a href="{BASE}/{f}">Download .ics</a>')
 home_ld = [{"@context": "https://schema.org", "@type": "WebSite", "@id": f"{SITE_URL}/#website", "name": "MTG Drops", "url": f"{SITE_URL}/", "description": ABOUT, "publisher": {"@id": f"{SITE_URL}/#org"}},
            {"@context": "https://schema.org", **ORG},
-           {"@context": "https://schema.org", "@type": "ItemList", "name": "Upcoming Magic: The Gathering releases", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate([r for r in up if not r.get("placeholder")])]}]
+           {"@context": "https://schema.org", "@type": "CollectionPage", "@id": f"{SITE_URL}/#page", "name": "MTG Release Calendar 2026–2027", "url": f"{SITE_URL}/", "description": HOME_DESC, "dateModified": PD, "isPartOf": {"@id": f"{SITE_URL}/#website"}, "publisher": {"@id": f"{SITE_URL}/#org"}, "mainEntity": {"@id": f"{SITE_URL}/#releases"}},
+           {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in home_faq]},
+           {"@context": "https://schema.org", "@type": "ItemList", "@id": f"{SITE_URL}/#releases", "name": "Upcoming Magic: The Gathering releases", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate([r for r in up if not r.get("placeholder")])]}]
 page("MTG Drops — Every upcoming MTG release, one calendar", HOME_DESC,
-     f"<h1>What's dropping in Magic</h1><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p><p>Every upcoming MTG product, with a short buy/skip note. New: <a href=\"{BASE}/guides/mtg-releases-fall-holiday-2026.html\">every MTG product releasing this fall/holiday 2026</a>, with gift picks, the <a href=\"{BASE}/guides/star-trek-mtg-release-guide.html\">MTG Star Trek release guide</a>, and the <a href=\"{BASE}/secret-lair.html\">Secret Lair drop schedule</a>.</p>{FORM}<p class=disc><small>{E(DISCLOSURE)}</small></p><div class=f>{btns}</div>" + months + js, "index.html", home_ld)
+     f"<h1>MTG Release Calendar 2026–2027</h1><p><b>What's dropping in Magic.</b> Last updated: {tdate()}</p><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p><p>Every upcoming MTG product, with a short buy/skip note. New: <a href=\"{BASE}/guides/mtg-releases-fall-holiday-2026.html\">every MTG product releasing this fall/holiday 2026</a>, with gift picks, the <a href=\"{BASE}/guides/star-trek-mtg-release-guide.html\">MTG Star Trek release guide</a>, and the <a href=\"{BASE}/secret-lair.html\">Secret Lair drop schedule</a>.</p>{FORM}<p class=disc><small>{E(DISCLOSURE)}</small></p><p><b>Calendar feed:</b> {ics_link("calendar.ics")}</p><div class=f>{btns}</div>" + months + home_faq_html + js, "index.html", home_ld)
 def title_for(r):
     sn = short_name(r); m = mon_yyyy(r).replace("Date TBA", "TBA")
     for t in (f"{sn} Release Date ({m}), Price & Preorder | MTG Drops", f"{sn} Release Date ({m}) | MTG Drops", f"{sn} Release Date, {m} | MTG Drops", f"{sn} Release Date | MTG Drops", f"{sn} ({m}) | MTG Drops", f"{sn} | MTG Drops"):
@@ -115,8 +197,10 @@ def related(r):
     if r.get("placeholder"): pool = public
     else: pool = [x for x in public if x is not r]
     pool = [x for x in pool if x is not r]
+    sib = [x for x in pool if dated(x) and x["release_date"] == r["release_date"] and {x["type"], r["type"]} & {"Commander Precon"} and ({x["type"], r["type"]} - {"Commander Precon"}) <= set(SETS) and x["type"] != r["type"]]
+    pool = [x for x in pool if x not in sib]
     key = lambda x: (0, abs((datetime.date.fromisoformat(x["release_date"]) - datetime.date.fromisoformat(r["release_date"])).days)) if dated(x) and dated(r) else ((1, 0) if not dated(x) else (2, 0))
-    return sorted(pool, key=key)[:4]
+    return (sib + sorted(pool, key=key))[:4]
 TYPE_INFO = {
  "Secret Lair": ("What is a Secret Lair drop?", "Secret Lair is Wizards of the Coast's direct-to-fan line of limited Magic products, sold mainly at MagicSecretLair.com. Most drops are small sets of cards with alternate art, often reprints, sold for a limited time or while supplies last, and not restocked once they end. Cards are tournament-legal wherever the original card is legal. Because supply is limited, prices on the secondary market can move quickly in either direction after a drop closes."),
  "Commander Precon": ("What is a Commander precon?", "A Commander precon (preconstructed deck) is a ready-to-play 100-card deck for Commander, Magic's most popular multiplayer format. Each deck is built around a legendary face commander, usually comes with tokens and a deck box, and can be played straight out of the box or used as a base to upgrade. Precons typically include a mix of new-to-Magic cards and reprints, so many players buy them both to play and for specific singles."),
@@ -179,12 +263,6 @@ def pcard(r):
     os.makedirs("dist/products", exist_ok=True)
     for f in files: shutil.copy(f, "dist/products/")
     return tuple(f"{SITE_URL}/products/{os.path.basename(f)}" for f in files)
-SL_STORE = "https://secretlair.wizards.com/us/en"  # Wizards' own Secret Lair store (MagicSecretLair.com)
-SL_ONSALE_DAYS = 30  # with no known sale_end, a drop counts as "on sale now" for this many days after it opens
-def sl_bucket(r):
-    if not dated(r) or r["release_date"] > today: return "up"
-    if r.get("sale_end"): return "now" if r["sale_end"] >= today else "past"
-    return "now" if (TODAY - datetime.date.fromisoformat(r["release_date"])).days <= SL_ONSALE_DAYS else "past"
 for r in data:
     sn = short_name(r); pu = f"{SITE_URL}/p/{r['slug']}.html"
     win = f"<p><b>Window:</b> {E(r['window'])}</p>" if r.get("window") else ""
@@ -199,7 +277,7 @@ for r in data:
     if r["slug"] in ("star-trek", "star-trek-commander"): hubl += f'<p>Planning your Star Trek buys? Read the <a href="{BASE}/guides/star-trek-mtg-release-guide.html">MTG Star Trek release guide</a>: every product, MSRP, Commander deck and key date.</p>'
     facts = ("<h2>Key facts</h2><ul>" + "".join(f"<li>{E(f)}</li>" for f in r["facts"]) + "</ul>") if r.get("facts") else ""
     ti = TYPE_INFO.get(r["type"]); tinfo = f"<h2>{E(ti[0])}</h2><p>{E(ti[1])}</p>" if ti else ""
-    howto = f"<h2>{HOWTO[0]}</h2><p>{E(HOWTO[1])}</p>" if not r.get("placeholder") and (not dated(r) or r["release_date"] > today) else ""
+    howto = f"<h2>{HOWTO[0]}</h2><p>{E(HOWTO[1])}</p>" if not r.get("placeholder") and (not dated(r) or r["release_date"] > today or r.get("delayed")) else ""
     rel = related(r)
     relhtml = "<h2>Related releases</h2><ul>" + "".join(f'<li><a href="{BASE}/p/{x["slug"]}.html">{E(x["name"])}</a> — {nice_date(x)}</li>' for x in rel) + "</ul>"
     faq = [(f"When does {sn} release?", f"{nice_date(r)} ({r['status']})." + (f" {r['window']}." if r.get("window") else "") if dated(r) else f"The release date is TBA ({r['status']})." + (f" {r['window']}." if r.get("window") else "")),
@@ -225,6 +303,10 @@ for r in data:
     else:
         avail = "https://schema.org/InStock" if dated(r) and r["release_date"] <= today else "https://schema.org/PreOrder"
         odesc = "Wizards of the Coast MSRP; sold by game stores and other retailers. MTG Drops does not sell this product."
+    # Stock flags from releases.json (sourced in field_sources / notes): sold out at the official store, or delayed after its
+    # announced date (still orderable ahead of arrival, so PreOrder: it is not on shelves yet).
+    if r.get("sold_out"): avail = "https://schema.org/SoldOut"
+    elif r.get("delayed"): avail = "https://schema.org/PreOrder"
     if offers:
         def offer(p):
             o = {"@type": "Offer", "name": p["label"], "price": f"{p['usd']:.2f}", "priceCurrency": p.get("currency", "USD"), "availability": avail, "description": odesc}
@@ -234,18 +316,18 @@ for r in data:
             if r.get("sale_end"): o["priceValidUntil"] = r["sale_end"]
             return o
         prod["offers"] = [offer(p) for p in offers]
-        main_ld = prod
+        prod["@id"] = pu + "#product"
+        main_ld = [{"@context": "https://schema.org", "@type": "WebPage", "@id": pu + "#page", "name": title_for(r), "url": pu, "dateModified": PD, "isPartOf": {"@id": f"{SITE_URL}/#website"}, "mainEntity": {"@id": pu + "#product"}}, prod]
     else:
-        main_ld = {"@context": "https://schema.org", "@type": "WebPage", "name": title_for(r), "url": pu, "description": trim(r["note"], 300), "isPartOf": {"@id": f"{SITE_URL}/#website"}, "about": {"@type": "Thing", "name": r["name"]}}
-    bc = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "MTG Drops", "item": f"{SITE_URL}/"},
-        {"@type": "ListItem", "position": 2, "name": r["type"], "item": f"{SITE_URL}/secret-lair.html" if r["type"] == "Secret Lair" else f"{SITE_URL}/"},
-        {"@type": "ListItem", "position": 3, "name": r["name"], "item": pu}]}
+        main_ld = [{"@context": "https://schema.org", "@type": "WebPage", "@id": pu + "#page", "name": title_for(r), "url": pu, "description": trim(r["note"], 300), "dateModified": PD, "isPartOf": {"@id": f"{SITE_URL}/#website"}, "about": {"@type": "Thing", "name": r["name"]}}]
+    # Only Secret Lair has a hub page; other types get a 2-item trail (no fake middle crumb pointing back at the home page).
+    bc_items = [("MTG Drops", f"{SITE_URL}/")] + ([("Secret Lair", f"{SITE_URL}/secret-lair.html")] if r["type"] == "Secret Lair" else []) + [(r["name"], pu)]
+    bc = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": i+1, "name": n, "item": u} for i, (n, u) in enumerate(bc_items)]}
     crumbs = f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › {(f'<a href="{BASE}/secret-lair.html">Secret Lair</a>' if r["type"] == "Secret Lair" else E(r["type"]))} › {E(sn)}</nav>{hubl}'
     desc = f"{sn} release date: {nice_date(r)}. " + r["note"]
     page(title_for(r), desc,
-         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])})</p>{win}<h2>Price</h2>{ptab}{contents}{facts}<h2>Buy or skip?</h2><p>{E(r["note"])}</p><p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}{"<p class=disc><small>"+E(DISCLOSURE)+"</small></p>" if amazon(r) else ""}{tinfo}{howto}{relhtml}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}<p><small>Last updated: {today}</small></p>{FORM}',
-         f"p/{r['slug']}.html", [main_ld, bc], noindex=bool(r.get("placeholder")), og=(card[1], 1200, 630) if card else None)
+         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])}){f" · <b>Prerelease:</b> {E(r['prerelease'])}" if r.get("prerelease") else ""}{" · <b>Sold out</b> at the official store" if r.get("sold_out") else ""}{" · <b>Delayed</b>: stock may arrive after this date" if r.get("delayed") else ""}</p>{win}<h2>Price</h2>{ptab}{contents}{facts}<h2>Buy or skip?</h2><p>{E(r["note"])}</p>{f"<p><i>{E(r['preorder_call'])}</i></p>" if r.get("preorder_call") else ""}{("<p>Other Commander decks coming in 2027: " + ", ".join(plink(x, x["name"]) + f" ({nice_date(x)})" for x in h_cmd27 if x is not r) + ".</p>") if r.get("preorder_call") and r in h_cmd27 else ""}<p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}{"<p class=disc><small>"+E(DISCLOSURE)+"</small></p>" if amazon(r) else ""}{tinfo}{howto}{relhtml}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}{checked(r, with_sources=False)}<p><small>Last updated: {tdate()}</small></p>{FORM}',
+         f"p/{r['slug']}.html", main_ld + [bc], noindex=bool(r.get("placeholder")), og=(card[1], 1200, 630) if card else None)
 # ---- Secret Lair hub (/secret-lair.html): generated from releases.json, so data updates keep it current ----
 SL_SRC = {"about": "https://secretlair.wizards.com/us/en/about-us",
           "faq": "https://secretlair-support.wizards.com/hc/en-us/articles/45369886769300-About-Secret-Lair-FAQ",
@@ -261,19 +343,21 @@ def sl_price(r):
     return "; ".join(f"{p['label']} {fmt(p)}" for p in ps[:3]) + ("; more options on the product page" if len(ps) > 3 else "")
 def sl_when(r):
     if not dated(r): return "Date TBA"
+    if r.get("delayed"): return f"Delayed: was due {nice_date(r)}; Wizards says stock may arrive shortly after"
+    if r.get("sold_out") and sl_bucket(r) == "past": return f"Went on sale {nice_date(r)}; sold out"
     b = sl_bucket(r)
     return ("On sale since " if b == "now" else "Went on sale " if b == "past" else "On sale ") + nice_date(r)
 def sl_card(r):
     cont = trim("; ".join(r["contents"]), 220) if r.get("contents") else "Contents TBA"
-    st = "" if r["status"] == "confirmed" else f' <span class=st>{E(r["status"])}</span>'
+    st = badges(r)
     return (f'<div class=card data-type="Secret Lair"><h3><a href="{BASE}/p/{r["slug"]}.html">{E(r["name"])}</a>{st}</h3>'
             f'<p><b>Date:</b> {E(sl_when(r))}</p>' + (f'<p><b>Sale details:</b> {E(r["window"])}</p>' if r.get("window") else "") +
             f'<p><b>Price:</b> {E(sl_price(r))}</p><p><b>Contents:</b> {E(cont)}</p><p><b>Our verdict:</b> {E(r["note"])}</p>'
-            f'<p><a href="{BASE}/p/{r["slug"]}.html">Full details, card list and sources →</a></p></div>')
+            f'<p><a href="{BASE}/p/{r["slug"]}.html">Full details, card list and sources →</a></p>{checked(r)}</div>')
 def sl_section(h, rs, empty):
     return f"<h2>{E(h)}</h2>" + ("".join(sl_card(r) for r in rs) if rs else f"<p>{E(empty)}</p>")
-nxt = next((r for r in sl_up if dated(r)), None)
-def names(rs): return "; ".join(f"{short_name(r)} ({nice_date(r) if dated(r) else 'date TBA'})" for r in rs)
+nxt = next((r for r in sl_up if dated(r) and not r.get("delayed")), None)
+def names(rs): return "; ".join(f"{short_name(r)} (" + ("delayed, was due " if r.get("delayed") else "") + f"{nice_date(r) if dated(r) else 'date TBA'})" for r in rs)
 sl_faq = [
  ("What is the next Secret Lair drop?",
   (f"The next dated Secret Lair release on our calendar is {nxt['name']}, on sale {nice_date(nxt)}." if nxt else "There is no dated upcoming Secret Lair release on our calendar right now.")
@@ -299,9 +383,9 @@ sl_intro = (f'<h2>What is Secret Lair and how do drops work?</h2>'
 sl_list = sl_now + sl_up + sl_past
 sl_url = f"{SITE_URL}/secret-lair.html"
 SL_TITLE = "Secret Lair Drops: Schedule, Prices & Verdicts | MTG Drops"
-SL_DESC = ("Secret Lair release schedule: drops on sale now, upcoming Secret Lair drops and recent sales, with dates, prices, card lists and buy/skip verdicts. Updated " + today + ".")
+SL_DESC = "Secret Lair release schedule: drops on sale now, upcoming Secret Lair drops and recent sales, with dates, prices, card lists and buy/skip verdicts."
 sl_ld = [
- {"@context": "https://schema.org", "@type": "CollectionPage", "@id": sl_url + "#page", "name": SL_TITLE, "url": sl_url, "description": trim(SL_DESC, 300), "dateModified": today, "isPartOf": {"@id": f"{SITE_URL}/#website"}, "publisher": {"@id": f"{SITE_URL}/#org"}},
+ {"@context": "https://schema.org", "@type": "CollectionPage", "@id": sl_url + "#page", "name": SL_TITLE, "url": sl_url, "description": trim(SL_DESC, 300), "dateModified": PD, "isPartOf": {"@id": f"{SITE_URL}/#website"}, "publisher": {"@id": f"{SITE_URL}/#org"}},
  {"@context": "https://schema.org", "@type": "ItemList", "name": "Secret Lair drops: on sale now, upcoming and recent", "itemListOrder": "https://schema.org/ItemListUnordered", "numberOfItems": len(sl_list),
   "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate(sl_list)]},
  {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
@@ -312,7 +396,8 @@ sl_ld = [
 page(SL_TITLE, SL_DESC,
      f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › Secret Lair</nav><h1>Secret Lair Drops: Schedule, Prices &amp; Verdicts</h1>'
      f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
-     f'<p><b>Last updated:</b> {today} · {len(sl_now)} on sale now · {len(sl_up)} upcoming · {len(sl_past)} recent / ended</p>'
+     f'<p><b>Last updated:</b> {tdate()} · {len(sl_now)} on sale now · {len(sl_up)} upcoming · {len(sl_past)} recent / ended</p>'
+     + f'<p><b>Secret Lair calendar feed:</b> {ics_link("secret-lair.ics")}</p>'
      + sl_intro + f'<p>Planning holiday buys? See <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a>, sets and Commander decks included.</p>'
      + sl_section("On sale now", sl_now, "No Secret Lair sale has opened in the last few weeks. See Upcoming below.")
      + sl_section("Upcoming Secret Lair drops", sl_up, "No upcoming Secret Lair drops are announced right now.")
@@ -320,7 +405,7 @@ page(SL_TITLE, SL_DESC,
      + '<p><small>Drops opened more than ' + str(SL_ONSALE_DAYS) + ' days ago are listed as recent / ended unless an end date is known; limited print runs may sell out sooner or stay in stock longer, so check MagicSecretLair.com.</small></p>'
      + "<h2>Secret Lair FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in sl_faq)
      + f'<h2>Get new Secret Lair drops by email</h2><p>What\'s Dropping is our free weekly email: new Secret Lair announcements, sale dates and a buy-or-skip verdict for each drop.</p>{FORM}'
-     + f'<p class=disc><small>{E(DISCLOSURE)}</small></p><p><small>Last updated: {today}</small></p>',
+     + f'<p class=disc><small>{E(DISCLOSURE)}</small></p><p><small>Last updated: {tdate()}</small></p>',
      "secret-lair.html", sl_ld)
 SL_LLMS = "".join(f"- [{r['name']}]({SITE_URL}/p/{r['slug']}.html): {lab}; {sl_when(r)}; price: {sl_price(r)}\n" for lab, rs in (("on sale now", sl_now), ("upcoming", sl_up), ("recent/ended", sl_past)) for r in rs)
 SL_LLMS = f"Hub: [Secret Lair drops: schedule, prices & verdicts]({sl_url})\n" + SL_LLMS
@@ -332,7 +417,7 @@ def vtag(r):
 def guide_item(r):
     ps = r.get("prices") or []
     price = "; ".join(f"{p['label']}: {fmt(p)}" for p in ps) if ps else "TBA"
-    st = "" if r["status"] == "confirmed" else f' <span class=st>{E(r["status"])}</span>'
+    st = badges(r)
     return (f'<div class=card data-type="{E(r["type"])}"><span class=t>{E(r["type"])}</span>{st}<h3><a href="{BASE}/p/{r["slug"]}.html">{E(r["name"])}</a></h3>'
             f'<p><b>Date:</b> {nice_date(r)}</p><p><b>Price:</b> {E(price)}</p><p>{vtag(r)}{E(r["note"])}</p>{amz_btn(r)}</div>')
 G_SLUG = "guides/mtg-releases-fall-holiday-2026.html"; g_url = url(G_SLUG)
@@ -353,17 +438,17 @@ g_faq.append(("What is the best MTG gift for the 2026 holidays?",
 if nxt_set: g_faq.append(("What is the next MTG set after 2026?", f"{nxt_set['name']}, releasing {nice_date(nxt_set)} ({nxt_set['status']})."))
 g_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › <a href="{BASE}/guides/">Guides</a> › Fall/Holiday 2026</nav><h1>{E(G_H1)}</h1>'
   f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
-  f'<p><b>Last updated:</b> {today} · {len(g_items)} products from October to December 2026</p>'
+  f'<p><b>Last updated:</b> {tdate()} · {len(g_items)} products from October to December 2026</p>'
   f'<p>Every Magic: The Gathering product on our calendar for October, November and December 2026: sets, Commander decks, Secret Lair drops, bundles and special releases, with release dates, MSRPs and our buy/skip verdict. Secret Lair sales are tracked on the <a href="{BASE}/secret-lair.html">Secret Lair hub</a>, and November\'s biggest release has its own <a href="{BASE}/guides/star-trek-mtg-release-guide.html">Star Trek release guide</a>.</p>'
   "<h2>Best picks for gifts</h2>" + ("<p>Only products we already rate as a buy, and who each one suits:</p><ul>" + "".join(f'<li><a href="{BASE}/p/{r["slug"]}.html">{E(short_name(r))}</a> ({nice_date(r)}): for {E(r["gift_for"])}.</li>' for r in g_gifts) + "</ul>" if g_gifts else "<p>No buy-rated products this season yet.</p>")
   + "".join(f"<h2>{g_month_name(m)}</h2>" + ("".join(guide_item(r) for r in rs) if rs else "<p>Nothing scheduled yet.</p>") for m, rs in g_by.items())
   + ("<h2>Announced, no date yet</h2><p>Announced but not yet scheduled, so these may or may not land before the end of 2026.</p>" + "".join(guide_item(r) for r in g_tba) if g_tba else "")
   + f'<p class=disc><small>{E(DISCLOSURE)}</small></p>'
   + "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in g_faq)
-  + f"<h2>Get the weekly release email</h2><p>What's Dropping covers what's releasing next, date and price changes, and a buy-or-skip verdict for each product.</p>{FORM}<p><small>Last updated: {today}</small></p>")
+  + f"<h2>Get the weekly release email</h2><p>What's Dropping covers what's releasing next, date and price changes, and a buy-or-skip verdict for each product.</p>{FORM}<p><small>Last updated: {tdate()}</small></p>")
 g_list = g_items + g_tba
 g_ld = [
- {"@context": "https://schema.org", "@type": "Article", "headline": G_H1, "url": g_url, "mainEntityOfPage": g_url, "image": OG_IMAGE, "datePublished": G_PUBLISHED, "dateModified": today,
+ {"@context": "https://schema.org", "@type": "Article", "headline": G_H1, "url": g_url, "mainEntityOfPage": g_url, "image": OG_IMAGE, "datePublished": G_PUBLISHED, "dateModified": PD,
   "author": {"@id": f"{SITE_URL}/#org"}, "publisher": {"@id": f"{SITE_URL}/#org"}, "isPartOf": {"@id": f"{SITE_URL}/#website"},
   "description": "Every Magic: The Gathering product releasing October to December 2026, with dates, prices, buy/skip verdicts and holiday gift picks."},
  {"@context": "https://schema.org", **ORG},
@@ -420,7 +505,7 @@ st_faq = [
 ]
 st_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › <a href="{BASE}/guides/">Guides</a> › Star Trek</nav><h1>{E(ST_H1)}</h1>'
   f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
-  f'<p><b>Last updated:</b> {today} · release {nice_date(st_set)} ({E(st_set["status"])})</p>'
+  f'<p><b>Last updated:</b> {tdate()} · release {nice_date(st_set)} ({E(st_set["status"])})</p>'
   f'<p>Magic: The Gathering | Star Trek is a Universes Beyond set that releases on {nice_date(st_set)}, ahead of Star Trek\'s 60th anniversary. This guide covers every product, Wizards\' MSRPs, the four Commander decks, the key dates and what we think is worth buying. Facts are from Wizards\' {st_a("collect", "Collecting Magic: The Gathering | Star Trek")} article and the {st_a("wpn", "Wizards Play Network product listing")}; full product pages: <a href="{BASE}/p/{st_set["slug"]}.html">{E(st_set["name"])}</a> and <a href="{BASE}/p/{st_cmd["slug"]}.html">Star Trek Commander Decks</a>.</p>'
   "<h2>Key dates</h2><table><tr><th>Event</th><th>Date</th></tr>" + "".join(f"<tr><td>{E(a)}</td><td>{E(b)}</td></tr>" for a, b in ST_DATES) + f'</table><p><small>Dates per {st_a("collect")}.</small></p>'
   "<h2>Every product and price</h2><table><tr><th>Product</th><th>MSRP (USD)</th><th>What's inside</th></tr>" + "".join(f"<tr><td>{E(n)}</td><td>{fmt({'usd': u})}</td><td>{E(c)}</td></tr>" for n, u, c in ST_PRODUCTS)
@@ -445,10 +530,10 @@ st_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a>
   f'<p class=disc><small>{E(DISCLOSURE)}</small></p>'
   "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in st_faq)
   + f'<p>More releases: <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a>, the <a href="{BASE}/secret-lair.html">Secret Lair drop schedule</a> and the full <a href="{BASE}/">release calendar</a>.</p>'
-  + f"<h2>Get the weekly release email</h2><p>What's Dropping covers what's releasing next, date and price changes, and a buy-or-skip verdict for each product.</p>{FORM}<p><small>Last updated: {today}</small></p>")
+  + f"<h2>Get the weekly release email</h2><p>What's Dropping covers what's releasing next, date and price changes, and a buy-or-skip verdict for each product.</p>{FORM}<p><small>Last updated: {tdate()}</small></p>")
 ST_DESC = "MTG Star Trek release guide: Nov 13, 2026 release date, every product and MSRP, the four Commander decks, key dates, signed cards and what to buy."
 st_ld = [
- {"@context": "https://schema.org", "@type": "Article", "headline": ST_H1, "url": st_url, "mainEntityOfPage": st_url, "image": OG_IMAGE, "datePublished": ST_PUBLISHED, "dateModified": today,
+ {"@context": "https://schema.org", "@type": "Article", "headline": ST_H1, "url": st_url, "mainEntityOfPage": st_url, "image": OG_IMAGE, "datePublished": ST_PUBLISHED, "dateModified": PD,
   "author": {"@id": f"{SITE_URL}/#org"}, "publisher": {"@id": f"{SITE_URL}/#org"}, "isPartOf": {"@id": f"{SITE_URL}/#website"},
   "about": {"@type": "Thing", "name": st_set["name"]}, "description": ST_DESC, "citation": list(ST_SRC.values())},
  {"@context": "https://schema.org", **ORG},
@@ -467,12 +552,23 @@ gi_url = url("guides/index.html")
 page("MTG Guides: Release Roundups & Gift Picks | MTG Drops", "MTG Drops guides: Magic: The Gathering release roundups, buying guides and gift picks, generated from our release calendar.",
      f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › Guides</nav><h1>MTG Drops Guides</h1><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
      + "".join(f'<div class=card><h2><a href="{BASE}/{p}">{E(t)}</a></h2><p>{E(d)}</p></div>' for p, t, d in GUIDES)
-     + f'<p>Also see the <a href="{BASE}/secret-lair.html">Secret Lair drops hub</a> and the full <a href="{BASE}/">release calendar</a>.</p>{FORM}<p><small>Last updated: {today}</small></p>',
+     + f'<p>Also see the <a href="{BASE}/secret-lair.html">Secret Lair drops hub</a> and the full <a href="{BASE}/">release calendar</a>.</p>{FORM}<p><small>Last updated: {tdate()}</small></p>',
      "guides/index.html",
-     [{"@context": "https://schema.org", "@type": "CollectionPage", "name": "MTG Drops Guides", "url": gi_url, "dateModified": today, "isPartOf": {"@id": f"{SITE_URL}/#website"}},
+     [{"@context": "https://schema.org", "@type": "CollectionPage", "name": "MTG Drops Guides", "url": gi_url, "dateModified": PD, "isPartOf": {"@id": f"{SITE_URL}/#website"}},
       {"@context": "https://schema.org", "@type": "ItemList", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": url(p), "name": t} for i, (p, t, d) in enumerate(GUIDES)]},
       {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "MTG Drops", "item": f"{SITE_URL}/"}, {"@type": "ListItem", "position": 2, "name": "Guides", "item": gi_url}]}])
-page("What's Dropping newsletter | MTG Drops", "Weekly MTG release newsletter.", f"<h1>What's Dropping</h1><p>One email a week: what releases, what's on preorder, buy or skip.</p><p>What's Dropping is a free weekly email from MTG Drops. Each issue covers the Magic: The Gathering products coming up next, new announcements from Wizards of the Coast (sets, Commander decks, Secret Lair drops and Universes Beyond), date and price changes, and a short buy-or-skip verdict for each product. It's short enough to read in a couple of minutes, and you can unsubscribe at any time from the link in every email.</p>{FORM}", "newsletter.html")
+NL_TITLE = "What's Dropping: Weekly MTG Release Newsletter | MTG Drops"
+NL_DESC = "What's Dropping is a free weekly MTG email, sent Mondays: upcoming sets, Commander decks and Secret Lair drops, date and price changes, and buy/skip calls."
+nl_url = url("newsletter.html")
+page(NL_TITLE, NL_DESC,
+     f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › Newsletter</nav><h1>What\'s Dropping</h1><p>One email a week: what releases, what\'s on preorder, buy or skip.</p>{FORM}'
+     "<h2>What's in each issue</h2><p>What's Dropping is a free weekly email from MTG Drops. Each issue covers the Magic: The Gathering products coming up next, new announcements from Wizards of the Coast (sets, Commander decks, Secret Lair drops and Universes Beyond), date and price changes, and a short buy-or-skip verdict for each product. It's short enough to read in a couple of minutes.</p>"
+     "<ul><li><b>This week and next:</b> what releases or goes on sale, with dates and MSRPs</li><li><b>New announcements:</b> sets, Commander precons and Secret Lair drops added to the calendar</li><li><b>Changes:</b> delays, sell-outs, date moves and price updates</li><li><b>Buy, wait or skip:</b> our short call on each product, the same verdicts as on the site</li></ul>"
+     f'<h2>When it arrives</h2><p>Every Monday morning (US Central time). It is built from the same data as the <a href="{BASE}/">release calendar</a> and the <a href="{BASE}/secret-lair.html">Secret Lair schedule</a>, so nothing in the email contradicts the site. You can unsubscribe at any time from the link in every email, and we never share or sell your address.</p>'
+     f'<h2>Prefer a calendar or RSS?</h2><p>Add every release to your calendar ({ics_link("calendar.ics")}) or follow the <a href="{BASE}/feed.xml">RSS feed</a>.</p>',
+     "newsletter.html",
+     [{"@context": "https://schema.org", "@type": "WebPage", "@id": nl_url + "#page", "name": NL_TITLE, "url": nl_url, "description": NL_DESC, "dateModified": PD, "isPartOf": {"@id": f"{SITE_URL}/#website"}, "publisher": {"@id": f"{SITE_URL}/#org"}},
+      {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "MTG Drops", "item": f"{SITE_URL}/"}, {"@type": "ListItem", "position": 2, "name": "Newsletter", "item": nl_url}]}])
 # ---- Sponsor media kit (/sponsor.html). No traffic, subscriber or price figures are published here: stats on request, rates by quote. ----
 SPONSOR_EMAIL = "sponsors@mtgdrops.com"
 sp_url = url("sponsor.html")
@@ -511,9 +607,9 @@ sp_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a>
   "<h2>Sponsorship and disclosure policy</h2><ul>" + "".join(f"<li>{E(x)}</li>" for x in SP_POLICY) + "</ul>"
   f'<h2>How to book</h2><p>Email <a href="mailto:{SPONSOR_EMAIL}">{SPONSOR_EMAIL}</a> with:</p><ul>' + "".join(f"<li>{E(x)}</li>" for x in SP_ASK) + "</ul>"
   "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in sp_faq)
-  + f'<p><small>MTG Drops is independent and not affiliated with Wizards of the Coast. Last updated: {today}</small></p>')
+  + f'<p><small>MTG Drops is independent and not affiliated with Wizards of the Coast. Last updated: {tdate()}</small></p>')
 sp_ld = [
- {"@context": "https://schema.org", "@type": "WebPage", "name": SP_TITLE, "url": sp_url, "description": SP_DESC, "dateModified": today, "isPartOf": {"@id": f"{SITE_URL}/#website"}, "about": {"@id": f"{SITE_URL}/#org"}},
+ {"@context": "https://schema.org", "@type": "WebPage", "name": SP_TITLE, "url": sp_url, "description": SP_DESC, "dateModified": PD, "isPartOf": {"@id": f"{SITE_URL}/#website"}, "about": {"@id": f"{SITE_URL}/#org"}},
  {"@context": "https://schema.org", **ORG, "contactPoint": {"@type": "ContactPoint", "contactType": "advertising and sponsorships", "email": SPONSOR_EMAIL, "availableLanguage": "English"}},
  {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "MTG Drops", "item": f"{SITE_URL}/"}, {"@type": "ListItem", "position": 2, "name": "Sponsor", "item": sp_url}]},
  {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in sp_faq]},
@@ -521,7 +617,43 @@ sp_ld = [
 page(SP_TITLE, SP_DESC, sp_body, "sponsor.html", sp_ld)
 items = "".join(f"<item><title>{E(r['name'])} — {r['release_date']}</title><link>{SITE_URL}/p/{r['slug']}.html</link><guid>{SITE_URL}/p/{r['slug']}.html</guid><description>{E(r['note'])}</description></item>" for r in up if not r.get("placeholder"))
 open("dist/feed.xml", "w").write(f'<?xml version="1.0"?><rss version="2.0"><channel><title>MTG Drops</title><link>{SITE_URL}/</link><description>Upcoming MTG releases</description>{items}</channel></rss>')
-open("dist/sitemap.xml","w").write('<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+"".join(f"<url><loc>{SITE_URL}/{p}</loc><lastmod>{today}</lastmod></url>" for p in ["","secret-lair.html","guides/"]+[g[0] for g in GUIDES]+["newsletter.html","sponsor.html"]+[f"p/{r['slug']}.html" for r in public])+"</urlset>")
+def lastmod(p): return new_dates[(p + "index.html") if p == "" or p.endswith("/") else p]["date"]
+open("dist/sitemap.xml","w").write('<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+"".join(f"<url><loc>{SITE_URL}/{p}</loc><lastmod>{lastmod(p)}</lastmod></url>" for p in ["","secret-lair.html","guides/"]+[g[0] for g in GUIDES]+["newsletter.html","sponsor.html"]+[f"p/{r['slug']}.html" for r in public])+"</urlset>")
+# ---- iCalendar feeds (RFC 5545): /calendar.ics (every dated release) and /secret-lair.ics (Secret Lair only) ----
+# All-day events (DTSTART;VALUE=DATE, DTEND = next day), stable UIDs (<slug>@mtgdrops.com), DTSTAMP from the entry's
+# last_checked date so an unchanged entry produces byte-identical output, CRLF line endings, lines folded at 75 octets.
+def ics_esc(t): return t.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,").replace("\n", "\\n")
+def ics_fold(line):
+    b = line.encode("utf-8"); out = []; first = True
+    while b:
+        n = 75 if first else 74; cut = min(n, len(b))
+        while cut < len(b) and (b[cut] & 0xC0) == 0x80: cut -= 1  # never split a UTF-8 sequence
+        out.append((b"" if first else b" ") + b[:cut]); b = b[cut:]; first = False
+    return b"\r\n".join(out)
+def ics_events(rs):
+    ev = []
+    for r in rs:
+        if not dated(r) or (r.get("placeholder") and r["status"] != "confirmed"): continue
+        d0 = datetime.date.fromisoformat(r["release_date"]); link = f"{SITE_URL}/p/{r['slug']}.html" if not r.get("placeholder") else f"{SITE_URL}/"
+        stamp = (r.get("last_checked") or r["release_date"]).replace("-", "") + "T000000Z"
+        flag = " (delayed)" if r.get("delayed") else " (sold out)" if r.get("sold_out") else "" if r["status"] == "confirmed" else f" ({r['status']})"
+        ev.append((r["slug"], d0, d0 + datetime.timedelta(days=1), short_name(r) + flag, f"{r['type']}. {r['note']} Details: {link}", link, stamp))
+        if r.get("prerelease") == "Nov 6–12, 2026" and r["slug"] == "star-trek":  # prerelease week as its own multi-day event
+            ev.append((r["slug"] + "-prerelease", datetime.date(2026, 11, 6), datetime.date(2026, 11, 13), short_name(r) + " prerelease (local game stores)", f"Prerelease events at local game stores, the week before the {nice_date(r)} release (Wizards). Details: {link}", link, stamp))
+    return ev
+def ics(name, desc, rs):
+    L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//MTG Drops//Release calendar//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
+         "X-WR-CALNAME:" + ics_esc(name), "X-WR-CALDESC:" + ics_esc(desc), "REFRESH-INTERVAL;VALUE=DURATION:P1D", "X-PUBLISHED-TTL:P1D"]
+    for uid, a, b, summ, dsc, link, stamp in ics_events(rs):
+        L += ["BEGIN:VEVENT", f"UID:{uid}@mtgdrops.com", f"DTSTAMP:{stamp}", f"DTSTART;VALUE=DATE:{a:%Y%m%d}", f"DTEND;VALUE=DATE:{b:%Y%m%d}",
+              "SUMMARY:" + ics_esc(summ), "DESCRIPTION:" + ics_esc(dsc), f"URL:{link}", "TRANSP:TRANSPARENT", "END:VEVENT"]
+    L.append("END:VCALENDAR")
+    return b"".join(ics_fold(l) + b"\r\n" for l in L)
+open("dist/calendar.ics", "wb").write(ics("MTG Drops: MTG release calendar", "Every upcoming Magic: The Gathering release from mtgdrops.com", data))
+open("dist/secret-lair.ics", "wb").write(ics("MTG Drops: Secret Lair drops", "Secret Lair drop dates from mtgdrops.com/secret-lair.html", [r for r in data if r["type"] == "Secret Lair"]))
+# Persist page dates (committed). Only pages built this run are kept.
+_pd_new = json.dumps(dict(sorted(new_dates.items())), indent=1, sort_keys=True) + "\n"
+if not os.path.exists(PAGE_DATES_FILE) or open(PAGE_DATES_FILE).read() != _pd_new: open(PAGE_DATES_FILE, "w").write(_pd_new)
 open("dist/robots.txt","w").write(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n")
 open("dist/llms.txt","w").write(f"""# MTG Drops
 
@@ -538,6 +670,7 @@ open("dist/llms.txt","w").write(f"""# MTG Drops
 """ + "".join(f"- [{t}]({url(p)}): {d}\n" for p, t, d in GUIDES) + f"""- [Newsletter]({SITE_URL}/newsletter.html): weekly "What's Dropping" email
 - [Sponsor]({SITE_URL}/sponsor.html): media kit, sponsorship placements and disclosure policy (contact sponsors@mtgdrops.com)
 - [RSS feed]({SITE_URL}/feed.xml)
+- [Calendar feed (.ics), every release]({SITE_URL}/calendar.ics) and [Secret Lair only]({SITE_URL}/secret-lair.ics)
 - [Sitemap]({SITE_URL}/sitemap.xml)
 
 ## Secret Lair drops

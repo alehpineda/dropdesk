@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: "0 11 * * *"  # daily 11:00 UTC rebuild so date-based sections (Secret Lair hub, guides) and last-updated stay current
+    - cron: "0 11 * * *"  # daily 11:00 UTC rebuild so date-based sections (Secret Lair hub, guides) stay current; page dates only change when content does
 permissions:
   contents: read
   pages: write
@@ -20,7 +20,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      # Page dates (sitemap lastmod, "Last updated", dateModified) only move when a page's content hash changes.
+      # The workflow can't commit, so the dates computed by each run are carried to the next run in the Actions cache.
+      - uses: actions/cache/restore@v4
+        with:
+          path: .cache/page_dates.json
+          key: page-dates-${{ github.run_id }}
+          restore-keys: page-dates-
       - run: python3 build.py && python3 check_links.py
+        env:
+          TZ: America/Chicago
+          PAGE_DATES_CACHE: .cache/page_dates.json
+      - run: mkdir -p .cache && cp data/page_dates.json .cache/page_dates.json
+      - uses: actions/cache/save@v4
+        with:
+          path: .cache/page_dates.json
+          key: page-dates-${{ github.run_id }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
