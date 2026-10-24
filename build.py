@@ -439,7 +439,7 @@ if nxt_set: g_faq.append(("What is the next MTG set after 2026?", f"{nxt_set['na
 g_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › <a href="{BASE}/guides/">Guides</a> › Fall/Holiday 2026</nav><h1>{E(G_H1)}</h1>'
   f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
   f'<p><b>Last updated:</b> {tdate()} · {len(g_items)} products from October to December 2026</p>'
-  f'<p>Every Magic: The Gathering product on our calendar for October, November and December 2026: sets, Commander decks, Secret Lair drops, bundles and special releases, with release dates, MSRPs and our buy/skip verdict. Secret Lair sales are tracked on the <a href="{BASE}/secret-lair.html">Secret Lair hub</a>, and November\'s biggest release has its own <a href="{BASE}/guides/star-trek-mtg-release-guide.html">Star Trek release guide</a>.</p>'
+  f'<p>Every Magic: The Gathering product on our calendar for October, November and December 2026: sets, Commander decks, Secret Lair drops, bundles and special releases, with release dates, MSRPs and our buy/skip verdict. Secret Lair sales are tracked on the <a href="{BASE}/secret-lair.html">Secret Lair hub</a>, and November\'s biggest release has its own <a href="{BASE}/guides/star-trek-mtg-release-guide.html">Star Trek release guide</a>. Looking further ahead? See the <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>.</p>'
   "<h2>Best picks for gifts</h2>" + ("<p>Only products we already rate as a buy, and who each one suits:</p><ul>" + "".join(f'<li><a href="{BASE}/p/{r["slug"]}.html">{E(short_name(r))}</a> ({nice_date(r)}): for {E(r["gift_for"])}.</li>' for r in g_gifts) + "</ul>" if g_gifts else "<p>No buy-rated products this season yet.</p>")
   + "".join(f"<h2>{g_month_name(m)}</h2>" + ("".join(guide_item(r) for r in rs) if rs else "<p>Nothing scheduled yet.</p>") for m, rs in g_by.items())
   + ("<h2>Announced, no date yet</h2><p>Announced but not yet scheduled, so these may or may not land before the end of 2026.</p>" + "".join(guide_item(r) for r in g_tba) if g_tba else "")
@@ -529,7 +529,7 @@ st_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a>
   "<p>If you want to collect the signed cards or the surge foil Booster Fun, that is Collector Booster territory; for drafting or a first taste of the set, Play Boosters, a Bundle or Draft Night are the cheaper way in. Prices in stores often fall after release, so preordering mainly makes sense if you want the product on day one.</p>"
   f'<p class=disc><small>{E(DISCLOSURE)}</small></p>'
   "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in st_faq)
-  + f'<p>More releases: <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a>, the <a href="{BASE}/secret-lair.html">Secret Lair drop schedule</a> and the full <a href="{BASE}/">release calendar</a>.</p>'
+  + f'<p>More releases: <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a>, the <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>, the <a href="{BASE}/secret-lair.html">Secret Lair drop schedule</a> and the full <a href="{BASE}/">release calendar</a>.</p>'
   + f"<h2>Get the weekly release email</h2><p>What's Dropping covers what's releasing next, date and price changes, and a buy-or-skip verdict for each product.</p>{FORM}<p><small>Last updated: {tdate()}</small></p>")
 ST_DESC = "MTG Star Trek release guide: Nov 13, 2026 release date, every product and MSRP, the four Commander decks, key dates, signed cards and what to buy."
 st_ld = [
@@ -546,8 +546,62 @@ st_ld = [
  {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in st_faq]},
 ]
 page(ST_TITLE, ST_DESC, st_body, ST_SLUG, st_ld)
+# ---- Guide 3: MTG 2027 release schedule (dates/notes from releases.json; set-count and MagicCon facts from Wizards' Jul 17, 2026 announcement) ----
+Y_SRC = "https://magic.wizards.com/en/news/announcements/everything-announced-for-the-magic-multiverse-in-2027"
+Y_SLUG = "guides/mtg-2027-release-schedule.html"; y_url = url(Y_SLUG)
+Y_TITLE = "MTG 2027 Release Schedule: Every Set & Precon | MTG Drops"
+Y_H1 = "MTG 2027 Release Schedule: Every Set and Commander Deck"
+Y_PUBLISHED = "2026-10-24"
+y_items = [r for r in data if dated(r) and r["release_date"][:4] == "2027"]
+y_sets = [r for r in y_items if r["type"] in ("Main Set", "Universes Beyond")]
+y_cmd = [r for r in y_items if r["type"] == "Commander Precon"]
+y_months = sorted({r["release_date"][:7] for r in y_items})
+def y_link(r): return E(r["name"]) if r.get("placeholder") else f'<a href="{BASE}/p/{r["slug"]}.html">{E(r["name"])}</a>'
+def y_item(r):
+    ps = r.get("prices") or []
+    price = "; ".join(f"{p['label']}: {fmt(p)}" for p in ps) if ps else "TBA"
+    win = f'<p><b>Also:</b> {E(r["window"])}</p>' if r.get("window") else ""
+    return (f'<div class=card data-type="{E(r["type"])}"><span class=t>{E(r["type"])}</span>{badges(r)}<h3>{y_link(r)}</h3>'
+            f'<p><b>Date:</b> {nice_date(r)}</p>{win}<p><b>Price:</b> {E(price)}</p><p>{vtag(r)}{E(r["note"])}</p>{"" if r.get("placeholder") else amz_btn(r)}</div>')
+def y_when(r): return f"{short_name(r)} ({nice_date(r)}" + ("" if r["status"] == "confirmed" else f", {r['status']}") + ")"
+y_first = y_sets[0] if y_sets else None
+y_faq = []
+if y_first: y_faq.append(("What is the first MTG set of 2027?", f"{y_first['name']}, releasing {nice_date(y_first)} ({y_first['status']})." + (f" {y_first['window']}." if y_first.get("window") else "")))
+y_faq.append(("What MTG sets release in 2027?", "On our calendar: " + "; ".join(y_when(r) for r in y_sets) + ". Wizards says 2027 has three Magic Multiverse sets and three Universes Beyond sets, alternating between the two, so not every 2027 set is announced yet."))
+y_faq.append(("Which 2027 MTG sets have Commander decks?", ("Announced so far: " + "; ".join(y_when(r) for r in y_cmd) + ".") if y_cmd else "None announced yet."))
+y_pre = [r for r in y_items if r.get("window") and "reorder" in r["window"]]
+y_faq.append(("Can you preorder 2027 MTG sets yet?", (("Wizards says preorders are open for " + " and ".join(short_name(r) for r in y_pre) + ". ") if y_pre else "") + "The other 2027 products have no announced preorder details on our calendar yet. None of the 2027 products has a verdict from us yet, because decklists, card previews or prices are still missing."))
+y_faq.append(("How many MagicCons are there in 2027?", "Wizards says there will be four MagicCons in 2027, including the first MagicCon in Japan."))
+y_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › <a href="{BASE}/guides/">Guides</a> › 2027 release schedule</nav><h1>{E(Y_H1)}</h1>'
+  f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
+  f'<p><b>Last updated:</b> {tdate()} · {len(y_items)} products dated in 2027</p>'
+  f'<p>Every Magic: The Gathering product on our calendar for 2027: premier sets, Universes Beyond sets and Commander decks, with release dates, known MSRPs, preorder status and sources. Wizards says 2027 will have <a href="{Y_SRC}">three Magic Multiverse sets and three Universes Beyond sets</a>, alternating between the two, and four MagicCons, including the first one in Japan. Each product page lists its sources, and dates that are not confirmed yet are tagged. For what\'s releasing before then, see <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a> and the <a href="{BASE}/guides/star-trek-mtg-release-guide.html">Star Trek release guide</a>.</p>'
+  "<h2>2027 at a glance</h2><table><tr><th>Date</th><th>Product</th><th>Type</th></tr>" + "".join(f"<tr><td>{nice_date(r)}</td><td>{y_link(r)}</td><td>{E(r['type'])}{'' if r['status'] == 'confirmed' else ' (' + E(r['status']) + ')'}</td></tr>" for r in y_items) + "</table>"
+  + "".join(f"<h2>{g_month_name(m)}</h2>" + "".join(y_item(r) for r in y_items if r["release_date"][:7] == m) for m in y_months)
+  + "<h2>Should you preorder 2027 sets now?</h2><p>None of the 2027 products has a buy, wait or skip verdict from us yet: card previews, decklists or prices are still missing for each of them. We add a verdict once there's enough to judge, and the weekly email flags it when we do.</p>"
+  + f'<p class=disc><small>{E(DISCLOSURE)}</small></p>'
+  + "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in y_faq)
+  + f'<p>More releases: the <a href="{BASE}/secret-lair.html">Secret Lair drop schedule</a> and the full <a href="{BASE}/">release calendar</a>.</p>'
+  + f"<h2>Get the weekly release email</h2><p>What's Dropping covers what's releasing next, date and price changes, and a buy-or-skip verdict for each product.</p>{FORM}<p><small>Last updated: {tdate()}</small></p>")
+Y_DESC = "MTG 2027 release schedule: Nauctis, Darkhold Destiny, Kamigawa: Titanbreach, Zhalfir and their Commander decks, with dates, MSRPs and preorder status."
+y_pub = [r for r in y_items if not r.get("placeholder")]
+y_ld = [
+ {"@context": "https://schema.org", "@type": "Article", "headline": Y_H1, "url": y_url, "mainEntityOfPage": y_url, "image": OG_IMAGE, "datePublished": Y_PUBLISHED, "dateModified": PD,
+  "author": {"@id": f"{SITE_URL}/#org"}, "publisher": {"@id": f"{SITE_URL}/#org"}, "isPartOf": {"@id": f"{SITE_URL}/#website"},
+  "description": Y_DESC, "citation": [Y_SRC]},
+ {"@context": "https://schema.org", **ORG},
+ {"@context": "https://schema.org", "@type": "ItemList", "name": "MTG releases in 2027", "numberOfItems": len(y_pub),
+  "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate(y_pub)]},
+ {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+   {"@type": "ListItem", "position": 1, "name": "MTG Drops", "item": f"{SITE_URL}/"},
+   {"@type": "ListItem", "position": 2, "name": "Guides", "item": f"{SITE_URL}/guides/"},
+   {"@type": "ListItem", "position": 3, "name": "MTG 2027 release schedule", "item": y_url}]},
+ {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in y_faq]},
+]
+page(Y_TITLE, Y_DESC, y_body, Y_SLUG, y_ld)
 GUIDES = [(G_SLUG, G_H1, "Every Magic product from October to December 2026, grouped by month, with prices, buy/skip verdicts and holiday gift picks."),
-          (ST_SLUG, ST_H1, "Everything in the Nov 13, 2026 Star Trek set: every product and MSRP, the four Commander decks, key dates, signed cards and what to buy.")]
+          (ST_SLUG, ST_H1, "Everything in the Nov 13, 2026 Star Trek set: every product and MSRP, the four Commander decks, key dates, signed cards and what to buy."),
+          (Y_SLUG, Y_H1, "Every 2027 MTG set and Commander deck on our calendar: Nauctis, Darkhold Destiny, Titanbreach and Zhalfir, with dates, MSRPs and preorder status.")]
 gi_url = url("guides/index.html")
 page("MTG Guides: Release Roundups & Gift Picks | MTG Drops", "MTG Drops guides: Magic: The Gathering release roundups, buying guides and gift picks, generated from our release calendar.",
      f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › Guides</nav><h1>MTG Drops Guides</h1><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'

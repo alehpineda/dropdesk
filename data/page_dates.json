@@ -1,15 +1,19 @@
 {
  "guides/index.html": {
-  "date": "2026-10-19",
-  "hash": "823a3657fde1a250"
+  "date": "2026-10-24",
+  "hash": "b553a8ba414eec14"
+ },
+ "guides/mtg-2027-release-schedule.html": {
+  "date": "2026-10-24",
+  "hash": "b25832caba621659"
  },
  "guides/mtg-releases-fall-holiday-2026.html": {
-  "date": "2026-10-23",
-  "hash": "15be24bc1e37a8e8"
+  "date": "2026-10-24",
+  "hash": "16568c43567c2d7c"
  },
  "guides/star-trek-mtg-release-guide.html": {
-  "date": "2026-10-23",
-  "hash": "da3445d3bc18a3c7"
+  "date": "2026-10-24",
+  "hash": "88b7a8932031e3e4"
  },
  "index.html": {
   "date": "2026-10-23",
