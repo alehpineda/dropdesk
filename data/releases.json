@@ -523,7 +523,18 @@
       "revealed cards": "https://magic.wizards.com/en/news/announcements/marvel-darkhold-destiny-emerges-april-2027",
       "products": "https://magic.wizards.com/en/products/marvel/marvel-darkhold-destiny"
     },
-    "last_checked": "2026-10-19"
+    "last_checked": "2026-10-19",
+    "amazon_asin": "B0HK6BMDNT",
+    "amazon_evidence": {
+      "asin": "B0HK6BMDNT",
+      "amazon_title": "Magic: The Gathering | Marvel: Darkhold Destiny (Bundle listing)",
+      "seller": "Ships from and sold by Amazon.com (checked 2026-10-25), pre-order at $69.99, exactly the Wizards MSRP, so no scalper markup.",
+      "price_seen_usd": [
+        69.99
+      ],
+      "checked": "2026-10-25",
+      "match_reason": "Official Wizards of the Coast listing (Manufacturer Wizards of the Coast, brand Marvel, UPC 195166351353), pre-order for the Apr 9, 2027 release, matching our release_date. Its bullets describe the Bundle: 9 Booster Packs, 1 Traditional Foil Mythic promo, 10 Traditional Foil + 20 regular lands (5 full-art), Spindown life counter, card storage box and 2 reference cards, which matches Wizards' WPN Bundle contents. The Bundle ($69.99 MSRP) is the set's usual gift/draft buy, so it stands in as the single Amazon link, same as the Star Trek Bundle."
+    }
   },
   {
     "slug": "marvel-darkhold-destiny-commander",
