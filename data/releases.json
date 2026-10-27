@@ -210,7 +210,7 @@
     "status": "confirmed",
     "window": "Nov 9, 2026, 9 AM PT / 12 PM ET, only at MagicSecretLair.com · while supplies last · bonus Return of the Wildspeaker as \"Transporter Boondoggle\" for $200+ spent on the Superdrop",
     "source": "https://www.gamespot.com/articles/star-trek-enters-magic-the-gatherings-secret-lair-next-month-here-are-the-cards/",
-    "note": "6 Star Trek drops at about $30 non-foil / $40 foil each (GameSpot), on sale Nov 9. Five are revealed: Beam Me Up (4 reversible blink cards incl. Momentary Blink), KHAAAAAAAAN (6 Wrath of Khan cards incl. Buried Alive, Genesis Wave), Lower Decks (Thrasios and Silas Renn's Secret Lair debut, Weatherlight), tlhIngan maH (5 reversible English/Klingon red cards incl. Seething Song) and New Worlds (10 basic lands by Alayna Danner). The sixth drop isn't revealed yet. No buy/skip verdict from us on this one yet. Price out the singles you'd play before buying a whole drop.",
+    "note": "6 Star Trek drops at about $30 non-foil / $40 foil each (GameSpot), on sale Nov 9. Five are revealed: Beam Me Up (4 reversible blink cards incl. Momentary Blink), KHAAAAAAAAN (6 Wrath of Khan cards incl. Buried Alive, Genesis Wave), Lower Decks (Thrasios and Silas Renn's Secret Lair debut, Weatherlight), tlhIngan maH (5 reversible English/Klingon red cards incl. Seething Song) and New Worlds (10 basic lands by Alayna Danner). The sixth drop isn't revealed yet. Buy only if you really like Star Trek; otherwise skip. Fan-collectible and theme play, not a speculative pickup.",
     "prices": [
       {
         "label": "Each drop, non-foil (about)",
@@ -284,7 +284,8 @@
       "bonus card": "https://www.gamespot.com/articles/star-trek-enters-magic-the-gatherings-secret-lair-next-month-here-are-the-cards/"
     },
     "short_name": "Star Trek Superdrop",
-    "verdict": null,
+    "verdict": "buy",
+    "gift_for": "Star Trek fans who want the themed Secret Lair drops: skip if you're not into Trek",
     "sold_out": null,
     "last_checked": "2026-10-27"
   },
