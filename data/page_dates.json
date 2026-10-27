@@ -4,28 +4,28 @@
   "hash": "b553a8ba414eec14"
  },
  "guides/mtg-2027-release-schedule.html": {
-  "date": "2026-10-24",
-  "hash": "b25832caba621659"
+  "date": "2026-10-25",
+  "hash": "8b761c3c8767e048"
  },
  "guides/mtg-releases-fall-holiday-2026.html": {
-  "date": "2026-10-24",
-  "hash": "16568c43567c2d7c"
+  "date": "2026-10-27",
+  "hash": "aec837ea9a77f913"
  },
  "guides/star-trek-mtg-release-guide.html": {
   "date": "2026-10-24",
   "hash": "88b7a8932031e3e4"
  },
  "index.html": {
-  "date": "2026-10-23",
-  "hash": "d26ddd59ef6178e3"
+  "date": "2026-10-27",
+  "hash": "dc88ae7c09cb0591"
  },
  "newsletter.html": {
   "date": "2026-10-23",
   "hash": "9c1968e3c471c96d"
  },
  "p/countdown-kit-marvels-history-of-heroes.html": {
-  "date": "2026-10-23",
-  "hash": "a336f47f7273de75"
+  "date": "2026-10-27",
+  "hash": "e89bfee20f16dda8"
  },
  "p/kamigawa-titanbreach-commander.html": {
   "date": "2026-10-23",
@@ -40,12 +40,12 @@
   "hash": "1602aeb45c7d4385"
  },
  "p/marvel-darkhold-destiny.html": {
-  "date": "2026-10-23",
-  "hash": "fac9e895fc32e452"
+  "date": "2026-10-25",
+  "hash": "2560593be0e04e81"
  },
  "p/mystery-booster-commander-edition.html": {
-  "date": "2026-10-23",
-  "hash": "54d5cfe94152d700"
+  "date": "2026-10-27",
+  "hash": "fc09291275f1ebdf"
  },
  "p/nauctis-commander.html": {
   "date": "2026-10-23",
@@ -56,24 +56,24 @@
   "hash": "07ad62bc13428652"
  },
  "p/secret-lair-atlanta.html": {
-  "date": "2026-10-23",
-  "hash": "8fa9d476452fb098"
+  "date": "2026-10-27",
+  "hash": "446836365c8036b2"
  },
  "p/secret-lair-chaos-vault-reality-fracture.html": {
-  "date": "2026-10-23",
-  "hash": "fe89062986e757c3"
+  "date": "2026-10-27",
+  "hash": "e902efe1856b19dc"
  },
  "p/secret-lair-corn-maze-superdrop.html": {
-  "date": "2026-10-23",
-  "hash": "fe48db712df041d0"
+  "date": "2026-10-27",
+  "hash": "d4e3cf0e67b74f1d"
  },
  "p/secret-lair-duality-distorted.html": {
-  "date": "2026-10-23",
-  "hash": "944f33c9bd761773"
+  "date": "2026-10-27",
+  "hash": "d3928c6f45aa6b55"
  },
  "p/secret-lair-marvel-doomsdrop.html": {
-  "date": "2026-10-23",
-  "hash": "81a1722238c81d8e"
+  "date": "2026-10-27",
+  "hash": "ba43c12feb2efd31"
  },
  "p/secret-lair-most-powerful-superdrop.html": {
   "date": "2026-10-23",
@@ -84,40 +84,44 @@
   "hash": "0a457811f96a4dee"
  },
  "p/secret-lair-reality-fracture-bundle-bundles.html": {
-  "date": "2026-10-23",
-  "hash": "918f045f6a1db79e"
+  "date": "2026-10-27",
+  "hash": "e18cf663d1841f83"
+ },
+ "p/secret-lair-star-trek-set-phasers-superdrop.html": {
+  "date": "2026-10-27",
+  "hash": "61635d33c563aa75"
  },
  "p/secret-lair-strange-school.html": {
-  "date": "2026-10-23",
-  "hash": "8959f40d11af639d"
+  "date": "2026-10-27",
+  "hash": "a7bd3270572914bd"
  },
  "p/spider-mania-commander.html": {
-  "date": "2026-10-23",
-  "hash": "d3fdf1d526b636f6"
+  "date": "2026-10-27",
+  "hash": "06cf403b5d1b25e0"
  },
  "p/star-trek-commander.html": {
-  "date": "2026-10-23",
-  "hash": "2322813fe16d37a0"
+  "date": "2026-10-27",
+  "hash": "4647ecd12593fcd6"
  },
  "p/star-trek.html": {
-  "date": "2026-10-23",
-  "hash": "2ae1ad5fb75b08a3"
+  "date": "2026-10-27",
+  "hash": "e1afc129226323c9"
  },
  "p/unannounced-ub-aug-2027.html": {
   "date": "2026-10-23",
   "hash": "9a86e00d36a34df9"
  },
  "p/zeta-set-rerelease.html": {
-  "date": "2026-10-23",
-  "hash": "e64f0dd6855c927b"
+  "date": "2026-10-27",
+  "hash": "2f9ef98a7a81982d"
  },
  "p/zhalfir.html": {
   "date": "2026-10-23",
   "hash": "79f6bd953ac92acb"
  },
  "secret-lair.html": {
-  "date": "2026-10-23",
-  "hash": "877ddaf0f918d6bf"
+  "date": "2026-10-27",
+  "hash": "bcc466b746b1ccc9"
  },
  "sponsor.html": {
   "date": "2026-10-23",

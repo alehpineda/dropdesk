@@ -203,6 +203,92 @@
     "last_checked": "2026-10-17"
   },
   {
+    "slug": "secret-lair-star-trek-set-phasers-superdrop",
+    "name": "Secret Lair x Star Trek: Set Phasers to Superdrop",
+    "type": "Secret Lair",
+    "release_date": "2026-11-09",
+    "status": "confirmed",
+    "window": "Nov 9, 2026, 9 AM PT / 12 PM ET, only at MagicSecretLair.com · while supplies last · bonus Return of the Wildspeaker as \"Transporter Boondoggle\" for $200+ spent on the Superdrop",
+    "source": "https://www.gamespot.com/articles/star-trek-enters-magic-the-gatherings-secret-lair-next-month-here-are-the-cards/",
+    "note": "6 Star Trek drops at about $30 non-foil / $40 foil each (GameSpot), on sale Nov 9. Five are revealed: Beam Me Up (4 reversible blink cards incl. Momentary Blink), KHAAAAAAAAN (6 Wrath of Khan cards incl. Buried Alive, Genesis Wave), Lower Decks (Thrasios and Silas Renn's Secret Lair debut, Weatherlight), tlhIngan maH (5 reversible English/Klingon red cards incl. Seething Song) and New Worlds (10 basic lands by Alayna Danner). The sixth drop isn't revealed yet. No buy/skip verdict from us on this one yet. Price out the singles you'd play before buying a whole drop.",
+    "prices": [
+      {
+        "label": "Each drop, non-foil (about)",
+        "usd": 30
+      },
+      {
+        "label": "Each drop, foil (about)",
+        "usd": 40
+      }
+    ],
+    "contents": [
+      "6 drops: Beam Me Up; KHAAAAAAAAN; Lower Decks; tlhIngan maH; New Worlds; sixth drop not yet revealed"
+    ],
+    "inside": [
+      [
+        "Beam Me Up (all reversible)",
+        [
+          "Eerie Interlude as \"Beam Us Up\"",
+          "Momentary Blink",
+          "Essence Flux as \"Materialize\"",
+          "Conjurer's Closet as \"The Transporter\""
+        ]
+      ],
+      [
+        "KHAAAAAAAAN",
+        [
+          "Wrath of the Skies as \"Best Served Cold\"",
+          "Commandeer",
+          "Illusionist's Gambit as \"Reliant's Betrayal\"",
+          "Buried Alive",
+          "Genesis Wave",
+          "Fracture"
+        ]
+      ],
+      [
+        "Lower Decks",
+        [
+          "Inti, Seneschal of the Sun as \"Mariner, Breaching Protocol\"",
+          "Kambal, Profiteering Mayor as \"Boimler, Citing Protocol\"",
+          "Silas Renn, Seeker Adept as \"Rutherford, Rebuilding the Past\"",
+          "Thrasios, Triton Hero as \"Tendi, Exploring the Future\"",
+          "Weatherlight as \"U.S.S. Cerritos, California-Class\""
+        ]
+      ],
+      [
+        "tlhIngan maH (all reversible, English/Klingon)",
+        [
+          "Demand Answers",
+          "Relentless Assault",
+          "Seething Song",
+          "War's Toll",
+          "Warstorm Surge"
+        ]
+      ],
+      [
+        "New Worlds (art by Alayna Danner)",
+        [
+          "2x Plains",
+          "2x Island",
+          "2x Swamp",
+          "2x Mountain",
+          "2x Forest"
+        ]
+      ]
+    ],
+    "inside_source": "https://www.gamespot.com/articles/star-trek-enters-magic-the-gatherings-secret-lair-next-month-here-are-the-cards/",
+    "field_sources": {
+      "release_date": "https://www.gamespot.com/articles/star-trek-enters-magic-the-gatherings-secret-lair-next-month-here-are-the-cards/",
+      "prices": "https://www.gamespot.com/articles/star-trek-enters-magic-the-gatherings-secret-lair-next-month-here-are-the-cards/",
+      "contents": "https://www.gamespot.com/articles/star-trek-enters-magic-the-gatherings-secret-lair-next-month-here-are-the-cards/",
+      "bonus card": "https://www.gamespot.com/articles/star-trek-enters-magic-the-gatherings-secret-lair-next-month-here-are-the-cards/"
+    },
+    "short_name": "Star Trek Superdrop",
+    "verdict": null,
+    "sold_out": null,
+    "last_checked": "2026-10-27"
+  },
+  {
     "slug": "secret-lair-marvel-doomsdrop",
     "name": "Secret Lair Drop Series: Marvel: Doomsdrop",
     "type": "Secret Lair",
@@ -369,7 +455,8 @@
       ]
     ],
     "facts": [
-      "Face commanders and colors (Wizards, Oct 20): Federation Fleet, Jean-Luc Picard, Luminary (blue-red-white); Landing Party, Commander Spock (green-white-blue); Klingon Fury, Worf, Defiant Commander (red-white-black); We Are the Borg, The Borg Queen (white-blue-black). Full decklists haven't been revealed yet.",
+      "Face commanders and colors (Wizards, Oct 20): Federation Fleet, Jean-Luc Picard, Luminary (blue-red-white); Landing Party, Commander Spock (green-white-blue); Klingon Fury, Worf, Defiant Commander (red-white-black); We Are the Borg, The Borg Queen (white-blue-black).",
+      "Decklists (Wizards, Oct 26): the full We Are the Borg list is out, with Locutus of Borg as its second new commander and staples like Sol Ring, Skullclamp, Toxic Deluge, Tempered Steel and Arcane Signet. Wizards says the Federation Fleet, Landing Party and Klingon Fury lists come later.",
       "Set code TRC; legal in Commander, Legacy and Vintage (individual cards also legal where already available in other formats).",
       "Commander Party events: Round 1 Nov 20–26, Round 2 Dec 11–17, 2026."
     ],
@@ -378,9 +465,10 @@
     "gift_for": "Commander players, especially Trek fans: a regular $74.99 deck is ready to play out of the box (skip the marked-up Collector's Editions)",
     "field_sources": {
       "delays": "https://magic.wizards.com/en/news/announcements/star-trek-product-delays-in-select-regions",
-      "face commanders and colors": "https://magic.wizards.com/en/news/announcements/star-trek-commander-decklists"
+      "face commanders and colors": "https://magic.wizards.com/en/news/announcements/star-trek-commander-decklists",
+      "decklists": "https://magic.wizards.com/en/news/announcements/star-trek-commander-decklists"
     },
-    "last_checked": "2026-10-23"
+    "last_checked": "2026-10-27"
   },
   {
     "slug": "spider-mania-commander",
@@ -648,11 +736,11 @@
     "slug": "secret-lair-strange-school",
     "name": "Secret Lair: 怪異学校 — Strange School (Reality Fracture)",
     "type": "Secret Lair",
-    "release_date": "TBA",
+    "release_date": "2026-10-26",
     "source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
-    "status": "unconfirmed",
-    "window": "Chaos Vault on MagicSecretLair.com, date TBA ('soon') · $29.99 non-foil / $39.99 foil; also in 3 Bundle Bundles",
-    "note": "5 mono-black reprints (Attrition, Bitter Ordeal, Ophiomancer, Sign in Blood, Soul Spike) with black-and-white horror-manga art. Announced Oct 13, 2026; Wizards says it launches in the Chaos Vault 'soon', with no date yet. All reprints, no new cards. Wait for the date and price out the singles.",
+    "status": "confirmed",
+    "window": "Went on sale Oct 26, 2026, 9 AM PT in the Chaos Vault on MagicSecretLair.com · $29.99 non-foil / $39.99 foil; also in 3 Bundle Bundles. Listed as no longer available by early afternoon ET on launch day",
+    "note": "Sold out: 5 mono-black reprints (Attrition, Bitter Ordeal, Ophiomancer, Sign in Blood, Soul Spike) with black-and-white horror-manga art. It went on sale Oct 26 in the Chaos Vault and every listing read 'No longer available' by early afternoon ET that day (NerdSnack). All reprints, no new cards. NerdSnack puts the cheapest existing printings at about $65, and resale asks start near $193 (TCGplayer, Oct 27), but no copies have shipped or sold at that price yet. Wait: don't pay resale for the sealed drop; buy the singles you'll actually play.",
     "prices": [
       {
         "label": "Non-foil",
@@ -686,20 +774,24 @@
     "inside_source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
     "field_sources": {
       "prices": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
-      "contents": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture"
+      "contents": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
+      "release_date": "https://sauim.com/post/mtgsecretlair.com/3myplbbfjwi2e",
+      "sale date (Secret Lair email)": "https://mtgrocks.com/mtg-duality-distorted-release-date/",
+      "sell-out and resale prices": "https://nerdsnack.com/reality-fracture-secret-lair-review/"
     },
     "verdict": "wait",
-    "last_checked": "2026-10-17"
+    "last_checked": "2026-10-27",
+    "sold_out": true
   },
   {
     "slug": "secret-lair-duality-distorted",
     "name": "Secret Lair: Duality Distorted (Reality Fracture)",
     "type": "Secret Lair",
-    "release_date": "TBA",
+    "release_date": "2026-10-26",
     "source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
-    "status": "unconfirmed",
-    "window": "Chaos Vault on MagicSecretLair.com, date TBA ('soon') · $29.99 non-foil / $39.99 foil; also in 3 Bundle Bundles",
-    "note": "4 retro-frame reprints (Thoughtseize, Desperate Ritual, Pyroblast, Tribute to the World Tree), each by an artist reimagining one of their earlier pieces. Announced Oct 13, 2026; Wizards says it launches in the Chaos Vault 'soon', with no date yet. All reprints, no new cards. Wait for the date and price out the singles.",
+    "status": "confirmed",
+    "window": "Went on sale Oct 26, 2026, 9 AM PT in the Chaos Vault on MagicSecretLair.com · $29.99 non-foil / $39.99 foil; also in 3 Bundle Bundles. Listed as no longer available by early afternoon ET on launch day",
+    "note": "Sold out: 4 retro-frame reprints (Thoughtseize, Desperate Ritual, Pyroblast, Tribute to the World Tree), each by an artist reimagining one of their earlier pieces. It went on sale Oct 26 in the Chaos Vault and every listing read 'No longer available' by early afternoon ET that day (NerdSnack). All reprints, no new cards. NerdSnack puts the cheapest existing printings at about $37, and resale asks start near $190 (TCGplayer, Oct 27), but no copies have shipped or sold at that price yet. Wait: don't pay resale for the sealed drop; buy the singles you'll actually play.",
     "prices": [
       {
         "label": "Non-foil",
@@ -731,20 +823,24 @@
     "inside_source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
     "field_sources": {
       "prices": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
-      "contents": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture"
+      "contents": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
+      "release_date": "https://sauim.com/post/mtgsecretlair.com/3myplbbfjwi2e",
+      "sale date (Secret Lair email)": "https://mtgrocks.com/mtg-duality-distorted-release-date/",
+      "sell-out and resale prices": "https://nerdsnack.com/reality-fracture-secret-lair-review/"
     },
     "verdict": "wait",
-    "last_checked": "2026-10-17"
+    "last_checked": "2026-10-27",
+    "sold_out": true
   },
   {
     "slug": "secret-lair-reality-fracture-bundle-bundles",
     "name": "Chaos Vault: Reality Fracture Secret Lair Bundle Bundles",
     "type": "Secret Lair",
-    "release_date": "TBA",
-    "status": "unconfirmed",
-    "window": "Chaos Vault on MagicSecretLair.com, date TBA ('soon'). The Secret Lair Bundle inside ships on normal Secret Lair fulfillment timing (Wizards, Oct 19)",
+    "release_date": "2026-10-26",
+    "status": "confirmed",
+    "window": "Went on sale Oct 26, 2026, 9 AM PT in the Chaos Vault on MagicSecretLair.com; listed as no longer available by early afternoon ET on launch day. The Secret Lair Bundle inside ships on normal Secret Lair fulfillment timing (Wizards, Oct 19)",
     "source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
-    "note": "Three Chaos Vault packages, each a Reality Fracture Secret Lair Bundle plus the Strange School and Duality Distorted drops: $159.98 non-foil, $179.98 foil, $234.99 for both editions. Our math: the $89.99 bundle MSRP plus the drops at $29.99/$39.99 comes to $149.97, $169.97 and $229.95, so these packages cost $5 to $10 more than buying everything separately at list price. Skip unless the bundle is hard to find at MSRP. Wait for the date.",
+    "note": "Sold out on launch day (Oct 26) in the Chaos Vault (NerdSnack). Three packages, each a Reality Fracture Secret Lair Bundle plus the Strange School and Duality Distorted drops: $159.98 non-foil, $179.98 foil, $234.99 for both editions. Our math: the $89.99 bundle MSRP plus the drops at $29.99/$39.99 comes to $149.97, $169.97 and $229.95, so these packages cost $5 to $10 more than buying everything separately at list price. Skip on resale: NerdSnack reports the bundle alone already sells for about $165, $75 over its $89.99 retail.",
     "prices": [
       {
         "label": "Non-Foil Edition",
@@ -793,12 +889,14 @@
     "field_sources": {
       "prices": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
       "contents": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
-      "storefront listing (Coming Soon)": "https://secretlair.wizards.com/us/en/",
-      "fulfillment": "https://magic.wizards.com/en/news/announcements/reality-fracture-secret-lair-bundle-delayed"
+      "fulfillment": "https://magic.wizards.com/en/news/announcements/reality-fracture-secret-lair-bundle-delayed",
+      "release_date": "https://sauim.com/post/mtgsecretlair.com/3myplbbfjwi2e",
+      "sell-out and resale prices": "https://nerdsnack.com/reality-fracture-secret-lair-review/"
     },
     "short_name": "Reality Fracture Bundle Bundles",
     "verdict": "skip",
-    "last_checked": "2026-10-20"
+    "last_checked": "2026-10-27",
+    "sold_out": true
   },
   {
     "slug": "secret-lair-corn-maze-superdrop",
