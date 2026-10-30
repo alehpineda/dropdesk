@@ -155,7 +155,8 @@ btns = '<button class=on data-f="">All</button>' + "".join(f'<button data-f="{E(
 js = "<script>document.querySelectorAll('.f button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.f button').forEach(x=>x.classList.remove('on'));b.classList.add('on');document.querySelectorAll('.card').forEach(c=>c.style.display=!b.dataset.f||c.dataset.type==b.dataset.f?'':'none')})</script>"
 groups = {}
 for r in up: groups.setdefault(mon_yyyy(r) if is_up(r) else "Already released", []).append(r)
-months = "".join(f"<h2>{E(g)}</h2>" + "".join(card(r) for r in rs) for g, rs in groups.items())
+first27 = next((g for g in groups if g.endswith("2027")), None)
+months = "".join(f"<h2>{E(g)}</h2>" + (f'<p>Planning ahead? See the full <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>.</p>' if g == first27 else "") + "".join(card(r) for r in rs) for g, rs in groups.items())
 ABOUT = "MTG Drops is a free Magic: The Gathering release calendar: every upcoming set, Commander precon, Universes Beyond and Secret Lair drop, with dates, prices, buy/skip verdicts and a weekly newsletter. Not affiliated with Wizards of the Coast, and not a Discord bot or eBay monitor."
 HOME_DESC = "MTG Drops: free Magic: The Gathering release calendar. Every set, precon, Universes Beyond and Secret Lair drop, with dates, prices and buy/skip verdicts."
 ORG = {"@type": "Organization", "@id": f"{SITE_URL}/#org", "name": "MTG Drops", "url": f"{SITE_URL}/", "logo": OG_IMAGE, "description": ABOUT}
@@ -173,7 +174,8 @@ def and_list(xs): return xs[0] if len(xs) == 1 else ", ".join(xs[:-1]) + " and "
 home_faq = []
 if h_next: home_faq.append(("What is the next MTG set?", f'{plink(h_next, h_next["name"])} releases {nice_date(h_next)} ({E(h_next["status"])})' + (f', with prerelease events {E(h_next["prerelease"])}' if h_next.get("prerelease") else "") + "."))
 if h_2027: home_faq.append(("What MTG sets release in 2027?", f"{len(h_2027)} sets are confirmed for 2027: " + and_list([f"{plink(r, r['name'])} ({nice_date(r)})" for r in h_2027]) + "."
-                             + (" Commander decks are confirmed alongside " + and_list([plink(r) for r in h_cmd27]) + ", with decklists still to come." if h_cmd27 else "")))
+                             + (" Commander decks are confirmed alongside " + and_list([plink(r) for r in h_cmd27]) + ", with decklists still to come." if h_cmd27 else "")
+                             + f' Every 2027 date is in our <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>.'))
 if h_sl: home_faq.append(("When is the next Secret Lair drop?", f'{plink(h_sl, h_sl["name"])} goes on sale {nice_date(h_sl)}' + (f' at {fmt(h_sl["prices"][0])}' if h_sl.get("prices") else "") + f'. See every drop on the <a href="{BASE}/secret-lair.html">Secret Lair schedule</a>.'))
 if h_sold: home_faq.append(("Which recent MTG releases are sold out?", and_list([plink(r) + f" ({nice_date(r)})" for r in h_sold]) + " sold out at the official store. Check each page before paying resale prices."))
 home_faq.append(("How often is the MTG Drops calendar updated?", "We check official Wizards of the Coast announcements and reputable MTG news every Tuesday and Friday. Each entry shows the date it was last checked and links to its sources."))
@@ -186,7 +188,7 @@ home_ld = [{"@context": "https://schema.org", "@type": "WebSite", "@id": f"{SITE
            {"@context": "https://schema.org", "@type": "CollectionPage", "@id": f"{SITE_URL}/#page", "name": "MTG Release Calendar 2026–2027", "url": f"{SITE_URL}/", "description": HOME_DESC, "dateModified": PD, "isPartOf": {"@id": f"{SITE_URL}/#website"}, "publisher": {"@id": f"{SITE_URL}/#org"}, "mainEntity": {"@id": f"{SITE_URL}/#releases"}},
            {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in home_faq]},
            {"@context": "https://schema.org", "@type": "ItemList", "@id": f"{SITE_URL}/#releases", "name": "Upcoming Magic: The Gathering releases", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate([r for r in up if not r.get("placeholder")])]}]
-page("MTG Drops — Every upcoming MTG release, one calendar", HOME_DESC,
+page("MTG Release Calendar 2026–2027 | MTG Drops", HOME_DESC,
      f"<h1>MTG Release Calendar 2026–2027</h1><p><b>What's dropping in Magic.</b> Last updated: {tdate()}</p><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p><p>Every upcoming MTG product, with a short buy/skip note. New: <a href=\"{BASE}/guides/mtg-releases-fall-holiday-2026.html\">every MTG product releasing this fall/holiday 2026</a>, with gift picks, the <a href=\"{BASE}/guides/star-trek-mtg-release-guide.html\">MTG Star Trek release guide</a>, and the <a href=\"{BASE}/secret-lair.html\">Secret Lair drop schedule</a>.</p>{FORM}<p class=disc><small>{E(DISCLOSURE)}</small></p><p><b>Calendar feed:</b> {ics_link("calendar.ics")}</p><div class=f>{btns}</div>" + months + home_faq_html + js, "index.html", home_ld)
 def title_for(r):
     sn = short_name(r); m = mon_yyyy(r).replace("Date TBA", "TBA")
@@ -323,10 +325,11 @@ for r in data:
     # Only Secret Lair has a hub page; other types get a 2-item trail (no fake middle crumb pointing back at the home page).
     bc_items = [("MTG Drops", f"{SITE_URL}/")] + ([("Secret Lair", f"{SITE_URL}/secret-lair.html")] if r["type"] == "Secret Lair" else []) + [(r["name"], pu)]
     bc = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": i+1, "name": n, "item": u} for i, (n, u) in enumerate(bc_items)]}
+    y27 = f'<p>Every 2027 set and Commander deck: <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>.</p>' if r["release_date"][:4] == "2027" else ""
     crumbs = f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › {(f'<a href="{BASE}/secret-lair.html">Secret Lair</a>' if r["type"] == "Secret Lair" else E(r["type"]))} › {E(sn)}</nav>{hubl}'
-    desc = f"{sn} release date: {nice_date(r)}. " + r["note"]
+    desc = r.get("meta_desc") or f"{sn} release date: {nice_date(r)}. " + r["note"]
     page(title_for(r), desc,
-         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])}){f" · <b>Prerelease:</b> {E(r['prerelease'])}" if r.get("prerelease") else ""}{" · <b>Sold out</b> at the official store" if r.get("sold_out") else ""}{" · <b>Delayed</b>: stock may arrive after this date" if r.get("delayed") else ""}</p>{win}<h2>Price</h2>{ptab}{contents}{facts}<h2>Buy or skip?</h2><p>{E(r["note"])}{(" " + E(r["buy_guide_intro"])) if r.get("buy_guide_intro") else ""}</p>{("<ul>" + "".join(f"<li><b>{E(k)}:</b> {E(v)}</li>" for k, v in r["buy_guide"]) + "</ul>") if r.get("buy_guide") else ""}{f"<p><i>{E(r['preorder_call'])}</i></p>" if r.get("preorder_call") else ""}{("<p>Other Commander decks coming in 2027: " + ", ".join(plink(x, x["name"]) + f" ({nice_date(x)})" for x in h_cmd27 if x is not r) + ".</p>") if r.get("preorder_call") and r in h_cmd27 else ""}<p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}{"<p class=disc><small>"+E(DISCLOSURE)+"</small></p>" if amazon(r) else ""}{tinfo}{howto}{relhtml}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}{checked(r, with_sources=False)}<p><small>Last updated: {tdate()}</small></p>{FORM}',
+         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])}){f" · <b>Prerelease:</b> {E(r['prerelease'])}" if r.get("prerelease") else ""}{" · <b>Sold out</b> at the official store" if r.get("sold_out") else ""}{" · <b>Delayed</b>: stock may arrive after this date" if r.get("delayed") else ""}</p>{win}<h2>Price</h2>{ptab}{contents}{facts}<h2>Buy or skip?</h2><p>{E(r["note"])}{(" " + E(r["buy_guide_intro"])) if r.get("buy_guide_intro") else ""}</p>{("<ul>" + "".join(f"<li><b>{E(k)}:</b> {E(v)}</li>" for k, v in r["buy_guide"]) + "</ul>") if r.get("buy_guide") else ""}{f"<p><i>{E(r['preorder_call'])}</i></p>" if r.get("preorder_call") else ""}{("<p>Other Commander decks coming in 2027: " + ", ".join(plink(x, x["name"]) + f" ({nice_date(x)})" for x in h_cmd27 if x is not r) + ".</p>") if r.get("preorder_call") and r in h_cmd27 else ""}<p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}{"<p class=disc><small>"+E(DISCLOSURE)+"</small></p>" if amazon(r) else ""}{tinfo}{howto}{relhtml}{y27}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}{checked(r, with_sources=False)}<p><small>Last updated: {tdate()}</small></p>{FORM}',
          f"p/{r['slug']}.html", main_ld + [bc], noindex=bool(r.get("placeholder")), og=(card[1], 1200, 630) if card else None)
 # ---- Secret Lair hub (/secret-lair.html): generated from releases.json, so data updates keep it current ----
 SL_SRC = {"about": "https://secretlair.wizards.com/us/en/about-us",
@@ -756,6 +759,6 @@ open("dist/llms.txt","w").write(f"""# MTG Drops
 
 """ + SL_LLMS + """
 ## Releases
-""" + "".join(f"- [{r['name']}]({SITE_URL}/p/{r['slug']}.html): {nice_date(r)}, {r['type']}, {r['status']}\n" for r in up if not r.get("placeholder")))
+""" + "".join(f"- [{r['name']}]({SITE_URL}/p/{r['slug']}.html): {nice_date(r)}, {r['type']}, {r['status']}" + ("; delayed, stock may arrive after this date" if r.get("delayed") else "") + "\n" for r in up if not r.get("placeholder")))
 open("dist/CNAME","w").write("mtgdrops.com\n")
 print(f"built {len(data)} products")
