@@ -170,13 +170,36 @@ h_2027 = [r for r in data if r["release_date"][:4] == "2027" and r["type"] in SE
 h_cmd27 = [r for r in public if r["release_date"][:4] == "2027" and r["type"] == "Commander Precon"]
 h_sl = next((r for r in data if r["type"] == "Secret Lair" and not r.get("placeholder") and dated(r) and sl_bucket(r) == "up" and not r.get("delayed")), None)
 h_sold = [r for r in public if r.get("sold_out")]
+# Next Secret Lair answer (hub, home line, hub FAQ). Times and verdicts are the ones already on these two releases.
+sl_kit = next(r for r in data if r["slug"] == "countdown-kit-marvels-history-of-heroes")
+sl_phasers = next(r for r in data if r["slug"] == "secret-lair-star-trek-set-phasers-superdrop")
+assert h_sl and h_sl["slug"] == sl_kit["slug"], "Countdown Kit is no longer the next dated Secret Lair sale"
+assert "9 AM PT" in (sl_kit.get("window") or "") and "limited quantity" in (sl_kit.get("window") or "")
+assert "9 AM PT / 12 PM ET" in (sl_phasers.get("window") or "") and sl_phasers["release_date"] == "2026-11-09"
+assert "Wait unless you're a Marvel collector" in sl_kit["note"]
+assert "Buy only if you really like Star Trek; otherwise skip" in sl_phasers["note"]
+SL_NEXT_CHECKED = "2026-10-30"  # next-drop facts re-checked against the two release entries
+def sl_drop_link(r): return f'<a href="{BASE}/p/{r["slug"]}.html">{E(r["name"])}</a>'
+def sl_next_copy(linked):
+    kit_name = sl_drop_link(sl_kit) if linked else sl_kit["name"]
+    ph_name = sl_drop_link(sl_phasers) if linked else sl_phasers["name"]
+    return (f"The next dated Secret Lair sale is {kit_name}, on sale {nice_date(sl_kit)} at 9 AM PT for {fmt(sl_kit['prices'][0])} at MagicSecretLair.com (limited quantity). "
+            f"Wait unless you're a Marvel collector, and price out the singles. "
+            f"After that, {ph_name} opens {nice_date(sl_phasers)} at 9 a.m. PT / 12 PM ET at MagicSecretLair.com: buy only if you really like Star Trek; otherwise skip.")
+home_next_sl = (f'<p><b>Next Secret Lair drop:</b> {sl_drop_link(sl_kit)} goes on sale {nice_date(sl_kit)} at 9 AM PT '
+                f'({fmt(sl_kit["prices"][0])}, MagicSecretLair.com). <a href="{BASE}/secret-lair.html">Secret Lair schedule</a>.</p>'
+                + checked({"last_checked": SL_NEXT_CHECKED, "source": sl_kit["source"]}, with_sources=False))
 def and_list(xs): return xs[0] if len(xs) == 1 else ", ".join(xs[:-1]) + " and " + xs[-1]
 home_faq = []
 if h_next: home_faq.append(("What is the next MTG set?", f'{plink(h_next, h_next["name"])} releases {nice_date(h_next)} ({E(h_next["status"])})' + (f', with prerelease events {E(h_next["prerelease"])}' if h_next.get("prerelease") else "") + "."))
 if h_2027: home_faq.append(("What MTG sets release in 2027?", f"{len(h_2027)} sets are confirmed for 2027: " + and_list([f"{plink(r, r['name'])} ({nice_date(r)})" for r in h_2027]) + "."
                              + (" Commander decks are confirmed alongside " + and_list([plink(r) for r in h_cmd27]) + ", with decklists still to come." if h_cmd27 else "")
                              + f' Every 2027 date is in our <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>.'))
-if h_sl: home_faq.append(("When is the next Secret Lair drop?", f'{plink(h_sl, h_sl["name"])} goes on sale {nice_date(h_sl)}' + (f' at {fmt(h_sl["prices"][0])}' if h_sl.get("prices") else "") + f'. See every drop on the <a href="{BASE}/secret-lair.html">Secret Lair schedule</a>.'))
+if h_sl:
+    h_sl_when = f'{plink(h_sl, h_sl["name"])} goes on sale {nice_date(h_sl)}'
+    if h_sl["slug"] == sl_kit["slug"]: h_sl_when += " at 9 AM PT"
+    if h_sl.get("prices"): h_sl_when += f' for {fmt(h_sl["prices"][0])}' if h_sl["slug"] == sl_kit["slug"] else f' at {fmt(h_sl["prices"][0])}'
+    home_faq.append(("When is the next Secret Lair drop?", h_sl_when + f'. See every drop on the <a href="{BASE}/secret-lair.html">Secret Lair schedule</a>.'))
 if h_sold: home_faq.append(("Which recent MTG releases are sold out?", and_list([plink(r) + f" ({nice_date(r)})" for r in h_sold]) + " sold out at the official store. Check each page before paying resale prices."))
 home_faq.append(("How often is the MTG Drops calendar updated?", "We check official Wizards of the Coast announcements and reputable MTG news every Tuesday and Friday. Each entry shows the date it was last checked and links to its sources."))
 home_faq_html = "<h2>MTG release FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{a}</p>" for q, a in home_faq)
@@ -189,7 +212,7 @@ home_ld = [{"@context": "https://schema.org", "@type": "WebSite", "@id": f"{SITE
            {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in home_faq]},
            {"@context": "https://schema.org", "@type": "ItemList", "@id": f"{SITE_URL}/#releases", "name": "Upcoming Magic: The Gathering releases", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate([r for r in up if not r.get("placeholder")])]}]
 page("MTG Release Calendar 2026–2027 | MTG Drops", HOME_DESC,
-     f"<h1>MTG Release Calendar 2026–2027</h1><p><b>What's dropping in Magic.</b> Last updated: {tdate()}</p><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p><p>Every upcoming MTG product, with a short buy/skip note. New: <a href=\"{BASE}/guides/mtg-releases-fall-holiday-2026.html\">every MTG product releasing this fall/holiday 2026</a>, with gift picks, the <a href=\"{BASE}/guides/star-trek-mtg-release-guide.html\">MTG Star Trek release guide</a>, and the <a href=\"{BASE}/secret-lair.html\">Secret Lair drop schedule</a>.</p>{FORM}<p class=disc><small>{E(DISCLOSURE)}</small></p><p><b>Calendar feed:</b> {ics_link("calendar.ics")}</p><div class=f>{btns}</div>" + months + home_faq_html + js, "index.html", home_ld)
+     f"<h1>MTG Release Calendar 2026–2027</h1><p><b>What's dropping in Magic.</b> Last updated: {tdate()}</p><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p><p>Every upcoming MTG product, with a short buy/skip note. New: <a href=\"{BASE}/guides/mtg-releases-fall-holiday-2026.html\">every MTG product releasing this fall/holiday 2026</a>, with gift picks, the <a href=\"{BASE}/guides/star-trek-mtg-release-guide.html\">MTG Star Trek release guide</a>, and the <a href=\"{BASE}/secret-lair.html\">Secret Lair drop schedule</a>.</p>{FORM}<p class=disc><small>{E(DISCLOSURE)}</small></p><p><b>Calendar feed:</b> {ics_link("calendar.ics")}</p>{home_next_sl}<div class=f>{btns}</div>" + months + home_faq_html + js, "index.html", home_ld)
 def title_for(r):
     sn = short_name(r); m = mon_yyyy(r).replace("Date TBA", "TBA")
     for t in (f"{sn} Release Date ({m}), Price & Preorder | MTG Drops", f"{sn} Release Date ({m}) | MTG Drops", f"{sn} Release Date, {m} | MTG Drops", f"{sn} Release Date | MTG Drops", f"{sn} ({m}) | MTG Drops", f"{sn} | MTG Drops"):
@@ -286,7 +309,9 @@ for r in data:
            (f"How much does {sn} cost?", "; ".join(f"{p['label']}: {fmt(p)}" for p in prices) + "." if prices else "Pricing has not been announced yet (TBA)."),
            (f"Should I buy {sn}?", r["note"])]
     if r.get("contents"): faq.append((f"What's in {sn}?", "; ".join(r["contents"]) + "."))
+    if r.get("prerelease_verdict"): faq.append((f"Should I buy a {sn} prerelease kit?", r["prerelease_verdict"]))
     faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in faq)
+    pre_html = f'<h3>Prerelease kits</h3><p><span class=t>Buy / Wait / Skip</span> {E(r["prerelease_verdict"])}</p>' if r.get("prerelease_verdict") else ""
     # Product snippet markup only (Google: "Product snippets: for product pages where people can't directly purchase the product").
     # MTG Drops sells nothing, so no offer may name us or our page as the place to buy: each Offer is the publisher's
     # (Wizards of the Coast) official price. Secret Lair offers name seller = Wizards and Wizards' own store url (Wizards sells
@@ -329,7 +354,7 @@ for r in data:
     crumbs = f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › {(f'<a href="{BASE}/secret-lair.html">Secret Lair</a>' if r["type"] == "Secret Lair" else E(r["type"]))} › {E(sn)}</nav>{hubl}'
     desc = r.get("meta_desc") or f"{sn} release date: {nice_date(r)}. " + r["note"]
     page(title_for(r), desc,
-         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])}){f" · <b>Prerelease:</b> {E(r['prerelease'])}" if r.get("prerelease") else ""}{" · <b>Sold out</b> at the official store" if r.get("sold_out") else ""}{" · <b>Delayed</b>: stock may arrive after this date" if r.get("delayed") else ""}</p>{win}<h2>Price</h2>{ptab}{contents}{facts}<h2>Buy or skip?</h2><p>{E(r["note"])}{(" " + E(r["buy_guide_intro"])) if r.get("buy_guide_intro") else ""}</p>{("<ul>" + "".join(f"<li><b>{E(k)}:</b> {E(v)}</li>" for k, v in r["buy_guide"]) + "</ul>") if r.get("buy_guide") else ""}{f"<p><i>{E(r['preorder_call'])}</i></p>" if r.get("preorder_call") else ""}{("<p>Other Commander decks coming in 2027: " + ", ".join(plink(x, x["name"]) + f" ({nice_date(x)})" for x in h_cmd27 if x is not r) + ".</p>") if r.get("preorder_call") and r in h_cmd27 else ""}<p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}{"<p class=disc><small>"+E(DISCLOSURE)+"</small></p>" if amazon(r) else ""}{tinfo}{howto}{relhtml}{y27}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}{checked(r, with_sources=False)}<p><small>Last updated: {tdate()}</small></p>{FORM}',
+         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])}){f" · <b>Prerelease:</b> {E(r['prerelease'])}" if r.get("prerelease") else ""}{" · <b>Sold out</b> at the official store" if r.get("sold_out") else ""}{" · <b>Delayed</b>: stock may arrive after this date" if r.get("delayed") else ""}</p>{win}<h2>Price</h2>{ptab}{contents}{facts}<h2>Buy or skip?</h2><p>{E(r["note"])}{(" " + E(r["buy_guide_intro"])) if r.get("buy_guide_intro") else ""}</p>{("<ul>" + "".join(f"<li><b>{E(k)}:</b> {E(v)}</li>" for k, v in r["buy_guide"]) + "</ul>") if r.get("buy_guide") else ""}{pre_html}{f"<p><i>{E(r['preorder_call'])}</i></p>" if r.get("preorder_call") else ""}{("<p>Other Commander decks coming in 2027: " + ", ".join(plink(x, x["name"]) + f" ({nice_date(x)})" for x in h_cmd27 if x is not r) + ".</p>") if r.get("preorder_call") and r in h_cmd27 else ""}<p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}{"<p class=disc><small>"+E(DISCLOSURE)+"</small></p>" if amazon(r) else ""}{tinfo}{howto}{relhtml}{y27}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}{checked(r, with_sources=False)}<p><small>Last updated: {tdate()}</small></p>{FORM}',
          f"p/{r['slug']}.html", main_ld + [bc], noindex=bool(r.get("placeholder")), og=(card[1], 1200, 630) if card else None)
 # ---- Secret Lair hub (/secret-lair.html): generated from releases.json, so data updates keep it current ----
 SL_SRC = {"about": "https://secretlair.wizards.com/us/en/about-us",
@@ -361,10 +386,14 @@ def sl_section(h, rs, empty):
     return f"<h2>{E(h)}</h2>" + ("".join(sl_card(r) for r in rs) if rs else f"<p>{E(empty)}</p>")
 nxt = next((r for r in sl_up if dated(r) and not r.get("delayed")), None)
 def names(rs): return "; ".join(f"{short_name(r)} (" + ("delayed, was due " if r.get("delayed") else "") + f"{nice_date(r) if dated(r) else 'date TBA'})" for r in rs)
+sl_next_others = [r for r in sl_up if r["slug"] not in (sl_kit["slug"], sl_phasers["slug"])]
+sl_next_block = (f'<h2>Next Secret Lair drop</h2><div class=card><p>{sl_next_copy(True)}</p>'
+                 + checked({"last_checked": SL_NEXT_CHECKED, "source": sl_kit["source"], "field_sources": {"set phasers to superdrop": sl_phasers["source"]}})
+                 + "</div>")
 sl_faq = [
  ("What is the next Secret Lair drop?",
-  (f"The next dated Secret Lair release on our calendar is {nxt['name']}, on sale {nice_date(nxt)}." if nxt else "There is no dated upcoming Secret Lair release on our calendar right now.")
-  + (f" Also announced: {names([r for r in sl_up if r is not nxt])}." if [r for r in sl_up if r is not nxt] else "")),
+  (sl_next_copy(False) if nxt and nxt["slug"] == sl_kit["slug"] else (f"The next dated Secret Lair release on our calendar is {nxt['name']}, on sale {nice_date(nxt)}." if nxt else "There is no dated upcoming Secret Lair release on our calendar right now."))
+  + (f" Also announced: {names(sl_next_others)}." if sl_next_others else "")),
  ("What Secret Lair drop is on sale now?",
   (f"Most recently opened: {names(sl_now)}. Limited print runs can sell out early, so check MagicSecretLair.com for current stock." if sl_now else "No Secret Lair sale has opened in the last few weeks on our calendar; see the Recent / ended section for the latest drops.")),
  ("How much do Secret Lair drops cost?",
@@ -400,6 +429,7 @@ page(SL_TITLE, SL_DESC,
      f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › Secret Lair</nav><h1>Secret Lair Drops: Schedule, Prices &amp; Verdicts</h1>'
      f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
      f'<p><b>Last updated:</b> {tdate()} · {len(sl_now)} on sale now · {len(sl_up)} upcoming · {len(sl_past)} recent / ended</p>'
+     + sl_next_block
      + f'<p><b>Secret Lair calendar feed:</b> {ics_link("secret-lair.ics")}</p>'
      + sl_intro + f'<p>Planning holiday buys? See <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a>, sets and Commander decks included.</p>'
      + sl_section("On sale now", sl_now, "No Secret Lair sale has opened in the last few weeks. See Upcoming below.")
@@ -506,6 +536,9 @@ st_faq = [
  ("Is there a Star Trek Beginner Box?", "Not any more: Wizards removed the Beginner Box from its Star Trek product article after the product was cancelled."),
  ("What should I buy from MTG Star Trek?", f"Our verdict on the set: {st_vs.get(st_set.get('verdict'), 'no verdict yet')}, for {st_set.get('gift_for', 'drafting and Trek fans')}. On the Commander decks: {st_vs.get(st_cmd.get('verdict'), 'no verdict yet')}, for {st_cmd.get('gift_for', 'Commander players')}."),
 ]
+if st_set.get("prerelease_verdict"): st_faq.append(("Should I buy a Star Trek prerelease kit?", st_set["prerelease_verdict"]))
+st_pre = (f'<div class=card><h3>Prerelease kits</h3><p><span class=t>Buy / Wait / Skip</span> {E(st_set["prerelease_verdict"])}</p>'
+          f'<p><small>Prerelease pack contents and dates per {st_a("collect")}.</small></p>{checked(st_set, with_sources=False)}</div>') if st_set.get("prerelease_verdict") else ""
 st_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › <a href="{BASE}/guides/">Guides</a> › Star Trek</nav><h1>{E(ST_H1)}</h1>'
   f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
   f'<p><b>Last updated:</b> {tdate()} · release {nice_date(st_set)} ({E(st_set["status"])})</p>'
@@ -527,7 +560,8 @@ st_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a>
   f'<p>WPN Commander events give a Highly Illogical or Munitions Enthusiast promo; Magic Presents: To Boldly Go gives a traditional foil Solemn Simulacrum; Standard Showdown winners get a Burst Lightning or a second promo Wizards hasn\'t revealed yet. All while supplies last ({st_a("collect")}).</p>'
   "<h2>What to buy</h2>"
   f'<div class=card><h3><a href="{BASE}/p/{st_set["slug"]}.html">{E(st_set["name"])}</a></h3><p>{vtag(st_set)}{E(st_set["note"])}</p>' + (f'<p><b>Good gift for:</b> {E(st_set["gift_for"])}.</p>' if st_set.get("gift_for") else "") + f'{amz_btn(st_set)}</div>'
-  f'<div class=card><h3><a href="{BASE}/p/{st_cmd["slug"]}.html">{E(st_cmd["name"])}</a></h3><p>{vtag(st_cmd)}{E(st_cmd["note"])}</p>' + (f'<p><b>Good gift for:</b> {E(st_cmd["gift_for"])}.</p>' if st_cmd.get("gift_for") else "") + f'{amz_btn(st_cmd)}</div>'
+  + st_pre
+  + f'<div class=card><h3><a href="{BASE}/p/{st_cmd["slug"]}.html">{E(st_cmd["name"])}</a></h3><p>{vtag(st_cmd)}{E(st_cmd["note"])}</p>' + (f'<p><b>Good gift for:</b> {E(st_cmd["gift_for"])}.</p>' if st_cmd.get("gift_for") else "") + f'{amz_btn(st_cmd)}</div>'
   "<h3>Value at MSRP</h3><p>Simple arithmetic from Wizards' MSRPs, so you can compare the boxes:</p><ul>" + "".join(f"<li><b>{E(a)}:</b> {E(b)}</li>" for a, b in st_math) + "</ul>"
   "<p>If you want to collect the signed cards or the surge foil Booster Fun, that is Collector Booster territory; for drafting or a first taste of the set, Play Boosters, a Bundle or Draft Night are the cheaper way in. Prices in stores often fall after release, so preordering mainly makes sense if you want the product on day one.</p>"
   f'<p class=disc><small>{E(DISCLOSURE)}</small></p>'

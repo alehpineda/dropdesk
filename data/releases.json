@@ -388,10 +388,12 @@
     },
     "field_sources": {
       "regional delays": "https://magic.wizards.com/en/news/announcements/star-trek-product-delays-in-select-regions",
-      "prerelease": "https://magic.wizards.com/en/news/feature/collecting-star-trek"
+      "prerelease": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
+      "prerelease pack": "https://magic.wizards.com/en/news/feature/collecting-star-trek"
     },
-    "last_checked": "2026-10-23",
+    "last_checked": "2026-10-30",
     "prerelease": "Nov 6–12, 2026",
+    "prerelease_verdict": "Buy the prerelease kit if you want the in-store event experience and the guaranteed traditional foil promo rare for the weekend (prerelease Nov 6–12, 2026 at local game stores). Each Prerelease Pack is 6 Play Boosters, 1 traditional foil rare or mythic rare, a deck box and a spindown. Wait on sealed product if you only want the cards: Play Boosters hit stores Nov 13, 2026 at $6.99 MSRP, and Play Boosters and Prerelease Packs are on track everywhere. Skip prerelease kits as speculation.",
     "buy_guide_intro": "Release is Nov 13, 2026, with prereleases at local stores Nov 6–12, and preorders are open now.",
     "buy_guide": [
       [
