@@ -4,8 +4,8 @@
   "hash": "b553a8ba414eec14"
  },
  "guides/mtg-2027-release-schedule.html": {
-  "date": "2026-10-25",
-  "hash": "8b761c3c8767e048"
+  "date": "2026-10-30",
+  "hash": "a2cf7aa463f977fc"
  },
  "guides/mtg-releases-fall-holiday-2026.html": {
   "date": "2026-10-27",
@@ -16,8 +16,8 @@
   "hash": "88b7a8932031e3e4"
  },
  "index.html": {
-  "date": "2026-10-27",
-  "hash": "e91fc57c06dd8005"
+  "date": "2026-10-30",
+  "hash": "861787cd113ea78a"
  },
  "newsletter.html": {
   "date": "2026-10-23",
@@ -84,8 +84,8 @@
   "hash": "0a457811f96a4dee"
  },
  "p/secret-lair-reality-fracture-bundle-bundles.html": {
-  "date": "2026-10-27",
-  "hash": "e18cf663d1841f83"
+  "date": "2026-10-30",
+  "hash": "1fb772a7b8d1a2cc"
  },
  "p/secret-lair-star-trek-set-phasers-superdrop.html": {
   "date": "2026-10-27",
@@ -108,8 +108,12 @@
   "hash": "e1afc129226323c9"
  },
  "p/unannounced-ub-aug-2027.html": {
-  "date": "2026-10-23",
-  "hash": "9a86e00d36a34df9"
+  "date": "2026-10-30",
+  "hash": "52e23315015a9c96"
+ },
+ "p/unannounced-ub-nov-2027.html": {
+  "date": "2026-10-30",
+  "hash": "9938595750eb1eec"
  },
  "p/zeta-set-rerelease.html": {
   "date": "2026-10-27",
@@ -120,8 +124,8 @@
   "hash": "79f6bd953ac92acb"
  },
  "secret-lair.html": {
-  "date": "2026-10-27",
-  "hash": "367e2b5baa9f01e4"
+  "date": "2026-10-30",
+  "hash": "9d0edde02976cc17"
  },
  "sponsor.html": {
   "date": "2026-10-23",

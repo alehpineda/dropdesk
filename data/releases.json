@@ -731,7 +731,10 @@
     "status": "unconfirmed",
     "placeholder": true,
     "short_name": "Unannounced Universes Beyond Set",
-    "last_checked": "2026-10-16"
+    "last_checked": "2026-10-30",
+    "field_sources": {
+      "also listed (ICv2, Oct 27)": "https://icv2.com/articles/news/view/63731/magic-the-gathering-2027-product-release-calendar"
+    }
   },
   {
     "slug": "secret-lair-strange-school",
@@ -839,7 +842,7 @@
     "type": "Secret Lair",
     "release_date": "2026-10-26",
     "status": "confirmed",
-    "window": "Went on sale Oct 26, 2026, 9 AM PT in the Chaos Vault on MagicSecretLair.com; listed as no longer available by early afternoon ET on launch day. The Secret Lair Bundle inside ships on normal Secret Lair fulfillment timing (Wizards, Oct 19)",
+    "window": "Went on sale Oct 26, 2026, 9 AM PT in the Chaos Vault on MagicSecretLair.com; listed as no longer available by early afternoon ET on launch day. US orders expected to ship Nov 19, 2026 – Feb 19, 2027 (EU/UK from Dec 29, 2026), per the Secret Lair shipping-status page",
     "source": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
     "note": "Sold out on launch day (Oct 26) in the Chaos Vault (NerdSnack). Three packages, each a Reality Fracture Secret Lair Bundle plus the Strange School and Duality Distorted drops: $159.98 non-foil, $179.98 foil, $234.99 for both editions. Our math: the $89.99 bundle MSRP plus the drops at $29.99/$39.99 comes to $149.97, $169.97 and $229.95, so these packages cost $5 to $10 more than buying everything separately at list price. Skip on resale: NerdSnack reports the bundle alone already sells for about $165, $75 over its $89.99 retail.",
     "prices": [
@@ -892,11 +895,12 @@
       "contents": "https://magic.wizards.com/en/news/announcements/bring-two-new-secret-lair-drops-to-your-multiverse-with-reality-fracture",
       "fulfillment": "https://magic.wizards.com/en/news/announcements/reality-fracture-secret-lair-bundle-delayed",
       "release_date": "https://sauim.com/post/mtgsecretlair.com/3myplbbfjwi2e",
-      "sell-out and resale prices": "https://nerdsnack.com/reality-fracture-secret-lair-review/"
+      "sell-out and resale prices": "https://nerdsnack.com/reality-fracture-secret-lair-review/",
+      "shipping": "https://secretlair-support.wizards.com/hc/en-us/articles/5149533669652-Secret-Lair-Production-and-Shipping-Status"
     },
     "short_name": "Reality Fracture Bundle Bundles",
     "verdict": "skip",
-    "last_checked": "2026-10-27",
+    "last_checked": "2026-10-30",
     "sold_out": true
   },
   {
@@ -1275,5 +1279,18 @@
       "also listed (Playgroup.gg)": "https://playgroup.gg/sets"
     },
     "last_checked": "2026-10-23"
+  },
+  {
+    "slug": "unannounced-ub-nov-2027",
+    "name": "Unannounced Universes Beyond set (Nov 2027)",
+    "type": "Universes Beyond",
+    "release_date": "2027-11-19",
+    "window": null,
+    "source": "https://icv2.com/articles/news/view/63731/magic-the-gathering-2027-product-release-calendar",
+    "note": "Date slot only; IP TBA. ICv2 lists it as the final Universes Beyond set of 2027.",
+    "status": "unconfirmed",
+    "placeholder": true,
+    "short_name": "Unannounced Universes Beyond Set (Nov 2027)",
+    "last_checked": "2026-10-30"
   }
 ]
