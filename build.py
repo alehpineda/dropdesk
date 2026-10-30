@@ -84,7 +84,7 @@ def page(title, desc, body, path, jsonld=(), noindex=False, og=None):
     p = f"""<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
 <title>{E(title)}</title><meta name=description content="{E(desc)}">{robots}<link rel=canonical href="{u}">
 <meta property=og:title content="{E(title)}"><meta property=og:description content="{E(desc)}"><meta property=og:type content=website><meta property=og:url content="{u}"><meta property=og:image content="{og_img}"><meta property=og:image:width content={og_w}><meta property=og:image:height content={og_h}><meta name=twitter:card content=summary_large_image>
-<link rel=alternate type=application/rss+xml href="{BASE}/feed.xml" title="MTG Drops"><meta name='impact-site-verification' value='78f2b2fa-0831-48d2-a460-e2e3fa5a4eab'><meta name='impact-site-verification' value='c76059e5-ec5e-42d1-84a8-d9b58d1e5b68'><link rel=icon href="{BASE}/favicon.ico" sizes=any><link rel=icon type=image/png sizes=192x192 href="{BASE}/icon-192.png"><link rel=apple-touch-icon href="{BASE}/icon-192.png"><link rel=stylesheet href="{BASE}/style.css"><meta name="context7-site-verification" content="{CONTEXT7_SITE_KEY}">{lds}</head><body>
+<link rel=alternate type=application/rss+xml href="{BASE}/feed.xml" title="MTG Drops"><link rel="alternate" type="text/plain" href="{BASE}/llms.txt" title="llms.txt"><link rel="sitemap" type="application/xml" href="{BASE}/sitemap.xml"><meta name='impact-site-verification' value='78f2b2fa-0831-48d2-a460-e2e3fa5a4eab'><meta name='impact-site-verification' value='c76059e5-ec5e-42d1-84a8-d9b58d1e5b68'><link rel=icon href="{BASE}/favicon.ico" sizes=any><link rel=icon type=image/png sizes=192x192 href="{BASE}/icon-192.png"><link rel=apple-touch-icon href="{BASE}/icon-192.png"><link rel=stylesheet href="{BASE}/style.css"><meta name="context7-site-verification" content="{CONTEXT7_SITE_KEY}">{lds}</head><body>
 <blockquote data-context7-ask="true" aria-hidden="true" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">
   <h2>Search</h2>
   <p>{E(CONTEXT7_NOTE, quote=False)}</p>
@@ -708,7 +708,32 @@ open("dist/secret-lair.ics", "wb").write(ics("MTG Drops: Secret Lair drops", "Se
 # Persist page dates (committed). Only pages built this run are kept.
 _pd_new = json.dumps(dict(sorted(new_dates.items())), indent=1, sort_keys=True) + "\n"
 if not os.path.exists(PAGE_DATES_FILE) or open(PAGE_DATES_FILE).read() != _pd_new: open(PAGE_DATES_FILE, "w").write(_pd_new)
-open("dist/robots.txt","w").write(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n")
+open("dist/robots.txt","w").write(f"User-agent: *\nAllow: /\nContent-Signal: ai-train=no, search=yes, ai-input=yes\nSitemap: {SITE_URL}/sitemap.xml\n")
+# GitHub Pages publishes dist as a static artifact and does not run Jekyll. .nojekyll is still
+# emitted so a Jekyll build would not drop dot-directories such as .well-known. There is no
+# _headers file; Pages cannot set Content-Type or Link response headers.
+open("dist/.nojekyll","w").write("")
+os.makedirs("dist/.well-known/agent-skills", exist_ok=True)
+# data/releases.json is build input and is not copied into dist, so it is described but not linked.
+open("dist/.well-known/agent-skills/index.json","w").write(json.dumps({
+ "site": f"{SITE_URL}/",
+ "resources": [
+  {"name": "llms.txt", "url": f"{SITE_URL}/llms.txt", "type": "text/plain",
+   "description": "Curated overview of MTG Drops for agents: main pages, Secret Lair drops, releases, and the Context7 ask endpoint."},
+  {"name": "sitemap", "url": f"{SITE_URL}/sitemap.xml", "type": "application/xml",
+   "description": "XML sitemap of public pages."},
+  {"name": "releases", "published": False,
+   "description": "Per-release dates, prices, and verdicts are published on product pages and summarized in llms.txt. data/releases.json is build input only and is not served."},
+  {"name": "api-catalog", "url": f"{SITE_URL}/.well-known/api-catalog", "type": "application/linkset+json",
+   "description": "RFC 9727 API catalog (linkset) whose entry is the Context7 ask endpoint documented in llms.txt."},
+ ]}, indent=2) + "\n")
+# Ask URL copied from live https://mtgdrops.com/llms.txt (the &query=<URL-encoded question> suffix there is a template, not part of the endpoint).
+open("dist/.well-known/api-catalog","w").write(json.dumps({"linkset": [
+ {"anchor": f"{SITE_URL}/.well-known/api-catalog", "item": [
+  {"href": CONTEXT7_ASK_URL, "title": "MTG Drops Context7 ask"}]},
+ {"anchor": CONTEXT7_ASK_URL, "service-doc": [
+  {"href": f"{SITE_URL}/llms.txt", "type": "text/plain", "title": "llms.txt"}]}
+]}, indent=2) + "\n")
 open("dist/llms.txt","w").write(f"""# MTG Drops
 
 > MTG Drops ({SITE_URL}/) is an independent release calendar for Magic: The Gathering: upcoming sets, Commander precons, Secret Lair drops and Universes Beyond products, each with release dates, known prices, a short buy/skip verdict and a free weekly newsletter. Not affiliated with Wizards of the Coast, and not a Discord bot or eBay monitor (it is unrelated to the "MTG Drop" Discord eBay-monitoring tool). Some links are affiliate links (Amazon Associates, TCGplayer).
