@@ -168,38 +168,72 @@ SETS = ("Main Set", "Universes Beyond")
 h_next = next((r for r in public if dated(r) and r["release_date"] > today and r["type"] in SETS), None)
 h_2027 = [r for r in data if r["release_date"][:4] == "2027" and r["type"] in SETS and r["status"] == "confirmed"]
 h_cmd27 = [r for r in public if r["release_date"][:4] == "2027" and r["type"] == "Commander Precon"]
-h_sl = next((r for r in data if r["type"] == "Secret Lair" and not r.get("placeholder") and dated(r) and sl_bucket(r) == "up" and not r.get("delayed")), None)
+# Next Secret Lair answer (home line, home FAQ, hub card, hub FAQ). Rolls forward with the build date: the next dated,
+# not-delayed, not-sold-out Secret Lair sale whose date >= today (a drop stays "next" through its sale day), then the one after it.
+# If nothing is dated, the answer says the next drop is TBA; dates only ever come from releases.json.
+sl_dated_next = sorted([r for r in data if r["type"] == "Secret Lair" and not r.get("placeholder") and dated(r) and not r.get("delayed")
+                        and not r.get("sold_out") and r["release_date"] >= today], key=lambda r: r["release_date"])
+h_sl = sl_dated_next[0] if sl_dated_next else None          # next dated sale (None = TBA)
+sl_after = sl_dated_next[1] if len(sl_dated_next) > 1 else None
 h_sold = [r for r in public if r.get("sold_out")]
-# Next Secret Lair answer (hub, home line, hub FAQ). Times and verdicts are the ones already on these two releases.
-sl_kit = next(r for r in data if r["slug"] == "countdown-kit-marvels-history-of-heroes")
-sl_phasers = next(r for r in data if r["slug"] == "secret-lair-star-trek-set-phasers-superdrop")
-assert h_sl and h_sl["slug"] == sl_kit["slug"], "Countdown Kit is no longer the next dated Secret Lair sale"
-assert "9 AM PT" in (sl_kit.get("window") or "") and "limited quantity" in (sl_kit.get("window") or "")
-assert "9 AM PT / 12 PM ET" in (sl_phasers.get("window") or "") and sl_phasers["release_date"] == "2026-11-09"
-assert "Wait unless you're a Marvel collector" in sl_kit["note"]
-assert "Buy only if you really like Star Trek; otherwise skip" in sl_phasers["note"]
-SL_NEXT_CHECKED = "2026-10-30"  # next-drop facts re-checked against the two release entries
+# Curated wording for drops whose sale time/verdict we re-checked by hand. Each entry is used only while its anchors are still
+# in that release's data (window/note), so editing the data can't make the copy contradict it; otherwise the generic copy is used.
+# Verdict phrases are the ones already in each release's note (no new verdicts).
+SL_NEXT_CHECKED = "2026-10-30"  # date the curated next-drop facts below were re-checked against their release entries
+SL_NEXT_COPY = {
+    "countdown-kit-marvels-history-of-heroes": dict(win=("9 AM PT", "limited quantity"), anchor="Wait unless you're a Marvel collector",
+        time="9 AM PT", home_time="9 AM PT", extra=" (limited quantity)", lead="Wait unless you're a Marvel collector, and price out the singles.",
+        after="wait unless you're a Marvel collector"),
+    "secret-lair-star-trek-set-phasers-superdrop": dict(win=("9 AM PT / 12 PM ET", "while supplies last"), anchor="Buy only if you really like Star Trek; otherwise skip",
+        time="9 a.m. PT / 12 PM ET", home_time="9 AM PT / 12 PM ET", extra=" (while supplies last)", lead="Buy only if you really like Star Trek; otherwise skip.",
+        after="buy only if you really like Star Trek; otherwise skip"),
+}
+def sl_cur(r):
+    c = SL_NEXT_COPY.get(r["slug"])
+    return c if c and all(a in (r.get("window") or "") for a in c["win"]) and c["anchor"] in r["note"] else None
+def sl_time(r, home=False):
+    c = sl_cur(r)
+    if c: return " at " + c["home_time" if home else "time"]
+    return " at 9 AM PT" if "9 AM PT" in (r.get("window") or "") else ""
+def sl_cost(r, home=False):
+    ps = r.get("prices") or []
+    if not ps: return ""
+    if len(ps) == 1: return fmt(ps[0]) if home else f" for {fmt(ps[0])}"
+    lo, hi = min(p["usd"] for p in ps), max(p["usd"] for p in ps)
+    about = any("about" in p["label"].lower() for p in ps)
+    s = ("about " if about else "") + (f"${lo:,.0f}–${hi:,.0f}" if lo == int(lo) and hi == int(hi) else f"${lo:,.2f}–${hi:,.2f}") + (" per drop" if any("each drop" in p["label"].lower() for p in ps) else "")
+    return s if home else f" ({s})"
+def sl_checked_date(rs): return min(SL_NEXT_CHECKED if sl_cur(r) else (r.get("last_checked") or SL_NEXT_CHECKED) for r in rs)
 def sl_drop_link(r): return f'<a href="{BASE}/p/{r["slug"]}.html">{E(r["name"])}</a>'
+SL_TBA = "The next Secret Lair drop is TBA: no upcoming Secret Lair sale has a date on our calendar yet."
 def sl_next_copy(linked):
-    kit_name = sl_drop_link(sl_kit) if linked else sl_kit["name"]
-    ph_name = sl_drop_link(sl_phasers) if linked else sl_phasers["name"]
-    return (f"The next dated Secret Lair sale is {kit_name}, on sale {nice_date(sl_kit)} at 9 AM PT for {fmt(sl_kit['prices'][0])} at MagicSecretLair.com (limited quantity). "
-            f"Wait unless you're a Marvel collector, and price out the singles. "
-            f"After that, {ph_name} opens {nice_date(sl_phasers)} at 9 a.m. PT / 12 PM ET at MagicSecretLair.com: buy only if you really like Star Trek; otherwise skip.")
-home_next_sl = (f'<p><b>Next Secret Lair drop:</b> {sl_drop_link(sl_kit)} goes on sale {nice_date(sl_kit)} at 9 AM PT '
-                f'({fmt(sl_kit["prices"][0])}, MagicSecretLair.com). <a href="{BASE}/secret-lair.html">Secret Lair schedule</a>.</p>'
-                + checked({"last_checked": SL_NEXT_CHECKED, "source": sl_kit["source"]}, with_sources=False))
+    if not h_sl: return SL_TBA
+    nm = lambda r: sl_drop_link(r) if linked else r["name"]
+    c = sl_cur(h_sl)
+    s = (f"The next dated Secret Lair sale is {nm(h_sl)}, on sale {nice_date(h_sl)}{sl_time(h_sl)}{sl_cost(h_sl)} at MagicSecretLair.com{c['extra'] if c else ''}. "
+         + (f"{c['lead']} " if c else "See its page for our buy/skip verdict. "))
+    if sl_after:
+        ca = sl_cur(sl_after)
+        s += f"After that, {nm(sl_after)} opens {nice_date(sl_after)}{sl_time(sl_after)} at MagicSecretLair.com" + (f": {ca['after']}." if ca else ".")
+    else:
+        s += "No later Secret Lair sale has a date yet."
+    return s.strip()
+if h_sl:
+    _hc = sl_cost(h_sl, home=True)
+    home_next_sl = (f'<p><b>Next Secret Lair drop:</b> {sl_drop_link(h_sl)} goes on sale {nice_date(h_sl)}{sl_time(h_sl, home=True)} '
+                    f'({_hc + ", " if _hc else ""}MagicSecretLair.com). <a href="{BASE}/secret-lair.html">Secret Lair schedule</a>.</p>'
+                    + checked({"last_checked": sl_checked_date([h_sl]), "source": h_sl["source"]}, with_sources=False))
+else:
+    home_next_sl = f'<p><b>Next Secret Lair drop:</b> TBA. No upcoming Secret Lair sale has a date on our calendar yet. <a href="{BASE}/secret-lair.html">Secret Lair schedule</a>.</p>'
 def and_list(xs): return xs[0] if len(xs) == 1 else ", ".join(xs[:-1]) + " and " + xs[-1]
 home_faq = []
 if h_next: home_faq.append(("What is the next MTG set?", f'{plink(h_next, h_next["name"])} releases {nice_date(h_next)} ({E(h_next["status"])})' + (f', with prerelease events {E(h_next["prerelease"])}' if h_next.get("prerelease") else "") + "."))
 if h_2027: home_faq.append(("What MTG sets release in 2027?", f"{len(h_2027)} sets are confirmed for 2027: " + and_list([f"{plink(r, r['name'])} ({nice_date(r)})" for r in h_2027]) + "."
                              + (" Commander decks are confirmed alongside " + and_list([plink(r) for r in h_cmd27]) + ", with decklists still to come." if h_cmd27 else "")
                              + f' Every 2027 date is in our <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>.'))
-if h_sl:
-    h_sl_when = f'{plink(h_sl, h_sl["name"])} goes on sale {nice_date(h_sl)}'
-    if h_sl["slug"] == sl_kit["slug"]: h_sl_when += " at 9 AM PT"
-    if h_sl.get("prices"): h_sl_when += f' for {fmt(h_sl["prices"][0])}' if h_sl["slug"] == sl_kit["slug"] else f' at {fmt(h_sl["prices"][0])}'
-    home_faq.append(("When is the next Secret Lair drop?", h_sl_when + f'. See every drop on the <a href="{BASE}/secret-lair.html">Secret Lair schedule</a>.'))
+h_sl_when = (f'{plink(h_sl, h_sl["name"])} goes on sale {nice_date(h_sl)}{sl_time(h_sl, home=True)}{sl_cost(h_sl)}' if h_sl
+             else "The next Secret Lair drop is TBA: no upcoming Secret Lair sale has a date on our calendar yet")
+home_faq.append(("When is the next Secret Lair drop?", h_sl_when + f'. See every drop on the <a href="{BASE}/secret-lair.html">Secret Lair schedule</a>.'))
 if h_sold: home_faq.append(("Which recent MTG releases are sold out?", and_list([plink(r) + f" ({nice_date(r)})" for r in h_sold]) + " sold out at the official store. Check each page before paying resale prices."))
 home_faq.append(("How often is the MTG Drops calendar updated?", "We check official Wizards of the Coast announcements and reputable MTG news every Tuesday and Friday. Each entry shows the date it was last checked and links to its sources."))
 home_faq_html = "<h2>MTG release FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{a}</p>" for q, a in home_faq)
@@ -384,15 +418,16 @@ def sl_card(r):
             f'<p><a href="{BASE}/p/{r["slug"]}.html">Full details, card list and sources →</a></p>{checked(r)}</div>')
 def sl_section(h, rs, empty):
     return f"<h2>{E(h)}</h2>" + ("".join(sl_card(r) for r in rs) if rs else f"<p>{E(empty)}</p>")
-nxt = next((r for r in sl_up if dated(r) and not r.get("delayed")), None)
 def names(rs): return "; ".join(f"{short_name(r)} (" + ("delayed, was due " if r.get("delayed") else "") + f"{nice_date(r) if dated(r) else 'date TBA'})" for r in rs)
-sl_next_others = [r for r in sl_up if r["slug"] not in (sl_kit["slug"], sl_phasers["slug"])]
+sl_shown = [r for r in (h_sl, sl_after) if r]
+sl_next_others = [r for r in sl_up if r not in sl_shown]
+_sl_fs = {short_name(sl_after).lower(): sl_after["source"]} if sl_after else {}
 sl_next_block = (f'<h2>Next Secret Lair drop</h2><div class=card><p>{sl_next_copy(True)}</p>'
-                 + checked({"last_checked": SL_NEXT_CHECKED, "source": sl_kit["source"], "field_sources": {"set phasers to superdrop": sl_phasers["source"]}})
+                 + (checked({"last_checked": sl_checked_date(sl_shown), "source": h_sl["source"], "field_sources": _sl_fs}) if h_sl else "")
                  + "</div>")
 sl_faq = [
  ("What is the next Secret Lair drop?",
-  (sl_next_copy(False) if nxt and nxt["slug"] == sl_kit["slug"] else (f"The next dated Secret Lair release on our calendar is {nxt['name']}, on sale {nice_date(nxt)}." if nxt else "There is no dated upcoming Secret Lair release on our calendar right now."))
+  sl_next_copy(False)
   + (f" Also announced: {names(sl_next_others)}." if sl_next_others else "")),
  ("What Secret Lair drop is on sale now?",
   (f"Most recently opened: {names(sl_now)}. Limited print runs can sell out early, so check MagicSecretLair.com for current stock." if sl_now else "No Secret Lair sale has opened in the last few weeks on our calendar; see the Recent / ended section for the latest drops.")),
