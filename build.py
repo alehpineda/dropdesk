@@ -465,15 +465,83 @@ def g_month_name(m): return f"{['January','February','March','April','May','June
 g_by = {m: [r for r in g_items if r["release_date"][:7] == m] for m in G_MONTHS}
 def g_names(rs): return "; ".join(f"{short_name(r)} ({nice_date(r)}" + ("" if r["status"] == "confirmed" else f", {r['status']}") + (f", from {fmt(min(r['prices'], key=lambda p: p['usd']))}" if r.get("prices") else "") + ")" for r in rs)
 nxt_set = next((r for r in public if dated(r) and r["release_date"] > "2026-12-31" and r["type"] in ("Main Set", "Universes Beyond")), None)
-g_faq = [(f"What MTG products release in {g_month_name(m)}?", (f"{g_names(rs)}." if rs else f"Nothing is on our calendar for {g_month_name(m)} yet.") + " Dates marked unconfirmed can still change.") for m, rs in g_by.items()]
+# ---- November 2026 buy/preorder section (fall guide, under the intro). Every price, date and verdict comes from releases.json;
+# a curated one-line "why" is used only while the entry's verdict is still the one it was written for, otherwise the entry's own note shows.
+G_NOV_CHECKED = "2026-10-31"
+G_NOV_ID = "november-2026"
+def g_r(slug): return next(r for r in data if r["slug"] == slug)
+nv_kit, nv_ph, nv_st, nv_cmd = g_r("countdown-kit-marvels-history-of-heroes"), g_r("secret-lair-star-trek-set-phasers-superdrop"), g_r("star-trek"), g_r("star-trek-commander")
+def nv_label(r, expected, special):
+    v = r.get("verdict")
+    return special if v == expected else (VERDICT_LABEL.get(v, v) if v else "No verdict yet")
+def nv_why(r, expected, why): return why if r.get("verdict") == expected else r["note"]
+def nv_prices(r, labels=None): return "; ".join(f"{p['label']}: {fmt(p)}" for p in (r.get("prices") or []) if not labels or p["label"] in labels) or "TBA"
+_bmu = next((b for a, b in (nv_st.get("buy_guide") or []) if a.startswith("Bundles")), "")
+_bmu_usd = re.findall(r"\$(\d+\.\d\d) MSRP \(8 Play Boosters", _bmu)
+nv_st_price = nv_prices(nv_st) + (f"; Beam Me Up Bundle: ${_bmu_usd[0]}" if _bmu_usd else "")
+nv_pre_link = f'<a href="{BASE}/guides/star-trek-mtg-release-guide.html#prerelease-kits">Star Trek prerelease</a>'
+nv_rows = [
+ ("Nov 2", plink(nv_kit, nv_kit["name"]), nv_prices(nv_kit), nv_label(nv_kit, "wait", "Wait unless you're a Marvel collector"),
+  nv_why(nv_kit, "wait", "30 Marvel-art cards, mostly reprints plus 2 early Darkhold Destiny uncommons, about $6.67 a card; limited quantity at MagicSecretLair.com from 9 AM PT. Price out the singles you'd actually play.")),
+ ("Nov 6–12", nv_pre_link + " (local game stores)", "Set by each store", ("Buy for the event; Wait if you only want cards; Skip as speculation" if nv_st.get("prerelease_verdict") else "No verdict yet"),
+  ("Each Prerelease Pack is 6 Play Boosters, 1 traditional foil rare or mythic rare, a deck box and a spindown; Play Boosters hit stores Nov 13 at $6.99 MSRP." if nv_st.get("prerelease_verdict") else "Prerelease events at local game stores; see the Star Trek guide.")),
+ ("Nov 9", plink(nv_ph, nv_ph["name"]), "About $30 non-foil / $40 foil per drop" if nv_ph.get("prices") else "TBA", nv_label(nv_ph, "buy", "Buy if you really like Star Trek; otherwise Skip"),
+  nv_why(nv_ph, "buy", "6 Star Trek drops (5 revealed so far), 9 AM PT / 12 PM ET at MagicSecretLair.com: fan-collectible and theme play, not a speculative pickup.")),
+ ("Nov 13", plink(nv_st, nv_st["name"]) + " (Play Boosters, Collector Boosters, Bundle, Beam Me Up Bundle)", nv_st_price, nv_label(nv_st, "buy", "Buy (Play Boosters / Bundle); Collector Boosters only for chase cards"),
+  nv_why(nv_st, "buy", "For drafting and Trek fans; skip sealed speculation. Collector Boosters and both Bundles may arrive after Nov 13 in Europe or Asia-Pacific.")),
+ ("Nov 13", plink(nv_cmd, "Star Trek Commander Decks"), nv_prices(nv_cmd), nv_label(nv_cmd, "buy", "Buy regular decks; Skip Collector's Editions at markup"),
+  nv_why(nv_cmd, "buy", "Regular decks preorder near MSRP and Collector's Editions well above it (NerdSnack). In North America the decks may arrive after Nov 13 (Wizards, Oct 16): check your preorder's ship date.")),
+]
+nv_left = [(r, t) for r, t in (
+ (g_r("secret-lair-chaos-vault-reality-fracture"), "delayed globally (Wizards, Oct 19). Wait for stock at the $89.99 MSRP; pre-release retailer listings ran $159.99–$189.99."),
+ (g_r("secret-lair-atlanta"), "sold out at the official store ($249.99). Wait: don't overpay on resale (eBay listings over $450, per MTG Rocks)."),
+ (g_r("mystery-booster-commander-edition"), "only sold inside Festival in a Box: Atlanta 2026, now sold out. Wait: MTG Rocks expects it to return with future MagicCon Festival in a Box releases, so don't pay resale."),
+ (g_r("secret-lair-strange-school"), "sold out on launch day (Oct 26). Wait: don't pay resale for the sealed drop; buy the singles you'll actually play."),
+ (g_r("secret-lair-duality-distorted"), "sold out on launch day (Oct 26). Wait: don't pay resale for the sealed drop; buy the singles you'll actually play."),
+) if r.get("verdict") == "wait"]
+_corn = g_r("secret-lair-corn-maze-superdrop"); _bb = g_r("secret-lair-reality-fracture-bundle-bundles"); _spm = g_r("spider-mania-commander")
+_ce_name = "Star Trek Collector's Edition Commander decks"
+nv_dont = [f"{plink(nv_cmd, _ce_name)} above their {fmt(nv_cmd['prices'][1])} MSRP: buy the {fmt(nv_cmd['prices'][0])} regular decks instead."
+           if len(nv_cmd.get("prices") or []) > 1 else None,
+           f"Sealed {plink(nv_st, 'Star Trek')} boxes bought to speculate on.",
+           f"{plink(_corn, _corn['short_name'])} as a holiday gift: Wizards expects US orders to ship Dec 15, 2026 – Mar 15, 2027." if "Dec 15, 2026" in (_corn.get("window") or "") else None,
+           f"{plink(_bb, _bb['short_name'])} on resale (our verdict: Skip)." if _bb.get("verdict") == "skip" else None,
+           f"{plink(_spm, _spm['short_name'])} (Dec 4, unconfirmed leak): wait for Wizards to confirm it and show the decklist." if _spm.get("verdict") == "wait" and _spm["status"] != "confirmed" else None]
+nv_dont = [x for x in nv_dont if x]
+g_nov_html = (f'<h2 id="{G_NOV_ID}">What MTG to buy or preorder in November 2026</h2>'
+  + checked({"last_checked": G_NOV_CHECKED, "source": nv_kit["source"], "field_sources": {"st": nv_st["source"], "ph": nv_ph["source"], "delays": nv_cmd["field_sources"]["delays"]}})
+  + "<p>Four buying moments in 12 days. Here is our call on each, week by week, with Wizards' MSRPs (store prices vary). Click a product for its sources.</p>"
+  + "<table><tr><th>Date</th><th>Product</th><th>MSRP</th><th>Buy / Wait / Skip</th><th>Why</th></tr>"
+  + "".join(f"<tr><td>{E(d)}</td><td>{p}</td><td>{E(m)}</td><td><b>{E(v)}</b></td><td>{E(w)}</td></tr>" for d, p, m, v, w in nv_rows) + "</table>"
+  + "<h3>Still open from October</h3><ul>" + "".join(f"<li>{plink(r, r.get('short_name') or r['name'])}: {E(t)}</li>" for r, t in nv_left) + "</ul>"
+  + "<h3>Don't preorder</h3><ul>" + "".join(f"<li>{x}</li>" for x in nv_dont) + "</ul>"
+  + f'<p><b>How we decide:</b> Buy means worth it at MSRP for the people we name, Wait means hold for better stock, a better price or more information, and Skip means not worth it at the current price. The free <a href="{BASE}/newsletter.html">What\'s Dropping newsletter</a> flags new verdicts and price or date changes every Monday.</p>')
+_kit_note = nv_kit["note"]
+nv_faq = [
+ ("Which MTG products are worth preordering this month?",
+  f"For November 2026: the Star Trek set ({nv_label(nv_st, 'buy', 'Buy')} for drafting and Trek fans; Play Boosters {fmt(nv_st['prices'][0])}, Bundle {fmt(nv_st['prices'][2])}) and the regular Star Trek Commander decks ({fmt(nv_cmd['prices'][0])}, {nv_label(nv_cmd, 'buy', 'Buy')}; skip Collector's Editions at markup). "
+  f"Set Phasers to Superdrop (Nov 9): {nv_label(nv_ph, 'buy', 'buy if you really like Star Trek, otherwise skip')}. The Marvel History of Heroes Countdown Kit (Nov 2, {fmt(nv_kit['prices'][0])}): {nv_label(nv_kit, 'wait', 'wait unless you are a Marvel collector')}. Don't preorder anything above MSRP to speculate."),
+ ("Is the Marvel History of Heroes Countdown Kit worth $199.99?",
+  f"{_kit_note} It goes on sale {nice_date(nv_kit)} at 9 AM PT, only at MagicSecretLair.com."),
+ ("Should I preorder the Star Trek Bundle or Collector Boosters?",
+  " ".join(f"{a}: {b}" for a, b in (nv_st.get("buy_guide") or []) if a in ("Bundles / Beam Me Up Bundles", "Collector Boosters")) or nv_st["note"]),
+ ("Will Star Trek Commander decks be in stores on Nov 13?",
+  f"Maybe not in North America. {nv_cmd['window'].replace('Preorders open. ', '')}. Check your preorder's ship date; Play Boosters and Prerelease Packs are on track everywhere."),
+]
+g_faq = [((f"What MTG products come out in {g_month_name(m)}?" if m == "2026-11" else f"What MTG products release in {g_month_name(m)}?"),
+          (f"{g_names(rs)}." if rs else f"Nothing is on our calendar for {g_month_name(m)} yet.")
+          + (f" Star Trek prerelease events run {nv_st['prerelease']} at local game stores, and the set reaches MTG Arena Nov 10, 2026." if m == "2026-11" and nv_st.get("prerelease") else "")
+          + " Dates marked unconfirmed can still change.") for m, rs in g_by.items()]
+g_faq = nv_faq[:1] + [q for q in g_faq if q[0].startswith("What MTG products come out in November")] + nv_faq[1:] + [q for q in g_faq if not q[0].startswith("What MTG products come out in November")]
 g_faq.append(("What is the best MTG gift for the 2026 holidays?",
               ("Our picks, all rated buy: " + "; ".join(f"{short_name(r)} for {r['gift_for'].split(':')[0]}" for r in g_gifts) + ". If you're unsure, a gift card for a local game store avoids guessing.") if g_gifts else "We don't have any items rated buy for this season yet."))
 if nxt_set: g_faq.append(("What is the next MTG set after 2026?", f"{nxt_set['name']}, releasing {nice_date(nxt_set)} ({nxt_set['status']})."))
 g_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › <a href="{BASE}/guides/">Guides</a> › Fall/Holiday 2026</nav><h1>{E(G_H1)}</h1>'
   f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
   f'<p><b>Last updated:</b> {tdate()} · {len(g_items)} products from October to December 2026</p>'
-  f'<p>Every Magic: The Gathering product on our calendar for October, November and December 2026: sets, Commander decks, Secret Lair drops, bundles and special releases, with release dates, MSRPs and our buy/skip verdict. Secret Lair sales are tracked on the <a href="{BASE}/secret-lair.html">Secret Lair hub</a>, and November\'s biggest release has its own <a href="{BASE}/guides/star-trek-mtg-release-guide.html">Star Trek release guide</a>. Looking further ahead? See the <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>.</p>'
-  "<h2>Best picks for gifts</h2>" + ("<p>Only products we already rate as a buy, and who each one suits:</p><ul>" + "".join(f'<li><a href="{BASE}/p/{r["slug"]}.html">{E(short_name(r))}</a> ({nice_date(r)}): for {E(r["gift_for"])}.</li>' for r in g_gifts) + "</ul>" if g_gifts else "<p>No buy-rated products this season yet.</p>")
+  f'<p>Every Magic: The Gathering product on our calendar for October, November and December 2026: sets, Commander decks, Secret Lair drops, bundles and special releases, with release dates, MSRPs and our buy/skip verdict. Secret Lair sales are tracked on the <a href="{BASE}/secret-lair.html">Secret Lair hub</a>, and November\'s biggest release has its own <a href="{BASE}/guides/star-trek-mtg-release-guide.html">Star Trek release guide</a>. Looking further ahead? See the <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>. Deciding what to lock in now? Start with <a href="#{G_NOV_ID}">what to buy or preorder in November 2026</a>.</p>'
+  + g_nov_html
+  + "<h2>Best picks for gifts</h2>" + ("<p>Only products we already rate as a buy, and who each one suits:</p><ul>" + "".join(f'<li><a href="{BASE}/p/{r["slug"]}.html">{E(short_name(r))}</a> ({nice_date(r)}): for {E(r["gift_for"])}.</li>' for r in g_gifts) + "</ul>" if g_gifts else "<p>No buy-rated products this season yet.</p>")
   + "".join(f"<h2>{g_month_name(m)}</h2>" + ("".join(guide_item(r) for r in rs) if rs else "<p>Nothing scheduled yet.</p>") for m, rs in g_by.items())
   + ("<h2>Announced, no date yet</h2><p>Announced but not yet scheduled, so these may or may not land before the end of 2026.</p>" + "".join(guide_item(r) for r in g_tba) if g_tba else "")
   + f'<p class=disc><small>{E(DISCLOSURE)}</small></p>'
@@ -483,7 +551,7 @@ g_list = g_items + g_tba
 g_ld = [
  {"@context": "https://schema.org", "@type": "Article", "headline": G_H1, "url": g_url, "mainEntityOfPage": g_url, "image": OG_IMAGE, "datePublished": G_PUBLISHED, "dateModified": PD,
   "author": {"@id": f"{SITE_URL}/#org"}, "publisher": {"@id": f"{SITE_URL}/#org"}, "isPartOf": {"@id": f"{SITE_URL}/#website"},
-  "description": "Every Magic: The Gathering product releasing October to December 2026, with dates, prices, buy/skip verdicts and holiday gift picks."},
+  "description": "Every Magic: The Gathering product releasing October to December 2026, with dates, prices, buy/skip verdicts, a week-by-week November 2026 buy/preorder table and holiday gift picks."},
  {"@context": "https://schema.org", **ORG},
  {"@context": "https://schema.org", "@type": "ItemList", "name": "MTG releases, October to December 2026", "numberOfItems": len(g_list),
   "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate(g_list)]},
@@ -493,7 +561,7 @@ g_ld = [
    {"@type": "ListItem", "position": 3, "name": "Fall/Holiday 2026 MTG releases", "item": g_url}]},
  {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in g_faq]},
 ]
-G_DESC = "Every MTG release for October, November and December 2026: sets, Commander decks, Secret Lair drops and bundles, with dates, prices, verdicts and gift picks."
+G_DESC = "What MTG to buy or preorder in November 2026, plus every Oct–Dec 2026 release: sets, Commander decks and Secret Lair drops, with verdicts and gift picks."
 page(G_TITLE, G_DESC, g_body, G_SLUG, g_ld)
 # ---- Guide 2: Star Trek release guide (facts from Wizards' Collecting Star Trek article and WPN product listing; verdicts from releases.json) ----
 ST_SRC = {"collect": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
@@ -537,7 +605,7 @@ st_faq = [
  ("What should I buy from MTG Star Trek?", f"Our verdict on the set: {st_vs.get(st_set.get('verdict'), 'no verdict yet')}, for {st_set.get('gift_for', 'drafting and Trek fans')}. On the Commander decks: {st_vs.get(st_cmd.get('verdict'), 'no verdict yet')}, for {st_cmd.get('gift_for', 'Commander players')}."),
 ]
 if st_set.get("prerelease_verdict"): st_faq.append(("Should I buy a Star Trek prerelease kit?", st_set["prerelease_verdict"]))
-st_pre = (f'<div class=card><h3>Prerelease kits</h3><p><span class=t>Buy / Wait / Skip</span> {E(st_set["prerelease_verdict"])}</p>'
+st_pre = (f'<div class=card><h3 id="prerelease-kits">Prerelease kits</h3><p><span class=t>Buy / Wait / Skip</span> {E(st_set["prerelease_verdict"])}</p>'
           f'<p><small>Prerelease pack contents and dates per {st_a("collect")}.</small></p>{checked(st_set, with_sources=False)}</div>') if st_set.get("prerelease_verdict") else ""
 st_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › <a href="{BASE}/guides/">Guides</a> › Star Trek</nav><h1>{E(ST_H1)}</h1>'
   f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
@@ -636,7 +704,7 @@ y_ld = [
  {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in y_faq]},
 ]
 page(Y_TITLE, Y_DESC, y_body, Y_SLUG, y_ld)
-GUIDES = [(G_SLUG, G_H1, "Every Magic product from October to December 2026, grouped by month, with prices, buy/skip verdicts and holiday gift picks."),
+GUIDES = [(G_SLUG, G_H1, "Every Magic product from October to December 2026, grouped by month, with prices, buy/skip verdicts, holiday gift picks and a week-by-week table of what to buy or preorder in November 2026."),
           (ST_SLUG, ST_H1, "Everything in the Nov 13, 2026 Star Trek set: every product and MSRP, the four Commander decks, key dates, signed cards and what to buy."),
           (Y_SLUG, Y_H1, "Every 2027 MTG set and Commander deck on our calendar: Nauctis, Darkhold Destiny, Titanbreach and Zhalfir, with dates, MSRPs and preorder status.")]
 gi_url = url("guides/index.html")
