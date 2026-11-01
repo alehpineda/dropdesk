@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 """MTG Drops static site builder. Usage: python3 build.py  -> dist/"""
 import json, html, os, re, shutil, urllib.parse, datetime, hashlib
-AFFILIATE_ID = ""  # TCGplayer affiliate/partner id; blank = plain links
+# TCGplayer Impact (contract accepted 2026-10-31). Tracking link from Active Contracts.
+# Deep links append ?u=<percent-encoded landing page> (Impact: "Create a Deep Link for an Ad").
+# Path is /c/{partner}/{ad}/{campaign}. The old www.tcgplayer.com ?partner= query is not this program.
+IMPACT_PARTNER_ID = "7984768"         # Impact account / media partner id
+IMPACT_AD_ID = "1780961"
+IMPACT_CAMPAIGN_ID = "21018"
+IMPACT_MEDIA_PROPERTY_ID = "9018299"  # mtgdrops.com channel in Create-a-link; not a tracking-path segment
+TCG_IMPACT_BASE = f"https://partner.tcgplayer.com/c/{IMPACT_PARTNER_ID}/{IMPACT_AD_ID}/{IMPACT_CAMPAIGN_ID}"
 SITE_URL = "https://mtgdrops.com"
 BASE = ""  # site served at the domain root (mtgdrops.com)
 CONTEXT7_ASK_URL = "https://context7.com/api/v2/ask?siteKey=ask_1bb1972ef8ba0c552c4ec616"
@@ -17,10 +24,12 @@ header,footer{padding:1rem;background:#171a21}header a{margin-right:1rem}main{ma
 .f button.on{background:#3a7bd5}input{padding:.5rem;border-radius:6px;border:0}form button{padding:.5rem 1rem}
 a.amz{display:inline-block;padding:.4rem .8rem;border-radius:8px;background:#ff9900;color:#111;text-decoration:none;font-weight:600}.disc{color:#9aa}.about{color:#9aa;margin:-.4rem 0 .8rem}"""
 def tcg(name):  # callers pass a release's optional tcg_query (explicit TCGplayer search term) or its name
-    u = "https://www.tcgplayer.com/search/magic/product?q=" + urllib.parse.quote(name)
-    return u + ("&partner=" + urllib.parse.quote(AFFILIATE_ID) if AFFILIATE_ID else "")
+    dest = "https://www.tcgplayer.com/search/magic/product?q=" + urllib.parse.quote(name)
+    # safe="" percent-encodes the destination, including its already-encoded q=, so one decode restores the search URL.
+    # IMPACT_MEDIA_PROPERTY_ID stays off the click URL: the contract tracking link does not include it.
+    return TCG_IMPACT_BASE + "?u=" + urllib.parse.quote(dest, safe="")
 AMAZON_TAG = "mtgdrops-20"  # Amazon Associates tag
-DISCLOSURE = "As an Amazon Associate, MTG Drops earns from qualifying purchases. Some links on this site are affiliate links."
+DISCLOSURE = "As an Amazon Associate, MTG Drops earns from qualifying purchases. MTG Drops also earns a commission on qualifying purchases through TCGplayer affiliate links. Some links on this site are affiliate links."
 def amazon(r):
     # Direct /dp/ link only when an owner-approved ASIN with recorded evidence (amazon_evidence) is present;
     # otherwise a search URL, which never goes dead. Only purchasable retail products carry amazon_query.
@@ -388,7 +397,7 @@ for r in data:
     crumbs = f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › {(f'<a href="{BASE}/secret-lair.html">Secret Lair</a>' if r["type"] == "Secret Lair" else E(r["type"]))} › {E(sn)}</nav>{hubl}'
     desc = r.get("meta_desc") or f"{sn} release date: {nice_date(r)}. " + r["note"]
     page(title_for(r), desc,
-         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])}){f" · <b>Prerelease:</b> {E(r['prerelease'])}" if r.get("prerelease") else ""}{" · <b>Sold out</b> at the official store" if r.get("sold_out") else ""}{" · <b>Delayed</b>: stock may arrive after this date" if r.get("delayed") else ""}</p>{win}<h2>Price</h2>{ptab}{contents}{facts}<h2>Buy or skip?</h2><p>{E(r["note"])}{(" " + E(r["buy_guide_intro"])) if r.get("buy_guide_intro") else ""}</p>{("<ul>" + "".join(f"<li><b>{E(k)}:</b> {E(v)}</li>" for k, v in r["buy_guide"]) + "</ul>") if r.get("buy_guide") else ""}{pre_html}{f"<p><i>{E(r['preorder_call'])}</i></p>" if r.get("preorder_call") else ""}{("<p>Other Commander decks coming in 2027: " + ", ".join(plink(x, x["name"]) + f" ({nice_date(x)})" for x in h_cmd27 if x is not r) + ".</p>") if r.get("preorder_call") and r in h_cmd27 else ""}<p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}{"<p class=disc><small>"+E(DISCLOSURE)+"</small></p>" if amazon(r) else ""}{tinfo}{howto}{relhtml}{y27}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}{checked(r, with_sources=False)}<p><small>Last updated: {tdate()}</small></p>{FORM}',
+         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])}){f" · <b>Prerelease:</b> {E(r['prerelease'])}" if r.get("prerelease") else ""}{" · <b>Sold out</b> at the official store" if r.get("sold_out") else ""}{" · <b>Delayed</b>: stock may arrive after this date" if r.get("delayed") else ""}</p>{win}<h2>Price</h2>{ptab}{contents}{facts}<h2>Buy or skip?</h2><p>{E(r["note"])}{(" " + E(r["buy_guide_intro"])) if r.get("buy_guide_intro") else ""}</p>{("<ul>" + "".join(f"<li><b>{E(k)}:</b> {E(v)}</li>" for k, v in r["buy_guide"]) + "</ul>") if r.get("buy_guide") else ""}{pre_html}{f"<p><i>{E(r['preorder_call'])}</i></p>" if r.get("preorder_call") else ""}{("<p>Other Commander decks coming in 2027: " + ", ".join(plink(x, x["name"]) + f" ({nice_date(x)})" for x in h_cmd27 if x is not r) + ".</p>") if r.get("preorder_call") and r in h_cmd27 else ""}<p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}<p class=disc><small>{E(DISCLOSURE)}</small></p>{tinfo}{howto}{relhtml}{y27}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}{checked(r, with_sources=False)}<p><small>Last updated: {tdate()}</small></p>{FORM}',
          f"p/{r['slug']}.html", main_ld + [bc], noindex=bool(r.get("placeholder")), og=(card[1], 1200, 630) if card else None)
 # ---- Secret Lair hub (/secret-lair.html): generated from releases.json, so data updates keep it current ----
 SL_SRC = {"about": "https://secretlair.wizards.com/us/en/about-us",
