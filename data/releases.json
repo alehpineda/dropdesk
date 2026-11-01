@@ -695,7 +695,18 @@
       "deck names": "https://magic.wizards.com/en/products/marvel/marvel-darkhold-destiny/card-image-gallery"
     },
     "last_checked": "2026-10-19",
-    "preorder_call": "This is a preorder-stage page: Wizards has published the deck names and MSRPs, but no decklists or face commanders yet, so there is no verdict. We'll make the call once the lists are out."
+    "preorder_call": "This is a preorder-stage page: Wizards has published the deck names and MSRPs, but no decklists or face commanders yet, so there is no verdict. We'll make the call once the lists are out.",
+    "amazon_asin": "B0HK672FVM",
+    "amazon_evidence": {
+      "asin": "B0HK672FVM",
+      "amazon_title": "Magic: The Gathering | Marvel: Darkhold Destiny (Commander Deck Bundle listing; search card reads \"Commander Deck Bundle (Includes All 4 Decks (Strange Academy, Gods of Asgard, Midnight Sons, Lords of Hel)\")",
+      "seller": "Ships from and sold by Amazon.com (merchant ATVPDKIKX0DER, checked 2026-11-01), pre-order at $299.96, exactly 4 x the $74.99 per-deck price, so no scalper markup.",
+      "price_seen_usd": [
+        299.96
+      ],
+      "checked": "2026-11-01",
+      "match_reason": "Official Wizards of the Coast listing (UPC 195166349619, model D64660000), pre-order for the Apr 9, 2027 release, matching our release_date. Bullets: includes 1 of each deck (Strange Academy, Gods of Asgard, Midnight Sons, Lords of Hel), 30 new Commander cards per deck, 2 Traditional Foil legendary commanders per deck (1 Borderless), 10 double-sided tokens, deck box, strategy guide and reference card per deck, matching the four decks and contents in this entry. The regular 4-deck bundle (not the $639.96 Collector's Edition set) stands in as the single Amazon link for this four-deck release, same approach as the Star Trek and Darkhold set Bundles."
+    }
   },
   {
     "slug": "kamigawa-titanbreach",
