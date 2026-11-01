@@ -862,20 +862,155 @@ open("dist/robots.txt","w").write(f"User-agent: *\nAllow: /\nContent-Signal: ai-
 # emitted so a Jekyll build would not drop dot-directories such as .well-known. There is no
 # _headers file; Pages cannot set Content-Type or Link response headers.
 open("dist/.nojekyll","w").write("")
+# Agent Skills Discovery RFC v0.2.0 (https://schemas.agentskills.io/discovery/0.2.0/schema.json).
+# llms.txt, the sitemap, and the api-catalog linkset stay where they already are (llms.txt, the
+# HTML <link> hints, and /.well-known/api-catalog). This index lists skills only.
+# GitHub Pages serves /.well-known/agent-skills/ as this same index.json (the no-slash path 301s
+# there). There is no separate extensionless file: the directory name is agent-skills.
+AGENT_SKILLS_SCHEMA = "https://schemas.agentskills.io/discovery/0.2.0/schema.json"
+WHATS_DROPPING_DESC = ("Find what Magic: The Gathering products are dropping this week on the MTG Drops release calendar, including dates, prices, and buy/skip verdicts. Use when asked what is releasing, what to preorder, or what the calendar says.")
+SECRET_LAIR_DESC = ("Read the MTG Drops Secret Lair schedule and separate drops that are on sale now from upcoming and ended ones, with dates, prices, and buy/skip verdicts. Use when asked which Secret Lair is on sale, when a drop goes on sale, or whether a drop is worth buying.")
+def agent_skill_md(name, description, body):
+    """SKILL.md bytes: YAML frontmatter (name + description) then markdown. Digest is sha256 of these bytes."""
+    text = f"---\nname: {name}\ndescription: {json.dumps(description, ensure_ascii=False)}\n---\n\n{body.strip()}\n"
+    return text.encode("utf-8")
+def write_agent_skill(name, description, body):
+    raw = agent_skill_md(name, description, body)
+    path = os.path.join("dist/.well-known/agent-skills", name, "SKILL.md")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    open(path, "wb").write(raw)
+    return {"name": name, "type": "skill-md", "description": description,
+            "url": f"/.well-known/agent-skills/{name}/SKILL.md",
+            "digest": "sha256:" + hashlib.sha256(raw).hexdigest()}
+whats_dropping_body = f"""# What's dropping this week
+
+MTG Drops ({SITE_URL}/) is an independent Magic: The Gathering release calendar. It lists upcoming sets, Commander precons, Universes Beyond products, and Secret Lair drops, each with a date, known prices, and a short buy/skip verdict. It is not a store, a Discord bot, or an eBay monitor, and it is not affiliated with Wizards of the Coast.
+
+Use this skill to answer what is releasing this week or soon, what a product costs, and whether MTG Drops says to buy, wait, or skip. Read the live pages below. Dates, prices, and verdicts come from those pages.
+
+## Release calendar
+
+Open {SITE_URL}/.
+
+The page is titled "MTG Release Calendar 2026–2027". Products are grouped under month headings such as "Nov 2026". A dated product stays under its month heading through its release date. Starting the next day it is listed under "Already released", unless it is marked delayed. Delayed products stay in the upcoming groups. A product whose date is TBA stays under "Date TBA".
+
+There is no "this week" filter and no date-range API. For this week, open the current month and read each card's date. The type buttons (All, and one per product type) only hide cards in a browser. The HTML includes every card.
+
+Each product card shows:
+
+- A type label (for example Main Set, Universes Beyond, Commander Precon, or Secret Lair).
+- A status label such as "unconfirmed" when status is not confirmed, plus "sold out" or "delayed" when those flags are set. Delayed means the announced date has passed and stock may arrive after that date.
+- The product name. It links to {SITE_URL}/p/{{slug}}.html. A placeholder that has no page yet is plain text, with no product URL.
+- The release date, written like "Nov 13, 2026", or "TBA". When a prerelease window is announced, the date line adds "Prerelease" and that window.
+- A short note. That note is the buy/skip writeup.
+- "Last checked", with source links, when the entry records a check date.
+
+## Product page
+
+On {SITE_URL}/p/{{slug}}.html read:
+
+- The Release line: date, status, and, when present, prerelease, sold out, and delayed.
+- The Price section.
+- The "Buy or skip?" section. The paragraph there is the verdict. Some products also have a structured verdict of buy, wait, skip, or mixed. Guide pages show that as "Verdict: Buy" (or Wait, Skip, or Mixed). On the calendar card, use the note.
+
+The page links to TCGplayer and sometimes Amazon. Those are affiliate links. See Affiliate disclosure below. MTG Drops does not sell the product.
+
+## Other ways to read the same calendar
+
+- {SITE_URL}/calendar.ics — iCalendar feed of dated releases (all-day events). The event URL is the product page. When a placeholder is included, its event URL is the home page.
+- {SITE_URL}/feed.xml — RSS of every product that has a page, upcoming and delayed first, then already released. Each item links to the product page and uses the note as the description.
+- {SITE_URL}/llms.txt — curated text overview. The Releases section lists every product that has a page, in that same order. Each line has the date, type, and status, and notes when an item is delayed. The Main pages section links the calendar, guides, newsletter, and feeds.
+- {SITE_URL}/guides/mtg-releases-fall-holiday-2026.html#november-2026 — a week-by-week buy/preorder table for November 2026 only, on the fall/holiday guide. It is not a general weekly feed. Other months on that guide are listed under their own headings. The 2027 schedule is {SITE_URL}/guides/mtg-2027-release-schedule.html.
+- {SITE_URL}/newsletter.html — describes the free Monday email "What's Dropping" (US Central time). The signup form posts to Buttondown. There is no newsletter API.
+
+## Asking a question
+
+{SITE_URL}/llms.txt has a Search section. It documents a Context7 ask endpoint. Append `&query=` and the URL-encoded question to the endpoint printed there. The response is documentation that answers the question, with a source link for each part. No API key is needed. If nothing matches, it says so. Treat that as a search over the published pages, not as live store stock or a price feed. When the calendar or a product page disagrees with a paraphrase, use the page.
+
+## What is not published
+
+data/releases.json is build input. It is not served. There is no JSON releases API. The sitemap of public pages is {SITE_URL}/sitemap.xml. The linkset at {SITE_URL}/.well-known/api-catalog points at the same Context7 ask endpoint, with llms.txt as its service doc.
+
+## Affiliate disclosure
+
+Every page states: "{DISCLOSURE}"
+
+Dates come from official and community sources. Verify before buying. Contact: contact@mtgdrops.com.
+"""
+secret_lair_body = f"""# Secret Lair schedule
+
+Use this skill for Secret Lair questions: what is on sale now, what is upcoming, when a drop goes on sale, what it costs, and the buy/skip verdict. Read the live hub. Dates, prices, and verdicts come from that page.
+
+## Hub page
+
+Open {SITE_URL}/secret-lair.html.
+
+Under the title, a line counts the three buckets, in the form "N on sale now · N upcoming · N recent / ended".
+
+Then, in this order:
+
+1. "Next Secret Lair drop". This is the next dated Secret Lair sale that is not delayed and not sold out, on or after today. It stays "next" through its sale day. If no such sale has a date, the page says the next drop is TBA.
+2. A link to the Secret Lair calendar feed, {SITE_URL}/secret-lair.ics.
+3. "On sale now".
+4. "Upcoming Secret Lair drops".
+5. "Recent / ended".
+6. "Secret Lair FAQ", including what is on sale now, what is next, the usual sale time, foil versus non-foil, and print-to-demand. The lists above are the schedule. When a drop's own card is more specific than the general FAQ, use the card.
+
+Each drop card shows:
+
+- The name, linked to {SITE_URL}/p/{{slug}}.html, plus "sold out" or "delayed" when those flags are set.
+- Date: one of "On sale since {{date}}" (opened, still in the on-sale window), "On sale {{date}}" (not opened yet), "Went on sale {{date}}", "Went on sale {{date}}; sold out", "Date TBA", or a delayed line ("Delayed: was due {{date}}; Wizards says stock may arrive shortly after").
+- Sale details, when that drop has a known window (time, store, end, or quantity). The window on the card overrides the general FAQ line that recent sales open at 9 a.m. PT, with a pre-queue from 8 a.m. PT, at MagicSecretLair.com.
+- Price: the prices recorded for that drop. Standard 2026 drops are often $29.99 non-foil and $39.99 foil. Superdrops, bundles, and larger products are priced on their own. Read the card.
+- Contents.
+- "Our verdict": the buy/skip note for that drop.
+- "Last checked", with sources, when a check date is recorded.
+
+The product page repeats the release date and status, the price section, the card list when one is published, and "Buy or skip?".
+
+## How a drop is bucketed
+
+The hub applies these rules in order:
+
+- Delayed: upcoming. A delayed drop is never listed as on sale now. Stock may arrive after the announced date.
+- Sold out, and the sale date is today or earlier: recent / ended.
+- No numeric date, or the sale date is still in the future: upcoming. TBA is upcoming.
+- A known sale end date: on sale now while that end date is today or later; otherwise recent / ended.
+- Otherwise (no sale end date): on sale now while the drop opened {SL_ONSALE_DAYS} or fewer days ago, then recent / ended. The hub says drops opened more than {SL_ONSALE_DAYS} days ago are listed as recent / ended unless an end date is known.
+
+Limited print runs can sell out sooner, or stay listed at the store longer, than that window. For current stock, check Wizards' own store, MagicSecretLair.com: {SL_STORE}. MTG Drops does not sell Secret Lair products and does not take orders.
+
+## Same facts elsewhere
+
+{SITE_URL}/llms.txt lists every hub drop under "Secret Lair drops", labeled "on sale now", "upcoming", or "recent/ended", with the date line and price.
+
+{SITE_URL}/secret-lair.ics is an iCalendar feed of Secret Lair drops only.
+
+The home calendar ({SITE_URL}/) also includes Secret Lair cards in the month groups, and a "Next Secret Lair drop" line that links to this hub. For on-sale versus upcoming, use the hub sections.
+
+## Asking a question
+
+The Search section of {SITE_URL}/llms.txt documents the Context7 ask endpoint. Append `&query=` and the URL-encoded question to the endpoint printed there. It returns documentation with a source link for each part. No API key is needed. If nothing matches, it says so. It is not a stock or checkout API. For whether a drop is on sale, read the hub.
+
+## What is not published
+
+There is no JSON API of drops. data/releases.json is build input and is not served.
+
+## Affiliate disclosure
+
+Every page states: "{DISCLOSURE}"
+
+Dates come from official and community sources. Verify before buying. Not affiliated with Wizards of the Coast. Contact: contact@mtgdrops.com.
+"""
+agent_skills = [
+    write_agent_skill("whats-dropping", WHATS_DROPPING_DESC, whats_dropping_body),
+    write_agent_skill("secret-lair", SECRET_LAIR_DESC, secret_lair_body),
+]
 os.makedirs("dist/.well-known/agent-skills", exist_ok=True)
-# data/releases.json is build input and is not copied into dist, so it is described but not linked.
-open("dist/.well-known/agent-skills/index.json","w").write(json.dumps({
- "site": f"{SITE_URL}/",
- "resources": [
-  {"name": "llms.txt", "url": f"{SITE_URL}/llms.txt", "type": "text/plain",
-   "description": "Curated overview of MTG Drops for agents: main pages, Secret Lair drops, releases, and the Context7 ask endpoint."},
-  {"name": "sitemap", "url": f"{SITE_URL}/sitemap.xml", "type": "application/xml",
-   "description": "XML sitemap of public pages."},
-  {"name": "releases", "published": False,
-   "description": "Per-release dates, prices, and verdicts are published on product pages and summarized in llms.txt. data/releases.json is build input only and is not served."},
-  {"name": "api-catalog", "url": f"{SITE_URL}/.well-known/api-catalog", "type": "application/linkset+json",
-   "description": "RFC 9727 API catalog (linkset) whose entry is the Context7 ask endpoint documented in llms.txt."},
- ]}, indent=2) + "\n")
+open("dist/.well-known/agent-skills/index.json", "w").write(json.dumps({
+    "$schema": AGENT_SKILLS_SCHEMA,
+    "skills": agent_skills,
+}, indent=2) + "\n")
 # Ask URL copied from live https://mtgdrops.com/llms.txt (the &query=<URL-encoded question> suffix there is a template, not part of the endpoint).
 open("dist/.well-known/api-catalog","w").write(json.dumps({"linkset": [
  {"anchor": f"{SITE_URL}/.well-known/api-catalog", "item": [
