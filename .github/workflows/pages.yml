@@ -5,6 +5,7 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "0 11 * * *"  # daily 11:00 UTC rebuild so date-based sections (Secret Lair hub, guides) stay current; page dates only change when content does
+    - cron: "15 18 * * *"  # 18:15 UTC rebuild, after 9 AM PT Secret Lair sales open, so an opened sale stops showing as next the same day
 permissions:
   contents: read
   pages: write

@@ -178,23 +178,34 @@ h_next = next((r for r in public if dated(r) and r["release_date"] > today and r
 h_2027 = [r for r in data if r["release_date"][:4] == "2027" and r["type"] in SETS and r["status"] == "confirmed"]
 h_cmd27 = [r for r in public if r["release_date"][:4] == "2027" and r["type"] == "Commander Precon"]
 # Next Secret Lair answer (home line, home FAQ, hub card, hub FAQ). Rolls forward with the build date: the next dated,
-# not-delayed, not-sold-out Secret Lair sale whose date >= today (a drop stays "next" through its sale day), then the one after it.
+# not-delayed, not-sold-out Secret Lair sale that hasn't opened yet (a drop stays "next" on its sale day only until its opening hour,
+# e.g. 9 AM PT; the workflow rebuilds after that hour), then the one after it.
 # If nothing is dated, the answer says the next drop is TBA; dates only ever come from releases.json.
+def sl_sale_open(r):
+    """True once a Secret Lair sale has opened: any earlier day, or sale day at/after its opening hour (from the window, default 9 AM PT).
+    Uses the real clock only for a normal build; a BUILD_DATE test build treats sale day as not yet open."""
+    if r["release_date"] < today: return True
+    if r["release_date"] > today or os.environ.get("BUILD_DATE"): return False
+    from zoneinfo import ZoneInfo
+    m = re.search(r"\b(\d{1,2})(?::(\d{2}))?\s*([AP])M PT", r.get("window") or "")
+    h, mi = ((int(m.group(1)) % 12 + (12 if m.group(3) == "P" else 0)), int(m.group(2) or 0)) if m else (9, 0)
+    now = datetime.datetime.now(ZoneInfo("America/Los_Angeles"))
+    return now.date().isoformat() > today or (now.hour, now.minute) >= (h, mi)
 sl_dated_next = sorted([r for r in data if r["type"] == "Secret Lair" and not r.get("placeholder") and dated(r) and not r.get("delayed")
-                        and not r.get("sold_out") and r["release_date"] >= today], key=lambda r: r["release_date"])
+                        and not r.get("sold_out") and not sl_sale_open(r)], key=lambda r: r["release_date"])
 h_sl = sl_dated_next[0] if sl_dated_next else None          # next dated sale (None = TBA)
 sl_after = sl_dated_next[1] if len(sl_dated_next) > 1 else None
 h_sold = [r for r in public if r.get("sold_out")]
 # Curated wording for drops whose sale time/verdict we re-checked by hand. Each entry is used only while its anchors are still
 # in that release's data (window/note), so editing the data can't make the copy contradict it; otherwise the generic copy is used.
 # Verdict phrases are the ones already in each release's note (no new verdicts).
-SL_NEXT_CHECKED = "2026-10-30"  # date the curated next-drop facts below were re-checked against their release entries
+SL_NEXT_CHECKED = "2026-11-02"  # date the curated next-drop facts below were re-checked against their release entries
 SL_NEXT_COPY = {
     "countdown-kit-marvels-history-of-heroes": dict(win=("9 AM PT", "limited quantity"), anchor="Wait unless you're a Marvel collector",
         time="9 AM PT", home_time="9 AM PT", extra=" (limited quantity)", lead="Wait unless you're a Marvel collector, and price out the singles.",
         after="wait unless you're a Marvel collector"),
-    "secret-lair-star-trek-set-phasers-superdrop": dict(win=("9 AM PT / 12 PM ET", "while supplies last"), anchor="Buy only if you really like Star Trek; otherwise skip",
-        time="9 a.m. PT / 12 PM ET", home_time="9 AM PT / 12 PM ET", extra=" (while supplies last)", lead="Buy only if you really like Star Trek; otherwise skip.",
+    "secret-lair-star-trek-set-phasers-superdrop": dict(win=("9 AM PT / 12 PM ET", "while supplies last", "pre-queue from 8 AM PT"), anchor="Buy only if you really like Star Trek; otherwise skip",
+        time="9 a.m. PT / 12 PM ET", home_time="9 AM PT / 12 PM ET, pre-queue from 8 AM PT", extra=" (while supplies last; the pre-queue opens at 8 a.m. PT)", lead="Buy only if you really like Star Trek; otherwise skip.",
         after="buy only if you really like Star Trek; otherwise skip"),
 }
 def sl_cur(r):
