@@ -208,17 +208,17 @@
     "type": "Secret Lair",
     "release_date": "2026-11-09",
     "status": "confirmed",
-    "window": "Nov 9, 2026, 9 AM PT / 12 PM ET (pre-queue from 8 AM PT), only at MagicSecretLair.com · while supplies last · bonus Return of the Wildspeaker as \"Transporter Boondoggle\" for $200+ spent on the Superdrop",
-    "source": "https://www.gamespot.com/articles/star-trek-enters-magic-the-gatherings-secret-lair-next-month-here-are-the-cards/",
-    "note": "6 Star Trek drops at about $30 non-foil / $40 foil each (GameSpot), on sale Nov 9. Five are revealed: Beam Me Up (4 reversible blink cards incl. Momentary Blink), KHAAAAAAAAN (6 Wrath of Khan cards incl. Buried Alive, Genesis Wave), Lower Decks (Thrasios and Silas Renn's Secret Lair debut, Weatherlight), tlhIngan maH (5 reversible English/Klingon red cards incl. Seething Song) and New Worlds (10 basic lands by Alayna Danner). The sixth drop isn't revealed yet. Buy only if you really like Star Trek; otherwise skip. Fan-collectible and theme play, not a speculative pickup.",
+    "window": "Nov 9, 2026, 9 AM PT / 12 PM ET (pre-queue from 8 AM PT), only at MagicSecretLair.com · while supplies last · one foil Return of the Wildspeaker as \"Transporter Boondoggle\" promo for every $199.99 spent, while supplies last",
+    "source": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop",
+    "note": "6 Star Trek drops at $29.99 non-foil / $39.99 foil each (Wizards), on sale Nov 9. Five are revealed: Beam Me Up (4 reversible blink cards incl. Momentary Blink), KHAAAAAAAAN (6 Wrath of Khan cards incl. Buried Alive, Genesis Wave), Lower Decks (Thrasios and Silas Renn's Secret Lair debut, Weatherlight), tlhIngan maH (5 reversible English/Klingon red cards incl. Seething Song) and New Worlds (10 basic lands by Alayna Danner). The sixth drop isn't revealed yet. Buy only if you really like Star Trek; otherwise skip. Fan-collectible and theme play, not a speculative pickup.",
     "prices": [
       {
-        "label": "Each drop, non-foil (about)",
-        "usd": 30
+        "label": "Each drop, non-foil",
+        "usd": 29.99
       },
       {
-        "label": "Each drop, foil (about)",
-        "usd": 40
+        "label": "Each drop, foil",
+        "usd": 39.99
       }
     ],
     "contents": [
@@ -279,15 +279,16 @@
     "inside_source": "https://www.gamespot.com/articles/star-trek-enters-magic-the-gatherings-secret-lair-next-month-here-are-the-cards/",
     "field_sources": {
       "release_date": "https://www.gamespot.com/articles/star-trek-enters-magic-the-gatherings-secret-lair-next-month-here-are-the-cards/",
-      "prices": "https://www.gamespot.com/articles/star-trek-enters-magic-the-gatherings-secret-lair-next-month-here-are-the-cards/",
+      "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop",
       "contents": "https://www.gamespot.com/articles/star-trek-enters-magic-the-gatherings-secret-lair-next-month-here-are-the-cards/",
-      "bonus card": "https://www.gamespot.com/articles/star-trek-enters-magic-the-gatherings-secret-lair-next-month-here-are-the-cards/"
+      "bonus card": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop",
+      "window": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop"
     },
     "short_name": "Star Trek Superdrop",
     "verdict": "buy",
     "gift_for": "Star Trek fans who want the themed Secret Lair drops: skip if you're not into Trek",
     "sold_out": null,
-    "last_checked": "2026-10-27"
+    "last_checked": "2026-11-03"
   },
   {
     "slug": "secret-lair-marvel-doomsdrop",
