@@ -713,19 +713,19 @@ g_nov_html = (f'<h2 id="{G_NOV_ID}">What MTG to buy or preorder in November 2026
   + "<h3>Still open from October</h3><ul>" + "".join(f"<li>{plink(r, r.get('short_name') or r['name'])}: {E(t)}</li>" for r, t in nv_left) + "</ul>"
   + "<h3>Don't preorder</h3><ul>" + "".join(f"<li>{x}</li>" for x in nv_dont) + "</ul>"
   + f'<p><b>How we decide:</b> Buy means worth it at MSRP for the people we name, Wait means hold for better stock, a better price or more information, and Skip means not worth it at the current price. The free <a href="{BASE}/newsletter.html">What\'s Dropping newsletter</a> flags new verdicts and price or date changes every Monday.</p>')
-# Black Friday category verdicts. DRAFT until DeathScythe signs off. Do not treat a merge as that OK.
-# Proposed (owner must OK before publish):
+# Black Friday category verdicts. Owner approved these for publish on Nov 3, 2026.
+# Published timing calls (substance unchanged from the former Proposed lines):
 # - Star Trek Play Booster box and Bundle: Wait
 # - Star Trek Collector Booster box above MSRP: Skip / Wait for singles
 # - Star Trek Commander: don't pay above MSRP; expect Black Friday discounts
 #   (the "buy regular, skip CE at markup" line is the existing verdict, not a new one)
 # - Older 2026 Commander decks and beginner/starter products: Wait for Black Friday
-# Settled, reused verbatim from the product notes (not proposed):
+# Settled, reused verbatim from the product notes:
 # - Star Trek set: "Buy for drafting/Trek fans; skip sealed speculation."
 # - Set Phasers: "Buy only if you really like Star Trek; otherwise skip."
 # - Sold-out drops: "Wait: don't pay resale for the sealed drop; buy the singles you'll actually play."
-# The "not discounted at MagicSecretLair.com" sentence is the brief's settled Secret Lair exception.
-# Confirm it with the owner in the same publish OK. It is not a new per-drop verdict.
+# The "not discounted at MagicSecretLair.com" sentence is the settled Secret Lair exception.
+# It is not a new per-drop verdict.
 # Countdown Kit stays on sale in our data. This section must not call it sold out. The poller owns that flip.
 _st_settled = "Buy for drafting/Trek fans; skip sealed speculation."
 _ph_settled = "Buy only if you really like Star Trek; otherwise skip."
@@ -739,19 +739,19 @@ G_BF_ID = "black-friday-2026"
 bf_rows = [
  (f'{plink(nv_st, "Star Trek Play Booster box")} and {plink(nv_st, "Bundle")}',
   f"Already under MSRP before the Nov 13 release. Nov 3 store lows: Play Booster Display $117.95 (MSRP {fmt({'usd': _play_box_msrp})}) and Bundle $42.99 (MSRP {fmt({'usd': _bundle_msrp})}). See the Nov 3 price table. GamesRadar (updated Nov 2, 2026) says cuts often start in mid-November.",
-  "Proposed: Wait",
+  "Wait",
   f"The set-level verdict stays: {_st_settled} This row is only about timing. Street prices are already under MSRP, so there is no need to preorder today if you can check again nearer Nov 27."),
  (f'{plink(nv_st, "Star Trek Collector Booster box")} above MSRP',
   f"Pack-math MSRP is {fmt({'usd': _coll_box_msrp})} (12 × {fmt({'usd': _cpack})}). On Nov 3 the cheapest store preorder was $449.99, which is under that figure. This call applies when a listing is above {fmt({'usd': _coll_box_msrp})}.",
-  "Proposed: Skip above MSRP / Wait for singles",
+  "Skip above MSRP / Wait for singles",
   "Collector Boosters are for chase cards, not a sealed bet. Skip a box priced above MSRP and buy the singles you want after release, once prices settle."),
  (plink(nv_cmd, "Star Trek Commander decks"),
   f"Regular decks are {fmt({'usd': _cmd_msrp})} MSRP and Collector's Editions are {fmt({'usd': _ce_msrp})} MSRP. On Nov 3 the lowest regular deck MTG Compare showed was Klingon Fury at $49.95. Collector's Edition store lows were {fmt({'usd': _ce_msrp})}, with a TCGplayer preorder at $215.58 on the Federation Fleet section.",
-  f"Settled: {_cmd_settled}. Proposed: don't pay above MSRP; expect Black Friday discounts.",
-  f"Existing verdict, unchanged: {_cmd_settled}. The proposed Black Friday line is the second sentence of the call: don't pay more than the MSRP, and expect stores to discount these decks."),
+  f"Settled: {_cmd_settled}. Don't pay above MSRP; expect Black Friday discounts.",
+  f"Existing verdict, unchanged: {_cmd_settled}. Don't pay more than the MSRP, and expect stores to discount these decks."),
  ("Older 2026 Commander decks and beginner or starter products",
   "GamesRadar (updated Nov 2, 2026) says that if previous years hold, Commander decks a few months old should see $10 off the sticker price, or more when the deck is older. That is their pattern. We did not measure a percent off.",
-  "Proposed: Wait for Black Friday",
+  "Wait for Black Friday",
   f"This is for Commander precons and beginner or starter products already in stores from earlier in 2026. It is not the Nov 13 Star Trek decks, and it is not {plink(_spm, _spm['short_name'])}, which is still an unconfirmed leak. Wizards removed the Star Trek Beginner Box, so a leftover listing of that box is not a product we are telling you to buy."),
  (plink(_rf, _rf["short_name"]),
   "Delayed globally (Wizards, Oct 19). Pre-release retailer listings ran $159.99–$189.99 against the $89.99 MSRP.",
@@ -765,9 +765,7 @@ bf_rows = [
 g_bf_html = (
  f'<h2 id="{G_BF_ID}">Black Friday 2026: buy now or wait?</h2>'
  + checked({"last_checked": ST_PRE_CHECKED, "source": GR_BF, "field_sources": {"mtg compare": ST_PRE_PAGE, "play box": ST_PLAY_PAGE}})
- + "<p><small><b>Draft note:</b> every call marked Proposed still needs the site owner's OK before this section is treated as published. "
- "Calls marked settled are the verdicts already on the product pages, copied here unchanged.</small></p>"
- + "<p><b>Should you buy MTG now or wait for Black Friday 2026?</b> For most sealed Magic, the proposed call is to wait. "
+ + "<p><b>Should you buy MTG now or wait for Black Friday 2026?</b> For most sealed Magic, the call is to wait. "
  "Black Friday is Nov 27, 2026, and Cyber Monday is Nov 30, 2026. "
  f'<a href="{GR_BF}" rel=nofollow>GamesRadar</a> (updated Nov 2, 2026) says the official Magic deals start on Nov 27, with price cuts often showing up from mid-November, and that discounts usually continue through Cyber Monday. '
  f"Star Trek Play Booster boxes and Bundles were already listed below MSRP at some stores before the Nov 13 release (see <a href=\"#star-trek-preorder-prices\">the Nov 3 price table</a>). "
@@ -777,7 +775,7 @@ g_bf_html = (
  f'<a href="{GR_BF}" rel=nofollow>GamesRadar</a> says Magic discounts usually begin earlier than that Friday, from around the middle of November, and then hang on past Black Friday itself. '
  "We don't run a live deal tracker. The dates above are the calendar, plus that GamesRadar timing note.</p>"
  + "<h3>Buy now, wait, or skip</h3>"
- + "<p>The November table above is the week-by-week call for this month. This table is the Black Friday timing call. Where a row says Proposed, that timing call is the one waiting on owner sign-off.</p>"
+ + "<p>The November table above is the week-by-week call for this month. This table is the Black Friday timing call.</p>"
  + "<table><tr><th>Category</th><th>Typical deal pattern</th><th>Our call</th><th>Why</th></tr>"
  + "".join(f"<tr><td>{c}</td><td>{E(p)}</td><td><b>{E(v)}</b></td><td>{w}</td></tr>" for c, p, v, w in bf_rows)
  + "</table>"
@@ -815,13 +813,13 @@ g_faq += [
  ("When do MTG Black Friday deals start in 2026?",
   "Black Friday is Nov 27, 2026, and Cyber Monday is Nov 30, 2026. GamesRadar (updated Nov 2, 2026) says the official Magic deals start on Nov 27, with price cuts often appearing from mid-November, and that discounts usually continue through Cyber Monday."),
  ("Should I wait for Black Friday to buy MTG Star Trek?",
-  f"Proposed: Wait on a Star Trek Play Booster box or Bundle. On Nov 3, 2026, MTG Compare showed store preorders under MSRP ($117.95 for a Play Booster Display against the {fmt({'usd': _play_box_msrp})} pack-math MSRP, and $42.99 for a Bundle against {fmt({'usd': _bundle_msrp})}). The set-level verdict is unchanged: {_st_settled} Proposed: skip a Collector Booster box priced above {fmt({'usd': _coll_box_msrp})} and wait for singles. Commander stays: {_cmd_settled}. Proposed addition: don't pay above MSRP, and expect Black Friday discounts."),
+  f"Wait on a Star Trek Play Booster box or Bundle. On Nov 3, 2026, MTG Compare showed store preorders under MSRP ($117.95 for a Play Booster Display against the {fmt({'usd': _play_box_msrp})} pack-math MSRP, and $42.99 for a Bundle against {fmt({'usd': _bundle_msrp})}). The set-level verdict is unchanged: {_st_settled} Skip a Collector Booster box priced above {fmt({'usd': _coll_box_msrp})} and wait for singles. Commander stays: {_cmd_settled}. Don't pay above MSRP, and expect Black Friday discounts."),
  ("Are Secret Lair drops discounted on Black Friday?",
   f"No. Secret Lair drops are not discounted for Black Friday at MagicSecretLair.com. Set Phasers to Superdrop goes on sale Nov 9, 2026: {_ph_settled} For a drop that has already sold out at the official store: {_sold_settled}"),
  ("What MTG products are worth buying on Black Friday?",
-  "Proposed: older 2026 Commander decks and beginner or starter products already in stores, where GamesRadar expects about $10 off sticker if previous years hold. A Star Trek Bundle or Play Booster box that is still under MSRP can be the Black Friday buy if you wanted one for drafting. Skip a Collector Booster box above MSRP, skip sealed product bought to speculate, and do not count on a Secret Lair discount at MagicSecretLair.com."),
+  "Older 2026 Commander decks and beginner or starter products already in stores, where GamesRadar expects about $10 off sticker if previous years hold. A Star Trek Bundle or Play Booster box that is still under MSRP can be the Black Friday buy if you wanted one for drafting. Skip a Collector Booster box above MSRP, skip sealed product bought to speculate, and do not count on a Secret Lair discount at MagicSecretLair.com."),
  ("Is it better to buy MTG Commander decks on Black Friday?",
-  f"For Commander decks that have been out for a few months, proposed: yes, wait for Black Friday. GamesRadar (updated Nov 2, 2026) says those decks have typically been about $10 off sticker, or more when the deck is older. For Star Trek Commander the settled verdict is: {_cmd_settled}. Proposed addition: don't pay above the {fmt({'usd': _cmd_msrp})} or {fmt({'usd': _ce_msrp})} MSRP, and expect discounts. On Nov 3, MTG Compare already showed Klingon Fury at $49.95."),
+  f"For Commander decks that have been out for a few months, yes, wait for Black Friday. GamesRadar (updated Nov 2, 2026) says those decks have typically been about $10 off sticker, or more when the deck is older. For Star Trek Commander the settled verdict is: {_cmd_settled}. Don't pay above the {fmt({'usd': _cmd_msrp})} or {fmt({'usd': _ce_msrp})} MSRP, and expect discounts. On Nov 3, MTG Compare already showed Klingon Fury at $49.95."),
 ]
 g_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › <a href="{BASE}/guides/">Guides</a> › Fall/Holiday 2026</nav><h1>{E(G_H1)}</h1>'
   f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
@@ -1166,7 +1164,7 @@ The page links to TCGplayer and sometimes Amazon. Those are affiliate links. See
 - {SITE_URL}/calendar.ics — iCalendar feed of dated releases (all-day events). The event URL is the product page. When a placeholder is included, its event URL is the home page.
 - {SITE_URL}/feed.xml — RSS of every product that has a page, upcoming and delayed first, then already released. Each item links to the product page and uses the note as the description.
 - {SITE_URL}/llms.txt — curated text overview. The Releases section lists every product that has a page, in that same order. Each line has the date, type, and status, and notes when an item is delayed. The Main pages section links the calendar, guides, newsletter, and feeds.
-- {SITE_URL}/guides/mtg-releases-fall-holiday-2026.html#november-2026 — a week-by-week buy/preorder table for November 2026 only, on the fall/holiday guide, with a dated Star Trek preorder price table under that heading (#star-trek-preorder-prices). It is not a general weekly feed. The Black Friday buy-now-or-wait section is {SITE_URL}/guides/mtg-releases-fall-holiday-2026.html#black-friday-2026. Calls marked Proposed on that page are not final until the owner signs off. Other months on that guide are listed under their own headings. The 2027 schedule is {SITE_URL}/guides/mtg-2027-release-schedule.html.
+- {SITE_URL}/guides/mtg-releases-fall-holiday-2026.html#november-2026 — a week-by-week buy/preorder table for November 2026 only, on the fall/holiday guide, with a dated Star Trek preorder price table under that heading (#star-trek-preorder-prices). It is not a general weekly feed. The Black Friday buy-now-or-wait section is {SITE_URL}/guides/mtg-releases-fall-holiday-2026.html#black-friday-2026. Other months on that guide are listed under their own headings. The 2027 schedule is {SITE_URL}/guides/mtg-2027-release-schedule.html.
 - {SITE_URL}/newsletter.html — describes the free Monday email "What's Dropping" (US Central time). The signup form posts to Buttondown. There is no newsletter API.
 
 ## Asking a question
