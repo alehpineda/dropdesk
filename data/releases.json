@@ -477,6 +477,7 @@
     "slug": "spider-mania-commander",
     "name": "Spider-Mania Commander Deck (Marvel holiday release)",
     "type": "Commander Precon",
+    "universe": "Marvel",
     "release_date": "2026-12-04",
     "window": null,
     "source": "https://mtg.wiki/page/Template:Upcoming_events",
