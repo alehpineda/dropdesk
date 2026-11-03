@@ -404,7 +404,13 @@ for r in data:
     # Only Secret Lair has a hub page; other types get a 2-item trail (no fake middle crumb pointing back at the home page).
     bc_items = [("MTG Drops", f"{SITE_URL}/")] + ([("Secret Lair", f"{SITE_URL}/secret-lair.html")] if r["type"] == "Secret Lair" else []) + [(r["name"], pu)]
     bc = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": i+1, "name": n, "item": u} for i, (n, u) in enumerate(bc_items)]}
-    y27 = f'<p>Every 2027 set and Commander deck: <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>.</p>' if r["release_date"][:4] == "2027" else ""
+    # Same reverse-link rule as the 2027 schedule: one paragraph on the product page, guide title as the anchor.
+    if r["release_date"][:4] == "2027":
+        y27 = f'<p>Every 2027 set and Commander deck: <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>.</p>'
+    elif dated(r) and "2026-10-01" <= r["release_date"] <= "2026-12-31":
+        y27 = f'<p>Every MTG product releasing fall/holiday 2026: <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a>.</p>'
+    else:
+        y27 = ""
     crumbs = f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › {(f'<a href="{BASE}/secret-lair.html">Secret Lair</a>' if r["type"] == "Secret Lair" else E(r["type"]))} › {E(sn)}</nav>{hubl}'
     desc = r.get("meta_desc") or f"{sn} release date: {nice_date(r)}. " + r["note"]
     page(title_for(r), desc,
