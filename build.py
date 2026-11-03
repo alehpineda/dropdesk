@@ -272,14 +272,27 @@ def title_for(r):
     for t in (f"{sn} Release Date ({m}), Price & Preorder | MTG Drops", f"{sn} Release Date ({m}) | MTG Drops", f"{sn} Release Date, {m} | MTG Drops", f"{sn} Release Date | MTG Drops", f"{sn} ({m}) | MTG Drops", f"{sn} | MTG Drops"):
         if len(t) <= 60: return t
     return t
+def franchise(r):
+    # Shared universe for related-product links. An explicit releases.json "universe" wins, so a Marvel
+    # product whose slug does not say "marvel" (Spider-Mania) still joins the group; otherwise a slug
+    # containing "marvel" is the Marvel universe.
+    u = (r.get("universe") or "").strip().lower()
+    if u: return u
+    return "marvel" if "marvel" in r["slug"] else None
 def related(r):
     if r.get("placeholder"): pool = public
     else: pool = [x for x in public if x is not r]
     pool = [x for x in pool if x is not r]
     sib = [x for x in pool if dated(x) and x["release_date"] == r["release_date"] and {x["type"], r["type"]} & {"Commander Precon"} and ({x["type"], r["type"]} - {"Commander Precon"}) <= set(SETS) and x["type"] != r["type"]]
     pool = [x for x in pool if x not in sib]
+    fran = franchise(r)
+    univ = [x for x in pool if fran and franchise(x) == fran]
+    pool = [x for x in pool if x not in univ]
     key = lambda x: (0, abs((datetime.date.fromisoformat(x["release_date"]) - datetime.date.fromisoformat(r["release_date"])).days)) if dated(x) and dated(r) else ((1, 0) if not dated(x) else (2, 0))
-    return (sib + sorted(pool, key=key))[:4]
+    # Same-date set/commander pair first, then every other release in the same universe (a TBA drop such as
+    # Doomsdrop stays linked even though undated products sort last), then the nearest other releases.
+    picked = sib + sorted(univ, key=key) + sorted(pool, key=key)
+    return picked[:max(4, len(sib) + len(univ))]
 TYPE_INFO = {
  "Secret Lair": ("What is a Secret Lair drop?", "Secret Lair is Wizards of the Coast's direct-to-fan line of limited Magic products, sold mainly at MagicSecretLair.com. Most drops are small sets of cards with alternate art, often reprints, sold for a limited time or while supplies last, and not restocked once they end. Cards are tournament-legal wherever the original card is legal. Because supply is limited, prices on the secondary market can move quickly in either direction after a drop closes."),
  "Commander Precon": ("What is a Commander precon?", "A Commander precon (preconstructed deck) is a ready-to-play 100-card deck for Commander, Magic's most popular multiplayer format. Each deck is built around a legendary face commander, usually comes with tokens and a deck box, and can be played straight out of the box or used as a base to upgrade. Precons typically include a mix of new-to-Magic cards and reprints, so many players buy them both to play and for specific singles."),
