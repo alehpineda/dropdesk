@@ -1,15 +1,15 @@
 {
  "guides/index.html": {
-  "date": "2026-10-31",
-  "hash": "af8374f2a103fcd3"
+  "date": "2026-11-03",
+  "hash": "50211aee1b12d697"
  },
  "guides/mtg-2027-release-schedule.html": {
   "date": "2026-11-02",
   "hash": "ed00cafe28bba233"
  },
  "guides/mtg-releases-fall-holiday-2026.html": {
-  "date": "2026-10-31",
-  "hash": "5ea46537cc8e62c3"
+  "date": "2026-11-03",
+  "hash": "0d1f3c11674f9864"
  },
  "guides/star-trek-mtg-release-guide.html": {
   "date": "2026-10-31",
@@ -17,7 +17,7 @@
  },
  "index.html": {
   "date": "2026-11-03",
-  "hash": "d608fc0115aa7f4c"
+  "hash": "8a5ac0b6c1a905d0"
  },
  "newsletter.html": {
   "date": "2026-10-23",
@@ -124,8 +124,8 @@
   "hash": "9cfaf16374e7b9e9"
  },
  "secret-lair.html": {
-  "date": "2026-11-02",
-  "hash": "c2e38807429fba3b"
+  "date": "2026-11-03",
+  "hash": "bb7b8a43e89229f6"
  },
  "sponsor.html": {
   "date": "2026-10-31",

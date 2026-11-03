@@ -226,6 +226,12 @@ def sl_cost(r, home=False):
 def sl_checked_date(rs): return min(SL_NEXT_CHECKED if sl_cur(r) else (r.get("last_checked") or SL_NEXT_CHECKED) for r in rs)
 def sl_drop_link(r): return f'<a href="{BASE}/p/{r["slug"]}.html">{E(r["name"])}</a>'
 SL_TBA = "The next Secret Lair drop is TBA: no upcoming Secret Lair sale has a date on our calendar yet."
+def sl_head_label(r):
+    """Short 'Name, Mon D' for the hub title and H1. Set Phasers keeps the name buyers search."""
+    key = "Set Phasers to Superdrop"
+    label = key if key in r["name"] else short_name(r)
+    d = datetime.date.fromisoformat(r["release_date"])
+    return f"{label}, {MON[d.month-1]} {d.day}"
 def sl_next_copy(linked):
     if not h_sl: return SL_TBA
     nm = lambda r: sl_drop_link(r) if linked else r["name"]
@@ -256,7 +262,22 @@ h_sl_when = (f'{plink(h_sl, h_sl["name"])} goes on sale {nice_date(h_sl)}{sl_tim
 home_faq.append(("When is the next Secret Lair drop?", h_sl_when + f'. See every drop on the <a href="{BASE}/secret-lair.html">Secret Lair schedule</a>.'))
 if h_sold: home_faq.append(("Which recent MTG releases are sold out?", and_list([plink(r) + f" ({nice_date(r)})" for r in h_sold]) + " sold out at the official store. Check each page before paying resale prices."))
 home_faq.append(("How often is the MTG Drops calendar updated?", "We check official Wizards of the Coast announcements and reputable MTG news every Tuesday and Friday. Each entry shows the date it was last checked and links to its sources."))
+home_faq.append(("How do I add MTG release dates to Google Calendar?",
+ "Use the Add to Google Calendar link on this page (https://calendar.google.com/calendar/r?cid=webcal://mtgdrops.com/calendar.ics). If it does not open a subscribe dialog, in Google Calendar choose Other calendars, then From URL, and paste https://mtgdrops.com/calendar.ics. Apple Calendar can open webcal://mtgdrops.com/calendar.ics. Outlook can subscribe from the web with the same https URL. The file itself is https://mtgdrops.com/calendar.ics. Secret Lair dates alone are a separate feed at https://mtgdrops.com/secret-lair.ics."))
 home_faq_html = "<h2>MTG release FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{a}</p>" for q, a in home_faq)
+# How-to sits next to the existing calendar.ics links. It does not add a new feed file.
+CAL_HOWTO = (
+ f'<h2 id="add-to-google-calendar">Add MTG release dates to Google Calendar</h2>'
+ f'<p>Every dated release is already in <a href="{BASE}/calendar.ics">calendar.ics</a>. Subscribe once and later dates show up in the same calendar. '
+ 'These steps use the feed links already on this page.</p>'
+ '<ol>'
+ '<li><b>Google Calendar.</b> Open <a href="https://calendar.google.com/calendar/r?cid=webcal://mtgdrops.com/calendar.ics" rel=nofollow>Add to Google Calendar</a> and confirm the calendar named "MTG Drops: MTG release calendar".</li>'
+ '<li><b>If that link does not open a subscribe dialog:</b> in Google Calendar on the web, choose Other calendars (+), then From URL, and paste <code>https://mtgdrops.com/calendar.ics</code>.</li>'
+ f'<li><b>Apple Calendar.</b> Open <a href="webcal://mtgdrops.com/calendar.ics" rel=nofollow>Apple / Outlook (webcal)</a>, or <a href="{BASE}/calendar.ics">download the .ics</a> and open it. Subscribe, so later releases are added, instead of importing a one-time copy.</li>'
+ '<li><b>Outlook.</b> Choose Calendar, Add calendar, Subscribe from web, and paste <code>https://mtgdrops.com/calendar.ics</code>. The webcal link also opens in many desktop calendar apps.</li>'
+ f'<li><b>Secret Lair dates only.</b> The same three links are on the <a href="{BASE}/secret-lair.html">Secret Lair page</a> for <a href="{BASE}/secret-lair.ics">secret-lair.ics</a>. The feed on this page is every dated release.</li>'
+ '</ol>'
+ '<p><small>The feed asks calendar apps to refresh about once a day. Dates still come from the same sources as the rest of the site, so verify a date before you buy.</small></p>')
 ICS_LINKS = {"calendar.ics": "every MTG release", "secret-lair.ics": "Secret Lair drops only"}
 def ics_link(f): return (f'<a href="https://calendar.google.com/calendar/r?cid=webcal://mtgdrops.com/{f}" rel=nofollow>Add to Google Calendar</a> · '
                          f'<a href="webcal://mtgdrops.com/{f}" rel=nofollow>Apple / Outlook (webcal)</a> · <a href="{BASE}/{f}">Download .ics</a>')
@@ -266,7 +287,7 @@ home_ld = [{"@context": "https://schema.org", "@type": "WebSite", "@id": f"{SITE
            {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in home_faq]},
            {"@context": "https://schema.org", "@type": "ItemList", "@id": f"{SITE_URL}/#releases", "name": "Upcoming Magic: The Gathering releases", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate([r for r in up if not r.get("placeholder")])]}]
 page("MTG Release Calendar 2026–2027 | MTG Drops", HOME_DESC,
-     f"<h1>MTG Release Calendar 2026–2027</h1><p><b>What's dropping in Magic.</b> Last updated: {tdate()}</p><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p><p>Every upcoming MTG product, with a short buy/skip note. New: <a href=\"{BASE}/guides/mtg-releases-fall-holiday-2026.html\">every MTG product releasing this fall/holiday 2026</a>, with gift picks, the <a href=\"{BASE}/guides/star-trek-mtg-release-guide.html\">MTG Star Trek release guide</a>, and the <a href=\"{BASE}/secret-lair.html\">Secret Lair drop schedule</a>.</p>{FORM}<p class=disc><small>{E(DISCLOSURE)}</small></p><p><b>Calendar feed:</b> {ics_link("calendar.ics")}</p>{home_next_sl}<div class=f>{btns}</div>" + months + home_faq_html + js, "index.html", home_ld)
+     f"<h1>MTG Release Calendar 2026–2027</h1><p><b>What's dropping in Magic.</b> Last updated: {tdate()}</p><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p><p>Every upcoming MTG product, with a short buy/skip note. New: <a href=\"{BASE}/guides/mtg-releases-fall-holiday-2026.html\">every MTG product releasing this fall/holiday 2026</a>, with gift picks, the <a href=\"{BASE}/guides/star-trek-mtg-release-guide.html\">MTG Star Trek release guide</a>, and the <a href=\"{BASE}/secret-lair.html\">Secret Lair drop schedule</a>.</p>{FORM}<p class=disc><small>{E(DISCLOSURE)}</small></p><p><b>Calendar feed:</b> {ics_link("calendar.ics")}</p>{CAL_HOWTO}{home_next_sl}<div class=f>{btns}</div>" + months + home_faq_html + js, "index.html", home_ld)
 def title_for(r):
     sn = short_name(r); m = mon_yyyy(r).replace("Date TBA", "TBA")
     for t in (f"{sn} Release Date ({m}), Price & Preorder | MTG Drops", f"{sn} Release Date ({m}) | MTG Drops", f"{sn} Release Date, {m} | MTG Drops", f"{sn} Release Date | MTG Drops", f"{sn} ({m}) | MTG Drops", f"{sn} | MTG Drops"):
@@ -488,8 +509,26 @@ sl_intro = (f'<h2>What is Secret Lair and how do drops work?</h2>'
  f'Standard 2026 drops cost $29.99 non-foil or $39.99 traditional foil; Superdrops bundle several drops, and larger products such as Countdown Kits and Festival in a Box are priced on their own.</p>')
 sl_list = sl_now + sl_up + sl_past
 sl_url = f"{SITE_URL}/secret-lair.html"
-SL_TITLE = "Secret Lair Drops: Schedule, Prices & Verdicts | MTG Drops"
-SL_DESC = "Secret Lair release schedule: drops on sale now, upcoming Secret Lair drops and recent sales, with dates, prices, card lists and buy/skip verdicts."
+# Title and H1 lead with the next drop so "next Secret Lair" answers name the sale. The schedule framing stays in the subtitle.
+if h_sl:
+    _sl_head = sl_head_label(h_sl)
+    SL_TITLE = f"Next Secret Lair: {_sl_head} | MTG Drops"
+    SL_H1 = f"Next Secret Lair: {_sl_head}"
+    SL_DESC = f"Next Secret Lair: {_sl_head}. Schedule of drops on sale now, upcoming and recent, with dates, prices and buy/skip verdicts."
+else:
+    SL_TITLE = "Secret Lair Drops: Schedule, Prices & Verdicts | MTG Drops"
+    SL_H1 = "Secret Lair Drops: Schedule, Prices & Verdicts"
+    SL_DESC = "Secret Lair release schedule: drops on sale now, upcoming Secret Lair drops and recent sales, with dates, prices, card lists and buy/skip verdicts."
+# Fair description of Secret Lair GG from its homepage (fetched 2026-11-03): drop and card database, calendar, BUY/TOSS-UP/SKIP vs sale price. No dig at their copy.
+SL_GG = "https://secretlair.gg/"
+sl_vs = (
+ '<h2>MTG Drops vs Secret Lair GG</h2>'
+ '<p>MTG Drops is a free Magic: The Gathering release calendar. It lists upcoming sets, Commander precons, Universes Beyond products and Secret Lair drops, each with a date, known prices and a short buy, wait or skip verdict. '
+ f'You can subscribe every release (<a href="{BASE}/calendar.ics">calendar.ics</a>) or Secret Lair dates only (<a href="{BASE}/secret-lair.ics">secret-lair.ics</a>) in Google Calendar, Apple Calendar or Outlook. '
+ 'It is not a per-card price database, and it does not sell cards.</p>'
+ f'<p><a href="{SL_GG}" rel=nofollow>Secret Lair GG</a> is a Secret Lair tracker. It keeps a database of drops and individual cards, a release calendar with countdowns, and BUY, TOSS-UP or SKIP calls that compare a drop\'s singles value with its sale price. It is built around Secret Lair, not the rest of the Magic release calendar.</p>'
+ '<p>Use MTG Drops when you want the full release calendar, a buy/skip note and a calendar feed. Use Secret Lair GG when you want a Secret Lair card list and a singles-versus-price read on one drop. The two sites answer different questions. This page does not copy their price database. '
+ 'What each site covers was checked against the Secret Lair GG homepage on Nov 3, 2026.</p>')
 sl_ld = [
  {"@context": "https://schema.org", "@type": "CollectionPage", "@id": sl_url + "#page", "name": SL_TITLE, "url": sl_url, "description": trim(SL_DESC, 300), "dateModified": PD, "isPartOf": {"@id": f"{SITE_URL}/#website"}, "publisher": {"@id": f"{SITE_URL}/#org"}},
  {"@context": "https://schema.org", "@type": "ItemList", "name": "Secret Lair drops: on sale now, upcoming and recent", "itemListOrder": "https://schema.org/ItemListUnordered", "numberOfItems": len(sl_list),
@@ -500,12 +539,14 @@ sl_ld = [
  {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in sl_faq]},
 ]
 page(SL_TITLE, SL_DESC,
-     f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › Secret Lair</nav><h1>Secret Lair Drops: Schedule, Prices &amp; Verdicts</h1>'
+     f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › Secret Lair</nav><h1>{E(SL_H1)}</h1>'
+     f'<p>Secret Lair drops: schedule, prices and verdicts. The heading is the next dated sale. The lists below are what is on sale now, what is coming up, and what has ended.</p>'
      f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
      f'<p><b>Last updated:</b> {tdate()} · {len(sl_now)} on sale now · {len(sl_up)} upcoming · {len(sl_past)} recent / ended</p>'
      + sl_next_block
      + f'<p><b>Secret Lair calendar feed:</b> {ics_link("secret-lair.ics")}</p>'
      + sl_intro + f'<p>Planning holiday buys? See <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a>, sets and Commander decks included.</p>'
+     + sl_vs
      + sl_section("On sale now", sl_now, "No Secret Lair sale has opened in the last few weeks. See Upcoming below.")
      + sl_section("Upcoming Secret Lair drops", sl_up, "No upcoming Secret Lair drops are announced right now.")
      + sl_section("Recent / ended", sl_past, "Nothing here yet.")
@@ -582,14 +623,174 @@ nv_dont = [f"{plink(nv_cmd, _ce_name)} above their {fmt(nv_cmd['prices'][1])} MS
            f"{plink(_bb, _bb['short_name'])} on resale (our verdict: Skip)." if _bb.get("verdict") == "skip" else None,
            f"{plink(_spm, _spm['short_name'])} (Dec 4, unconfirmed leak): wait for Wizards to confirm it and show the decklist." if _spm.get("verdict") == "wait" and _spm["status"] != "confirmed" else None]
 nv_dont = [x for x in nv_dont if x]
+# Dated Star Trek street prices, fetched 2026-11-03. Do not change a number without a new fetch and a new date.
+# Never print a percent off: the table shows MSRP and the store low only.
+# Play Booster Display is 30 packs (releases.json inside text, from Wizards), so box MSRP is 30 x $6.99.
+# Older sets used 36-pack displays. Star Trek does not, so this table does not use 36 x $6.99.
+# Source A (Play Booster Display): https://mtgcompare.app/us/p/star-trek-play-booster-box
+#   Page said "checked 20 min ago". Store low $117.95 at Poke-Collect. TCGplayer line on that page $118.62. Shipping excluded.
+# Source B (other rows): https://mtgcompare.app/us/preorders/star-trek
+#   Page said "Prices checked 2 hours ago".
+#   Bundle $42.99 Double Infinity Gaming; Draft Night $86.99 Double Infinity Gaming;
+#   Collector Booster box $449.99 Gate City Games; Beam Me Up Bundle $99.99 at 4GS Games;
+#   regular Commander low Klingon Fury $49.95 Galactic Toys;
+#   Collector's Edition Commander store low $159.99 Cole Street Game Vault (Federation Fleet);
+#   that same Collector's Edition section showed a TCGplayer preorder at $215.58;
+#   Enterprise-Q Scene Box $33.95 Lazarus Games.
+# Source C: https://www.coolstuffinc.com/p/443286 fetched the same day. Draft Night was Out of Stock and the page
+#   did not display a price. A Nov 2 public listing had shown $94.99 against the $119.99 MSRP. That $94.99 is not today's low.
+ST_PRE_CHECKED = "2026-11-03"
+ST_PRE_PAGE = "https://mtgcompare.app/us/preorders/star-trek"
+ST_PLAY_PAGE = "https://mtgcompare.app/us/p/star-trek-play-booster-box"
+CSI_DRAFT = "https://www.coolstuffinc.com/p/443286"
+GR_BF = "https://www.gamesradar.com/black-friday-magic-the-gathering-deals-and-savings/"
+_st_inside = json.dumps(nv_st["inside"])
+if "30 per box" not in _st_inside or "12 per box" not in _st_inside:
+    raise SystemExit("Star Trek display pack counts missing from releases.json; not printing a box MSRP")
+_pb_usd = next(p["usd"] for p in nv_st["prices"] if p["label"] == "Play Booster")
+_cpack = next(p["usd"] for p in nv_st["prices"] if p["label"] == "Collector Booster")
+_bundle_msrp = next(p["usd"] for p in nv_st["prices"] if p["label"] == "Bundle")
+_cmd_msrp = next(p["usd"] for p in nv_cmd["prices"] if p["label"].startswith("Commander Deck"))
+_ce_msrp = next(p["usd"] for p in nv_cmd["prices"] if "Collector" in p["label"])
+def _inside_msrp(label):
+    m = re.search(re.escape(label) + r" \$(\d+\.\d\d)", _st_inside)
+    if not m: raise SystemExit("missing Star Trek MSRP in releases.json: " + label)
+    return float(m.group(1))
+_bmu_msrp, _draft_msrp, _scene_msrp = _inside_msrp("Beam Me Up Bundle"), _inside_msrp("Draft Night"), _inside_msrp("Scene Box")
+_play_box_msrp, _coll_box_msrp = round(30 * _pb_usd, 2), round(12 * _cpack, 2)
+def retail_links(query, amz_url=None):
+    amz = amz_url or ("https://www.amazon.com/s?k=" + urllib.parse.quote_plus(query) + "&tag=" + AMAZON_TAG)
+    return (f'<a href="{E(tcg(query))}" rel="sponsored nofollow">TCGplayer</a> · '
+            f'<a href="{E(amz)}" rel="sponsored nofollow noopener" target="_blank">Amazon</a>')
+def _prow(product, msrp, street, where, query, amz_url=None):
+    return f"<tr><td>{product}</td><td>{E(msrp)}</td><td>{E(street)}</td><td>{where}</td><td>{retail_links(query, amz_url)}</td></tr>"
+_st_link = plink(nv_st, "MTG Star Trek")
+_cmd_link = plink(nv_cmd, "Star Trek Commander")
+st_price_rows = [
+ _prow(f"Play Booster Display (box, 30 packs) — {_st_link}", fmt({"usd": _play_box_msrp}) + f" (30 × {fmt({'usd': _pb_usd})})", "$117.95",
+        "Poke-Collect, via MTG Compare. The same page showed TCGplayer at $118.62.", "Magic The Gathering Star Trek Play Booster Box"),
+ _prow(f"Draft Night — {_st_link}", fmt({"usd": _draft_msrp}), "$86.99",
+        "Double Infinity Gaming, via MTG Compare.", "Magic The Gathering Star Trek Draft Night"),
+ _prow(f"Bundle — {_st_link}", fmt({"usd": _bundle_msrp}), "$42.99",
+        "Double Infinity Gaming, via MTG Compare.", "Magic The Gathering Star Trek Bundle", amazon(nv_st)),
+ _prow(f"Commander deck (regular) — {_cmd_link}", fmt({"usd": _cmd_msrp}) + " each", "$49.95",
+        "Lowest single deck: Klingon Fury at Galactic Toys. Other regular decks on the page were $54.95 to $64.99.", "Magic The Gathering Star Trek Commander Deck"),
+ _prow(f"Collector's Edition Commander deck — {_cmd_link}", fmt({"usd": _ce_msrp}) + " each", "$159.99",
+        "Federation Fleet at Cole Street Game Vault. The same section showed a TCGplayer preorder at $215.58.", "Magic The Gathering Star Trek Collector Edition Commander Deck"),
+ _prow(f"Collector Booster box (12 packs) — {_st_link}", fmt({"usd": _coll_box_msrp}) + f" (12 × {fmt({'usd': _cpack})})", "$449.99",
+        "Gate City Games, via MTG Compare. Keystone Games listed $455.88 on the same page.", "Magic The Gathering Star Trek Collector Booster Box"),
+ _prow(f"Beam Me Up Bundle — {_st_link}", fmt({"usd": _bmu_msrp}), "$99.99",
+        "4GS Games, via MTG Compare.", "Magic The Gathering Star Trek Beam Me Up Bundle"),
+ _prow(f"Scene Box (Enterprise-Q) — {_st_link}", fmt({"usd": _scene_msrp}), "$33.95",
+        "Lazarus Games, via MTG Compare. Divergent Timeline was also $33.95.", "Magic The Gathering Star Trek Scene Box"),
+]
+st_price_html = (
+ f'<h3 id="star-trek-preorder-prices">Star Trek preorder prices, Nov 3</h3>'
+ + checked({"last_checked": ST_PRE_CHECKED, "source": ST_PRE_PAGE, "field_sources": {"play box": ST_PLAY_PAGE, "coolstuffinc draft night": CSI_DRAFT, "wizards": nv_st["source"]}})
+ + "<p>MSRP is Wizards' price (Play Booster, Collector Booster and Bundle from the set entry; Draft Night, Beam Me Up Bundle and Scene Box from the same Wizards product list stored on that entry). "
+ "A display MSRP is pack-count arithmetic: the Star Trek Play Booster Display is 30 packs, not a 36-pack display, and the Collector Booster box is 12. Both counts are in Wizards' collecting article, already stored on the set entry. "
+ "Street low is the cheapest US store preorder <a href=\"" + ST_PRE_PAGE + "\" rel=nofollow>MTG Compare</a> showed on Nov 3, 2026, except the Play Booster Display, which uses the "
+ f'<a href="{ST_PLAY_PAGE}" rel=nofollow>Play Booster Box page</a> fetched the same day because it was a few dollars lower. '
+ "Those prices exclude shipping and tax. This table does not state a percent off.</p>"
+ + "<table><tr><th>Product</th><th>MSRP</th><th>Street low, Nov 3</th><th>Where we saw the low</th><th>Check prices</th></tr>"
+ + "".join(st_price_rows) + "</table>"
+ + "<p><small>Footnotes, all Nov 3, 2026 unless noted. "
+ f"Play Booster Display: <a href=\"{ST_PLAY_PAGE}\" rel=nofollow>MTG Compare</a> said the $117.95 Poke-Collect preorder was checked 20 minutes before we fetched the page. Shipping there was quoted at $6.71 to $9.16. "
+ f"The other rows are from <a href=\"{ST_PRE_PAGE}\" rel=nofollow>MTG Compare's Star Trek preorder page</a>, which said its prices had been checked 2 hours earlier. "
+ "Bundle $42.99 and Draft Night $86.99 were both Double Infinity Gaming, each with $9.90 shipping on that page. "
+ f"CoolStuffInc's <a href=\"{CSI_DRAFT}\" rel=nofollow>Draft Night page</a> was Out of Stock and showed no price when we opened it. "
+ "On Nov 2 that listing had shown $94.99 against the $119.99 MSRP, so $94.99 is not the Nov 3 low. "
+ "Collector's Edition store lows were at the $159.99 MSRP; the $215.58 figure is the TCGplayer preorder MTG Compare printed beside Federation Fleet, not the cheapest store. "
+ "MTG Compare still listed a Star Trek Beginner Box. Wizards removed that product, so it is not in this table. "
+ "Check prices uses our Amazon Associates tag (mtgdrops-20) and TCGplayer Impact links. The Bundle's Amazon link is the approved product page. The other Amazon links are searches.</small></p>")
 g_nov_html = (f'<h2 id="{G_NOV_ID}">What MTG to buy or preorder in November 2026</h2>'
   + checked({"last_checked": G_NOV_CHECKED, "source": nv_kit["source"], "field_sources": {"st": nv_st["source"], "ph": nv_ph["source"], "delays": nv_cmd["field_sources"]["delays"]}})
-  + "<p>Four buying moments in 12 days. Here is our call on each, week by week, with Wizards' MSRPs (store prices vary). Click a product for its sources.</p>"
+  + "<p>Four buying moments in 12 days. Here is our call on each, week by week, with Wizards' MSRPs (store prices vary). Click a product for its sources. "
+  f'Street prices for the Star Trek products are in <a href="#star-trek-preorder-prices">Star Trek preorder prices, Nov 3</a>.</p>'
   + "<table><tr><th>Date</th><th>Product</th><th>MSRP</th><th>Buy / Wait / Skip</th><th>Why</th></tr>"
   + "".join(f"<tr><td>{E(d)}</td><td>{p}</td><td>{E(m)}</td><td><b>{E(v)}</b></td><td>{E(w)}</td></tr>" for d, p, m, v, w in nv_rows) + "</table>"
+  + st_price_html
   + "<h3>Still open from October</h3><ul>" + "".join(f"<li>{plink(r, r.get('short_name') or r['name'])}: {E(t)}</li>" for r, t in nv_left) + "</ul>"
   + "<h3>Don't preorder</h3><ul>" + "".join(f"<li>{x}</li>" for x in nv_dont) + "</ul>"
   + f'<p><b>How we decide:</b> Buy means worth it at MSRP for the people we name, Wait means hold for better stock, a better price or more information, and Skip means not worth it at the current price. The free <a href="{BASE}/newsletter.html">What\'s Dropping newsletter</a> flags new verdicts and price or date changes every Monday.</p>')
+# Black Friday category verdicts. DRAFT until DeathScythe signs off. Do not treat a merge as that OK.
+# Proposed (owner must OK before publish):
+# - Star Trek Play Booster box and Bundle: Wait
+# - Star Trek Collector Booster box above MSRP: Skip / Wait for singles
+# - Star Trek Commander: don't pay above MSRP; expect Black Friday discounts
+#   (the "buy regular, skip CE at markup" line is the existing verdict, not a new one)
+# - Older 2026 Commander decks and beginner/starter products: Wait for Black Friday
+# Settled, reused verbatim from the product notes (not proposed):
+# - Star Trek set: "Buy for drafting/Trek fans; skip sealed speculation."
+# - Set Phasers: "Buy only if you really like Star Trek; otherwise skip."
+# - Sold-out drops: "Wait: don't pay resale for the sealed drop; buy the singles you'll actually play."
+# The "not discounted at MagicSecretLair.com" sentence is the brief's settled Secret Lair exception.
+# Confirm it with the owner in the same publish OK. It is not a new per-drop verdict.
+# Countdown Kit stays on sale in our data. This section must not call it sold out. The poller owns that flip.
+_st_settled = "Buy for drafting/Trek fans; skip sealed speculation."
+_ph_settled = "Buy only if you really like Star Trek; otherwise skip."
+_cmd_settled = "buy regular, skip CE at markup"
+_sold_settled = "Wait: don't pay resale for the sealed drop; buy the singles you'll actually play."
+for _need, _blob in ((_st_settled, nv_st["note"]), (_ph_settled, nv_ph["note"]), (_cmd_settled, nv_cmd["note"]),
+                     (_sold_settled, g_r("secret-lair-strange-school")["note"])):
+    if _need not in _blob: raise SystemExit("settled verdict missing from releases.json: " + _need)
+_rf = g_r("secret-lair-chaos-vault-reality-fracture")
+G_BF_ID = "black-friday-2026"
+bf_rows = [
+ (f'{plink(nv_st, "Star Trek Play Booster box")} and {plink(nv_st, "Bundle")}',
+  f"Already under MSRP before the Nov 13 release. Nov 3 store lows: Play Booster Display $117.95 (MSRP {fmt({'usd': _play_box_msrp})}) and Bundle $42.99 (MSRP {fmt({'usd': _bundle_msrp})}). See the Nov 3 price table. GamesRadar (updated Nov 2, 2026) says cuts often start in mid-November.",
+  "Proposed: Wait",
+  f"The set-level verdict stays: {_st_settled} This row is only about timing. Street prices are already under MSRP, so there is no need to preorder today if you can check again nearer Nov 27."),
+ (f'{plink(nv_st, "Star Trek Collector Booster box")} above MSRP',
+  f"Pack-math MSRP is {fmt({'usd': _coll_box_msrp})} (12 × {fmt({'usd': _cpack})}). On Nov 3 the cheapest store preorder was $449.99, which is under that figure. This call applies when a listing is above {fmt({'usd': _coll_box_msrp})}.",
+  "Proposed: Skip above MSRP / Wait for singles",
+  "Collector Boosters are for chase cards, not a sealed bet. Skip a box priced above MSRP and buy the singles you want after release, once prices settle."),
+ (plink(nv_cmd, "Star Trek Commander decks"),
+  f"Regular decks are {fmt({'usd': _cmd_msrp})} MSRP and Collector's Editions are {fmt({'usd': _ce_msrp})} MSRP. On Nov 3 the lowest regular deck MTG Compare showed was Klingon Fury at $49.95. Collector's Edition store lows were {fmt({'usd': _ce_msrp})}, with a TCGplayer preorder at $215.58 on the Federation Fleet section.",
+  f"Settled: {_cmd_settled}. Proposed: don't pay above MSRP; expect Black Friday discounts.",
+  f"Existing verdict, unchanged: {_cmd_settled}. The proposed Black Friday line is the second sentence of the call: don't pay more than the MSRP, and expect stores to discount these decks."),
+ ("Older 2026 Commander decks and beginner or starter products",
+  "GamesRadar (updated Nov 2, 2026) says that if previous years hold, Commander decks a few months old should see $10 off the sticker price, or more when the deck is older. That is their pattern. We did not measure a percent off.",
+  "Proposed: Wait for Black Friday",
+  f"This is for Commander precons and beginner or starter products already in stores from earlier in 2026. It is not the Nov 13 Star Trek decks, and it is not {plink(_spm, _spm['short_name'])}, which is still an unconfirmed leak. Wizards removed the Star Trek Beginner Box, so a leftover listing of that box is not a product we are telling you to buy."),
+ (plink(_rf, _rf["short_name"]),
+  "Delayed globally (Wizards, Oct 19). Pre-release retailer listings ran $159.99–$189.99 against the $89.99 MSRP.",
+  "Wait (settled)",
+  "Wait for stock at the $89.99 MSRP. Don't overpay: wait for MSRP stock unless you love the Secret Lair mythic art."),
+ (plink(nv_ph, "Secret Lair, including Set Phasers to Superdrop"),
+  "Sold at MagicSecretLair.com at the drop's listed price. Set Phasers to Superdrop goes on sale Nov 9, about $30 non-foil or $40 foil per drop. A sold-out drop is not restocked there for Black Friday.",
+  f"Settled: {_ph_settled} Not discounted at MagicSecretLair.",
+  f"{_ph_settled} For a drop that has already sold out at the official store: {_sold_settled}"),
+]
+g_bf_html = (
+ f'<h2 id="{G_BF_ID}">Black Friday 2026: buy now or wait?</h2>'
+ + checked({"last_checked": ST_PRE_CHECKED, "source": GR_BF, "field_sources": {"mtg compare": ST_PRE_PAGE, "play box": ST_PLAY_PAGE}})
+ + "<p><small><b>Draft note:</b> every call marked Proposed still needs the site owner's OK before this section is treated as published. "
+ "Calls marked settled are the verdicts already on the product pages, copied here unchanged.</small></p>"
+ + "<p><b>Should you buy MTG now or wait for Black Friday 2026?</b> For most sealed Magic, the proposed call is to wait. "
+ "Black Friday is Nov 27, 2026, and Cyber Monday is Nov 30, 2026. "
+ f'<a href="{GR_BF}" rel=nofollow>GamesRadar</a> (updated Nov 2, 2026) says the official Magic deals start on Nov 27, with price cuts often showing up from mid-November, and that discounts usually continue through Cyber Monday. '
+ f"Star Trek Play Booster boxes and Bundles were already listed below MSRP at some stores before the Nov 13 release (see <a href=\"#star-trek-preorder-prices\">the Nov 3 price table</a>). "
+ f"Secret Lair is the exception: drops are not discounted at MagicSecretLair.com, so buy Set Phasers to Superdrop on Nov 9 only if you really like Star Trek. Last checked: Nov 3, 2026.</p>"
+ + "<h3>When MTG Black Friday deals start</h3>"
+ + f'<p>The sale date is Friday, Nov 27, 2026. The Monday after it, Cyber Monday, is Nov 30, 2026. '
+ f'<a href="{GR_BF}" rel=nofollow>GamesRadar</a> says Magic discounts usually begin earlier than that Friday, from around the middle of November, and then hang on past Black Friday itself. '
+ "We don't run a live deal tracker. The dates above are the calendar, plus that GamesRadar timing note.</p>"
+ + "<h3>Buy now, wait, or skip</h3>"
+ + "<p>The November table above is the week-by-week call for this month. This table is the Black Friday timing call. Where a row says Proposed, that timing call is the one waiting on owner sign-off.</p>"
+ + "<table><tr><th>Category</th><th>Typical deal pattern</th><th>Our call</th><th>Why</th></tr>"
+ + "".join(f"<tr><td>{c}</td><td>{E(p)}</td><td><b>{E(v)}</b></td><td>{w}</td></tr>" for c, p, v, w in bf_rows)
+ + "</table>"
+ + "<h3>Gift-buyer warnings</h3><ul>"
+ + (f"<li>{plink(_corn, _corn['short_name'])}: Wizards expects US orders to ship Dec 15, 2026 – Mar 15, 2027. Don't count on it under the tree.</li>" if "Dec 15, 2026" in (_corn.get("window") or "") else "")
+ + f"<li>{plink(nv_kit, nv_kit['short_name'])} is still listed as on sale on our Secret Lair page. Check MagicSecretLair.com before you pay anyone else. If the official listing is gone, {_sold_settled}</li>"
+ + f"<li>Star Trek Collector Boosters, Bundles, Beam Me Up Bundles and Draft Night may arrive after Nov 13 in Europe or Asia-Pacific, and the Commander decks may arrive after Nov 13 in North America (Wizards, Oct 16). Read the ship date on a preorder before you treat it as a gift that will be here in November.</li>"
+ + "</ul>"
+ + "<h3>Where to check prices</h3>"
+ + f'<p>Use the Check prices links in the <a href="#star-trek-preorder-prices">Nov 3 Star Trek table</a> (Amazon tag mtgdrops-20, TCGplayer Impact). '
+ f'Or start from <a href="{E(tcg("Magic The Gathering Star Trek"))}" rel="sponsored nofollow">TCGplayer</a> and '
+ f'<a href="{E(amazon(nv_st))}" rel="sponsored nofollow noopener" target="_blank">Amazon</a>. '
+ "We don't track live deal prices. The street lows above are a dated check, not a feed, and a store can change them the same day.</p>")
 _kit_note = nv_kit["note"]
 nv_faq = [
  ("Which MTG products are worth preordering this month?",
@@ -610,12 +811,25 @@ g_faq = nv_faq[:1] + [q for q in g_faq if q[0].startswith("What MTG products com
 g_faq.append(("What is the best MTG gift for the 2026 holidays?",
               ("Our picks, all rated buy: " + "; ".join(f"{short_name(r)} for {r['gift_for'].split(':')[0]}" for r in g_gifts) + ". If you're unsure, a gift card for a local game store avoids guessing.") if g_gifts else "We don't have any items rated buy for this season yet."))
 if nxt_set: g_faq.append(("What is the next MTG set after 2026?", f"{nxt_set['name']}, releasing {nice_date(nxt_set)} ({nxt_set['status']})."))
+g_faq += [
+ ("When do MTG Black Friday deals start in 2026?",
+  "Black Friday is Nov 27, 2026, and Cyber Monday is Nov 30, 2026. GamesRadar (updated Nov 2, 2026) says the official Magic deals start on Nov 27, with price cuts often appearing from mid-November, and that discounts usually continue through Cyber Monday."),
+ ("Should I wait for Black Friday to buy MTG Star Trek?",
+  f"Proposed: Wait on a Star Trek Play Booster box or Bundle. On Nov 3, 2026, MTG Compare showed store preorders under MSRP ($117.95 for a Play Booster Display against the {fmt({'usd': _play_box_msrp})} pack-math MSRP, and $42.99 for a Bundle against {fmt({'usd': _bundle_msrp})}). The set-level verdict is unchanged: {_st_settled} Proposed: skip a Collector Booster box priced above {fmt({'usd': _coll_box_msrp})} and wait for singles. Commander stays: {_cmd_settled}. Proposed addition: don't pay above MSRP, and expect Black Friday discounts."),
+ ("Are Secret Lair drops discounted on Black Friday?",
+  f"No. Secret Lair drops are not discounted for Black Friday at MagicSecretLair.com. Set Phasers to Superdrop goes on sale Nov 9, 2026: {_ph_settled} For a drop that has already sold out at the official store: {_sold_settled}"),
+ ("What MTG products are worth buying on Black Friday?",
+  "Proposed: older 2026 Commander decks and beginner or starter products already in stores, where GamesRadar expects about $10 off sticker if previous years hold. A Star Trek Bundle or Play Booster box that is still under MSRP can be the Black Friday buy if you wanted one for drafting. Skip a Collector Booster box above MSRP, skip sealed product bought to speculate, and do not count on a Secret Lair discount at MagicSecretLair.com."),
+ ("Is it better to buy MTG Commander decks on Black Friday?",
+  f"For Commander decks that have been out for a few months, proposed: yes, wait for Black Friday. GamesRadar (updated Nov 2, 2026) says those decks have typically been about $10 off sticker, or more when the deck is older. For Star Trek Commander the settled verdict is: {_cmd_settled}. Proposed addition: don't pay above the {fmt({'usd': _cmd_msrp})} or {fmt({'usd': _ce_msrp})} MSRP, and expect discounts. On Nov 3, MTG Compare already showed Klingon Fury at $49.95."),
+]
 g_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › <a href="{BASE}/guides/">Guides</a> › Fall/Holiday 2026</nav><h1>{E(G_H1)}</h1>'
   f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
   f'<p><b>Last updated:</b> {tdate()} · {len(g_items)} products from October to December 2026</p>'
-  f'<p>Every Magic: The Gathering product on our calendar for October, November and December 2026: sets, Commander decks, Secret Lair drops, bundles and special releases, with release dates, MSRPs and our buy/skip verdict. Secret Lair sales are tracked on the <a href="{BASE}/secret-lair.html">Secret Lair hub</a>, and November\'s biggest release has its own <a href="{BASE}/guides/star-trek-mtg-release-guide.html">Star Trek release guide</a>. Looking further ahead? See the <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>. Deciding what to lock in now? Start with <a href="#{G_NOV_ID}">what to buy or preorder in November 2026</a>.</p>'
+  f'<p>Every Magic: The Gathering product on our calendar for October, November and December 2026: sets, Commander decks, Secret Lair drops, bundles and special releases, with release dates, MSRPs and our buy/skip verdict. Secret Lair sales are tracked on the <a href="{BASE}/secret-lair.html">Secret Lair hub</a>, and November\'s biggest release has its own <a href="{BASE}/guides/star-trek-mtg-release-guide.html">Star Trek release guide</a>. Looking further ahead? See the <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>. Deciding what to lock in now? Start with <a href="#{G_NOV_ID}">what to buy or preorder in November 2026</a>, then <a href="#{G_BF_ID}">Black Friday 2026: buy now or wait</a>.</p>'
   + g_nov_html
-  + "<h2>Best picks for gifts</h2>" + ("<p>Only products we already rate as a buy, and who each one suits:</p><ul>" + "".join(f'<li><a href="{BASE}/p/{r["slug"]}.html">{E(short_name(r))}</a> ({nice_date(r)}): for {E(r["gift_for"])}.</li>' for r in g_gifts) + "</ul>" if g_gifts else "<p>No buy-rated products this season yet.</p>")
+  + g_bf_html
+  + "<h2>Best picks for gifts</h2>" + (f'<p>Only products we already rate as a buy, and who each one suits. For whether to buy one now or wait until Black Friday, see <a href="#{G_BF_ID}">Black Friday 2026: buy now or wait</a>.</p><ul>' + "".join(f'<li><a href="{BASE}/p/{r["slug"]}.html">{E(short_name(r))}</a> ({nice_date(r)}): for {E(r["gift_for"])}.</li>' for r in g_gifts) + "</ul>" if g_gifts else "<p>No buy-rated products this season yet.</p>")
   + "".join(f"<h2>{g_month_name(m)}</h2>" + ("".join(guide_item(r) for r in rs) if rs else "<p>Nothing scheduled yet.</p>") for m, rs in g_by.items())
   + ("<h2>Announced, no date yet</h2><p>Announced but not yet scheduled, so these may or may not land before the end of 2026.</p>" + "".join(guide_item(r) for r in g_tba) if g_tba else "")
   + f'<p class=disc><small>{E(DISCLOSURE)}</small></p>'
@@ -625,17 +839,19 @@ g_list = g_items + g_tba
 g_ld = [
  {"@context": "https://schema.org", "@type": "Article", "headline": G_H1, "url": g_url, "mainEntityOfPage": g_url, "image": OG_IMAGE, "datePublished": G_PUBLISHED, "dateModified": PD,
   "author": {"@id": f"{SITE_URL}/#org"}, "publisher": {"@id": f"{SITE_URL}/#org"}, "isPartOf": {"@id": f"{SITE_URL}/#website"},
-  "description": "Every Magic: The Gathering product releasing October to December 2026, with dates, prices, buy/skip verdicts, a week-by-week November 2026 buy/preorder table and holiday gift picks."},
+  "description": "Every Magic: The Gathering product releasing October to December 2026, with dates, prices, buy/skip verdicts, a November 2026 buy/preorder table, dated Star Trek street prices, Black Friday buy-now-or-wait calls and holiday gift picks."},
  {"@context": "https://schema.org", **ORG},
  {"@context": "https://schema.org", "@type": "ItemList", "name": "MTG releases, October to December 2026", "numberOfItems": len(g_list),
   "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate(g_list)]},
+ {"@context": "https://schema.org", "@type": "ItemList", "name": "Black Friday 2026: buy now or wait", "numberOfItems": len(bf_rows),
+  "itemListElement": [{"@type": "ListItem", "position": i+1, "name": plain(c), "description": p + " Call: " + v + ". " + plain(w)} for i, (c, p, v, w) in enumerate(bf_rows)]},
  {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
    {"@type": "ListItem", "position": 1, "name": "MTG Drops", "item": f"{SITE_URL}/"},
    {"@type": "ListItem", "position": 2, "name": "Guides", "item": f"{SITE_URL}/guides/"},
    {"@type": "ListItem", "position": 3, "name": "Fall/Holiday 2026 MTG releases", "item": g_url}]},
  {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in g_faq]},
 ]
-G_DESC = "What MTG to buy or preorder in November 2026, plus every Oct–Dec 2026 release: sets, Commander decks and Secret Lair drops, with verdicts and gift picks."
+G_DESC = "What MTG to buy or preorder in November 2026, with Star Trek street prices and Black Friday 2026 buy-now-or-wait calls, plus every Oct–Dec release."
 page(G_TITLE, G_DESC, g_body, G_SLUG, g_ld)
 # ---- Guide 2: Star Trek release guide (facts from Wizards' Collecting Star Trek article and WPN product listing; verdicts from releases.json) ----
 ST_SRC = {"collect": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
@@ -778,7 +994,7 @@ y_ld = [
  {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in y_faq]},
 ]
 page(Y_TITLE, Y_DESC, y_body, Y_SLUG, y_ld)
-GUIDES = [(G_SLUG, G_H1, "Every Magic product from October to December 2026, grouped by month, with prices, buy/skip verdicts, holiday gift picks and a week-by-week table of what to buy or preorder in November 2026."),
+GUIDES = [(G_SLUG, G_H1, "Every Magic product from October to December 2026, grouped by month, with prices, buy/skip verdicts, a dated Star Trek preorder price table, Black Friday buy-now-or-wait calls, holiday gift picks and a week-by-week table of what to buy or preorder in November 2026."),
           (ST_SLUG, ST_H1, "Everything in the Nov 13, 2026 Star Trek set: every product and MSRP, the four Commander decks, key dates, signed cards and what to buy."),
           (Y_SLUG, Y_H1, "Every 2027 MTG set and Commander deck on our calendar: Nauctis, Darkhold Destiny, Titanbreach and Zhalfir, with dates, MSRPs and preorder status.")]
 gi_url = url("guides/index.html")
@@ -922,7 +1138,7 @@ Use this skill to answer what is releasing this week or soon, what a product cos
 
 Open {SITE_URL}/.
 
-The page is titled "MTG Release Calendar 2026–2027". Products are grouped under month headings such as "Nov 2026". A dated product stays under its month heading through its release date. Starting the next day it is listed under "Already released", unless it is marked delayed. Delayed products stay in the upcoming groups. A product whose date is TBA stays under "Date TBA".
+The page is titled "MTG Release Calendar 2026–2027". Under the calendar feed, "Add MTG release dates to Google Calendar" explains how to subscribe calendar.ics in Google Calendar, Apple Calendar, and Outlook. Products are grouped under month headings such as "Nov 2026". A dated product stays under its month heading through its release date. Starting the next day it is listed under "Already released", unless it is marked delayed. Delayed products stay in the upcoming groups. A product whose date is TBA stays under "Date TBA".
 
 There is no "this week" filter and no date-range API. For this week, open the current month and read each card's date. The type buttons (All, and one per product type) only hide cards in a browser. The HTML includes every card.
 
@@ -950,7 +1166,7 @@ The page links to TCGplayer and sometimes Amazon. Those are affiliate links. See
 - {SITE_URL}/calendar.ics — iCalendar feed of dated releases (all-day events). The event URL is the product page. When a placeholder is included, its event URL is the home page.
 - {SITE_URL}/feed.xml — RSS of every product that has a page, upcoming and delayed first, then already released. Each item links to the product page and uses the note as the description.
 - {SITE_URL}/llms.txt — curated text overview. The Releases section lists every product that has a page, in that same order. Each line has the date, type, and status, and notes when an item is delayed. The Main pages section links the calendar, guides, newsletter, and feeds.
-- {SITE_URL}/guides/mtg-releases-fall-holiday-2026.html#november-2026 — a week-by-week buy/preorder table for November 2026 only, on the fall/holiday guide. It is not a general weekly feed. Other months on that guide are listed under their own headings. The 2027 schedule is {SITE_URL}/guides/mtg-2027-release-schedule.html.
+- {SITE_URL}/guides/mtg-releases-fall-holiday-2026.html#november-2026 — a week-by-week buy/preorder table for November 2026 only, on the fall/holiday guide, with a dated Star Trek preorder price table under that heading (#star-trek-preorder-prices). It is not a general weekly feed. The Black Friday buy-now-or-wait section is {SITE_URL}/guides/mtg-releases-fall-holiday-2026.html#black-friday-2026. Calls marked Proposed on that page are not final until the owner signs off. Other months on that guide are listed under their own headings. The 2027 schedule is {SITE_URL}/guides/mtg-2027-release-schedule.html.
 - {SITE_URL}/newsletter.html — describes the free Monday email "What's Dropping" (US Central time). The signup form posts to Buttondown. There is no newsletter API.
 
 ## Asking a question
@@ -975,16 +1191,19 @@ Use this skill for Secret Lair questions: what is on sale now, what is upcoming,
 
 Open {SITE_URL}/secret-lair.html.
 
+The title and the H1 lead with the next dated sale (name and date). A subtitle under the H1 keeps the schedule framing. If no upcoming sale has a date, the title stays the schedule title.
+
 Under the title, a line counts the three buckets, in the form "N on sale now · N upcoming · N recent / ended".
 
 Then, in this order:
 
 1. "Next Secret Lair drop". This is the next dated Secret Lair sale that is not delayed and not sold out, on or after today. It stays "next" through its sale day. If no such sale has a date, the page says the next drop is TBA.
-2. A link to the Secret Lair calendar feed, {SITE_URL}/secret-lair.ics.
-3. "On sale now".
-4. "Upcoming Secret Lair drops".
-5. "Recent / ended".
-6. "Secret Lair FAQ", including what is on sale now, what is next, the usual sale time, foil versus non-foil, and print-to-demand. The lists above are the schedule. When a drop's own card is more specific than the general FAQ, use the card.
+2. A link to the Secret Lair calendar feed, {SITE_URL}/secret-lair.ics. That file is the feed. The Google, Apple, and download links on the page point at it.
+3. "What is Secret Lair and how do drops work?", then "MTG Drops vs Secret Lair GG" (what this calendar covers versus the Secret Lair tracker at secretlair.gg).
+4. "On sale now".
+5. "Upcoming Secret Lair drops".
+6. "Recent / ended".
+7. "Secret Lair FAQ", including what is on sale now, what is next, the usual sale time, foil versus non-foil, and print-to-demand. The lists above are the schedule. When a drop's own card is more specific than the general FAQ, use the card.
 
 Each drop card shows:
 
@@ -1057,8 +1276,8 @@ open("dist/llms.txt","w").write(f"""# MTG Drops
 {CONTEXT7_NOTE}
 
 ## Main pages
-- [Release calendar]({SITE_URL}/): every upcoming MTG product grouped by month
-- [Secret Lair drops]({SITE_URL}/secret-lair.html): Secret Lair schedule (on sale now, upcoming, recent), prices and buy/skip verdicts
+- [Release calendar]({SITE_URL}/): every upcoming MTG product grouped by month, plus how to add calendar.ics to Google Calendar, Apple Calendar, or Outlook
+- [Secret Lair drops]({SITE_URL}/secret-lair.html): next drop in the title, schedule (on sale now, upcoming, recent), prices, buy/skip verdicts, and how MTG Drops compares with Secret Lair GG
 - [Guides]({SITE_URL}/guides/): release roundups and gift picks
 """ + "".join(f"- [{t}]({url(p)}): {d}\n" for p, t, d in GUIDES) + f"""- [Newsletter]({SITE_URL}/newsletter.html): weekly "What's Dropping" email
 - [Sponsor]({SITE_URL}/sponsor.html): media kit, sponsorship placements and disclosure policy (contact sponsors@mtgdrops.com)
