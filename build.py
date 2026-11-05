@@ -571,7 +571,6 @@ def guide_item(r):
 G_SLUG = "guides/mtg-releases-fall-holiday-2026.html"; g_url = url(G_SLUG)
 G_TITLE = "MTG Releases Oct–Dec 2026 & Holiday Gift Guide | MTG Drops"
 G_H1 = "Every MTG Product Releasing This Fall/Holiday 2026"
-G_PUBLISHED = "2026-10-17"
 G_MONTHS = ["2026-10", "2026-11", "2026-12"]
 g_items = [r for r in public if r["release_date"][:7] in G_MONTHS]
 g_tba = [r for r in public if not dated(r)]
@@ -644,6 +643,11 @@ ST_PRE_PAGE = "https://mtgcompare.app/us/preorders/star-trek"
 ST_PLAY_PAGE = "https://mtgcompare.app/us/p/star-trek-play-booster-box"
 CSI_DRAFT = "https://www.coolstuffinc.com/p/443286"
 GR_BF = "https://www.gamesradar.com/black-friday-magic-the-gathering-deals-and-savings/"
+# Retailer windows checked live Nov 5, 2026. Do not print a projected Amazon date.
+BF_DATES_CHECKED = "2026-11-05"
+TARGET_BF_USA = "https://www.usatoday.com/story/shopping/deals/black-friday/2026/10/28/target-early-black-friday-sale-dates/92483386007/"
+TARGET_BF_AL = "https://www.al.com/shopping/2026/11/when-is-target-black-friday-2026-sale-dates-and-early-deals.html"
+WALMART_BF_SRC = "https://corporate.walmart.com/news/2026/10/walmart-unwraps-three-major-holiday-shopping-events"
 _st_inside = json.dumps(nv_st["inside"])
 if "30 per box" not in _st_inside or "12 per box" not in _st_inside:
     raise SystemExit("Star Trek display pack counts missing from releases.json; not printing a box MSRP")
@@ -762,6 +766,32 @@ bf_rows = [
   f"Settled: {_ph_settled} Not discounted at MagicSecretLair.",
   f"{_ph_settled} For a drop that has already sold out at the official store: {_sold_settled}"),
 ]
+_bf_cmd_extra = (f" {plink(_spm, _spm['short_name'])} is still an unconfirmed leak, so it is not a Black Friday buy: wait until Wizards confirms it and shows the decklist."
+                 if _spm.get("verdict") == "wait" and _spm["status"] != "confirmed" else "")
+_bf_bundle_extra = f" {plink(_bb, _bb['short_name'])} stays Skip on resale." if _bb.get("verdict") == "skip" else ""
+_bf_corn = (f" {plink(_corn, _corn['short_name'])}: Wizards expects US orders to ship Dec 15, 2026 – Mar 15, 2027. Don't count on it under the tree."
+            if "Dec 15, 2026" in (_corn.get("window") or "") else "")
+g_bf_dates = (
+ f'<h3 id="retailer-early-sales">Retailer early-sale dates</h3>'
+ + checked({"last_checked": BF_DATES_CHECKED, "source": TARGET_BF_USA, "field_sources": {"al.com": TARGET_BF_AL, "walmart": WALMART_BF_SRC}})
+ + "<p>These are announced store calendars, not a list of Magic discounts. A window can open without any given MTG box being reduced. "
+ "Black Friday is Nov 27, 2026. Cyber Monday is Nov 30, 2026. Last checked Nov 5, 2026.</p><ul>"
+ + f'<li><b>Target early Black Friday sale:</b> Thu Nov 5 – Sat Nov 7, 2026. Target also runs a daily Deal of the Day from Nov 1 through Dec 24, and new weekend offers afterward. '
+ f'Sources: <a href="{TARGET_BF_USA}" rel=nofollow>USA Today</a>, <a href="{TARGET_BF_AL}" rel=nofollow>al.com</a>.</li>'
+ + f'<li><b>Walmart Early Black Friday Deals:</b> Nov 12–15, 2026. <b>Walmart Black Friday Deals:</b> Nov 23–29, 2026 '
+ "(online at 12:01 a.m. ET; in stores Nov 12 and Nov 27 at 6 a.m. local; Walmart+ early access on Nov 12 and Nov 23). "
+ f'<b>Walmart Cyber Monday:</b> Nov 30 – Dec 2, 2026. Source: <a href="{WALMART_BF_SRC}" rel=nofollow>Walmart</a>.</li>'
+ + "<li><b>Amazon US:</b> Amazon has not announced US Black Friday dates yet. Black Friday is Nov 27 and Cyber Monday is Nov 30.</li>"
+ + "</ul>")
+g_bf_frame = (
+ "<h3>Holiday boxes: buy, wait, or skip</h3>"
+ + "<p>The calls in the table are unchanged. Here is how they apply to Commander decks, beginner and starter boxes, bundles, and older Secret Lairs.</p><ul>"
+ + f"<li><b>Commander decks.</b> Older 2026 Commander decks already in stores: Wait for Black Friday. {plink(nv_cmd, 'Star Trek Commander decks')}: buy regular decks, skip Collector's Editions at markup. Don't pay above MSRP, and expect Black Friday discounts.{_bf_cmd_extra}</li>"
+ + "<li><b>Beginner and starter boxes.</b> Beginner or starter products already in stores from earlier in 2026: Wait for Black Friday. Wizards removed the Star Trek Beginner Box, so a leftover listing of that box is not a product we are telling you to buy.</li>"
+ + f"<li><b>Bundles.</b> {plink(nv_st, 'Star Trek Bundle')}: Wait. On Nov 3 a store listed it at $42.99, under the {fmt({'usd': _bundle_msrp})} MSRP.{_bf_bundle_extra}</li>"
+ + f"<li><b>Older Secret Lairs.</b> Not discounted at MagicSecretLair.com. {plink(nv_ph, 'Set Phasers to Superdrop')} on Nov 9: {_ph_settled} A drop that has already sold out at the official store: {_sold_settled}{_bf_corn}</li>"
+ + "</ul>"
+ + f'<p>Compare a percent-off tag with what the box costs on an ordinary day. For Commander decks, check {retail_links("Magic The Gathering Commander Deck")}. The <a href="#star-trek-preorder-prices">Nov 3 Star Trek table</a> has a Check prices column for that set. Amazon links use the mtgdrops-20 tag. TCGplayer links are Impact affiliate links.</p>')
 g_bf_html = (
  f'<h2 id="{G_BF_ID}">Black Friday 2026: buy now or wait?</h2>'
  + checked({"last_checked": ST_PRE_CHECKED, "source": GR_BF, "field_sources": {"mtg compare": ST_PRE_PAGE, "play box": ST_PLAY_PAGE}})
@@ -773,14 +803,17 @@ g_bf_html = (
  + "<h3>When MTG Black Friday deals start</h3>"
  + f'<p>The sale date is Friday, Nov 27, 2026. The Monday after it, Cyber Monday, is Nov 30, 2026. '
  f'<a href="{GR_BF}" rel=nofollow>GamesRadar</a> says Magic discounts usually begin earlier than that Friday, from around the middle of November, and then hang on past Black Friday itself. '
- "We don't run a live deal tracker. The dates above are the calendar, plus that GamesRadar timing note.</p>"
+ "We don't run a live deal tracker. The dates above are the calendar, plus that GamesRadar timing note. "
+ f'<a href="#retailer-early-sales">Retailer early-sale dates</a> are a separate check.</p>'
+ + g_bf_dates
  + "<h3>Buy now, wait, or skip</h3>"
  + "<p>The November table above is the week-by-week call for this month. This table is the Black Friday timing call.</p>"
  + "<table><tr><th>Category</th><th>Typical deal pattern</th><th>Our call</th><th>Why</th></tr>"
  + "".join(f"<tr><td>{c}</td><td>{E(p)}</td><td><b>{E(v)}</b></td><td>{w}</td></tr>" for c, p, v, w in bf_rows)
  + "</table>"
+ + g_bf_frame
  + "<h3>Gift-buyer warnings</h3><ul>"
- + (f"<li>{plink(_corn, _corn['short_name'])}: Wizards expects US orders to ship Dec 15, 2026 – Mar 15, 2027. Don't count on it under the tree.</li>" if "Dec 15, 2026" in (_corn.get("window") or "") else "")
+ + (f"<li><b>US shipping warning — {plink(_corn, _corn['short_name'])}:</b> Wizards expects US orders to ship Dec 15, 2026 – Mar 15, 2027. Don't count on it under the tree.</li>" if "Dec 15, 2026" in (_corn.get("window") or "") else "")
  + f"<li>{plink(nv_kit, nv_kit['short_name'])} is still listed as on sale on our Secret Lair page. Check MagicSecretLair.com before you pay anyone else. If the official listing is gone, {_sold_settled}</li>"
  + f"<li>Star Trek Collector Boosters, Bundles, Beam Me Up Bundles and Draft Night may arrive after Nov 13 in Europe or Asia-Pacific, and the Commander decks may arrive after Nov 13 in North America (Wizards, Oct 16). Read the ship date on a preorder before you treat it as a gift that will be here in November.</li>"
  + "</ul>"
@@ -811,7 +844,10 @@ g_faq.append(("What is the best MTG gift for the 2026 holidays?",
 if nxt_set: g_faq.append(("What is the next MTG set after 2026?", f"{nxt_set['name']}, releasing {nice_date(nxt_set)} ({nxt_set['status']})."))
 g_faq += [
  ("When do MTG Black Friday deals start in 2026?",
-  "Black Friday is Nov 27, 2026, and Cyber Monday is Nov 30, 2026. GamesRadar (updated Nov 2, 2026) says the official Magic deals start on Nov 27, with price cuts often appearing from mid-November, and that discounts usually continue through Cyber Monday."),
+  "Black Friday is Nov 27, 2026, and Cyber Monday is Nov 30, 2026. GamesRadar (updated Nov 2, 2026) says the official Magic deals start on Nov 27, with price cuts often appearing from mid-November, and that discounts usually continue through Cyber Monday. "
+  "Retailer windows, last checked Nov 5, 2026: Target's early Black Friday sale is Thu Nov 5 – Sat Nov 7, 2026, with a daily Deal of the Day from Nov 1 through Dec 24 and new weekend offers afterward. "
+  "Walmart Early Black Friday Deals are Nov 12–15. Walmart Black Friday Deals are Nov 23–29 (online at 12:01 a.m. ET; in stores Nov 12 and Nov 27 at 6 a.m. local; Walmart+ early access on Nov 12 and Nov 23). Walmart's Cyber Monday is Nov 30 – Dec 2. "
+  "Amazon has not announced US Black Friday dates yet."),
  ("Should I wait for Black Friday to buy MTG Star Trek?",
   f"Wait on a Star Trek Play Booster box or Bundle. On Nov 3, 2026, MTG Compare showed store preorders under MSRP ($117.95 for a Play Booster Display against the {fmt({'usd': _play_box_msrp})} pack-math MSRP, and $42.99 for a Bundle against {fmt({'usd': _bundle_msrp})}). The set-level verdict is unchanged: {_st_settled} Skip a Collector Booster box priced above {fmt({'usd': _coll_box_msrp})} and wait for singles. Commander stays: {_cmd_settled}. Don't pay above MSRP, and expect Black Friday discounts."),
  ("Are Secret Lair drops discounted on Black Friday?",
@@ -834,12 +870,12 @@ g_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> 
   + "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in g_faq)
   + f"<h2>Get the weekly release email</h2><p>What's Dropping covers what's releasing next, date and price changes, and a buy-or-skip verdict for each product.</p>{FORM}<p><small>Last updated: {tdate()}</small></p>")
 g_list = g_items + g_tba
+# This page's JSON-LD is ItemList + BreadcrumbList only. Retailer sale windows stay in the HTML.
+# Do not add Product, Review, AggregateRating, Offer, or Event. dateModified stays on the release
+# list so the build can still stamp it when the page hash changes (visible "Last updated" uses the same date).
 g_ld = [
- {"@context": "https://schema.org", "@type": "Article", "headline": G_H1, "url": g_url, "mainEntityOfPage": g_url, "image": OG_IMAGE, "datePublished": G_PUBLISHED, "dateModified": PD,
-  "author": {"@id": f"{SITE_URL}/#org"}, "publisher": {"@id": f"{SITE_URL}/#org"}, "isPartOf": {"@id": f"{SITE_URL}/#website"},
-  "description": "Every Magic: The Gathering product releasing October to December 2026, with dates, prices, buy/skip verdicts, a November 2026 buy/preorder table, dated Star Trek street prices, Black Friday buy-now-or-wait calls and holiday gift picks."},
- {"@context": "https://schema.org", **ORG},
  {"@context": "https://schema.org", "@type": "ItemList", "name": "MTG releases, October to December 2026", "numberOfItems": len(g_list),
+  "url": g_url, "dateModified": PD,
   "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate(g_list)]},
  {"@context": "https://schema.org", "@type": "ItemList", "name": "Black Friday 2026: buy now or wait", "numberOfItems": len(bf_rows),
   "itemListElement": [{"@type": "ListItem", "position": i+1, "name": plain(c), "description": p + " Call: " + v + ". " + plain(w)} for i, (c, p, v, w) in enumerate(bf_rows)]},
@@ -847,8 +883,18 @@ g_ld = [
    {"@type": "ListItem", "position": 1, "name": "MTG Drops", "item": f"{SITE_URL}/"},
    {"@type": "ListItem", "position": 2, "name": "Guides", "item": f"{SITE_URL}/guides/"},
    {"@type": "ListItem", "position": 3, "name": "Fall/Holiday 2026 MTG releases", "item": g_url}]},
- {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in g_faq]},
 ]
+def _ld_types(o, acc):
+    if isinstance(o, dict):
+        t = o.get("@type")
+        if isinstance(t, str): acc.add(t)
+        elif isinstance(t, list): acc.update(t)
+        for v in o.values(): _ld_types(v, acc)
+    elif isinstance(o, list):
+        for v in o: _ld_types(v, acc)
+_g_types = set(); _ld_types(g_ld, _g_types)
+if _g_types - {"ItemList", "BreadcrumbList", "ListItem"}:
+    raise SystemExit("fall guide JSON-LD types must stay ItemList and BreadcrumbList (ListItem is the child type): " + str(sorted(_g_types)))
 G_DESC = "What MTG to buy or preorder in November 2026, with Star Trek street prices and Black Friday 2026 buy-now-or-wait calls, plus every Oct–Dec release."
 page(G_TITLE, G_DESC, g_body, G_SLUG, g_ld)
 # ---- Guide 2: Star Trek release guide (facts from Wizards' Collecting Star Trek article and WPN product listing; verdicts from releases.json) ----
@@ -992,7 +1038,7 @@ y_ld = [
  {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in y_faq]},
 ]
 page(Y_TITLE, Y_DESC, y_body, Y_SLUG, y_ld)
-GUIDES = [(G_SLUG, G_H1, "Every Magic product from October to December 2026, grouped by month, with prices, buy/skip verdicts, a dated Star Trek preorder price table, Black Friday buy-now-or-wait calls, holiday gift picks and a week-by-week table of what to buy or preorder in November 2026."),
+GUIDES = [(G_SLUG, G_H1, "Every Magic product from October to December 2026, grouped by month, with prices, buy/skip verdicts, a dated Star Trek preorder price table, Black Friday buy-now-or-wait calls with dated retailer early-sale windows, holiday gift picks and a week-by-week table of what to buy or preorder in November 2026."),
           (ST_SLUG, ST_H1, "Everything in the Nov 13, 2026 Star Trek set: every product and MSRP, the four Commander decks, key dates, signed cards and what to buy."),
           (Y_SLUG, Y_H1, "Every 2027 MTG set and Commander deck on our calendar: Nauctis, Darkhold Destiny, Titanbreach and Zhalfir, with dates, MSRPs and preorder status.")]
 gi_url = url("guides/index.html")
@@ -1164,7 +1210,7 @@ The page links to TCGplayer and sometimes Amazon. Those are affiliate links. See
 - {SITE_URL}/calendar.ics — iCalendar feed of dated releases (all-day events). The event URL is the product page. When a placeholder is included, its event URL is the home page.
 - {SITE_URL}/feed.xml — RSS of every product that has a page, upcoming and delayed first, then already released. Each item links to the product page and uses the note as the description.
 - {SITE_URL}/llms.txt — curated text overview. The Releases section lists every product that has a page, in that same order. Each line has the date, type, and status, and notes when an item is delayed. The Main pages section links the calendar, guides, newsletter, and feeds.
-- {SITE_URL}/guides/mtg-releases-fall-holiday-2026.html#november-2026 — a week-by-week buy/preorder table for November 2026 only, on the fall/holiday guide, with a dated Star Trek preorder price table under that heading (#star-trek-preorder-prices). It is not a general weekly feed. The Black Friday buy-now-or-wait section is {SITE_URL}/guides/mtg-releases-fall-holiday-2026.html#black-friday-2026. Other months on that guide are listed under their own headings. The 2027 schedule is {SITE_URL}/guides/mtg-2027-release-schedule.html.
+- {SITE_URL}/guides/mtg-releases-fall-holiday-2026.html#november-2026 — a week-by-week buy/preorder table for November 2026 only, on the fall/holiday guide, with a dated Star Trek preorder price table under that heading (#star-trek-preorder-prices). It is not a general weekly feed. The Black Friday buy-now-or-wait section is {SITE_URL}/guides/mtg-releases-fall-holiday-2026.html#black-friday-2026. That section includes dated retailer early-sale windows (Target Thu Nov 5 – Sat Nov 7, Walmart Nov 12–15 and Nov 23–29, and a line that Amazon has not announced US Black Friday dates yet; last checked Nov 5, 2026). It does not change the published buy/wait/skip calls. Other months on that guide are listed under their own headings. The 2027 schedule is {SITE_URL}/guides/mtg-2027-release-schedule.html.
 - {SITE_URL}/newsletter.html — describes the free Monday email "What's Dropping" (US Central time). The signup form posts to Buttondown. There is no newsletter API.
 
 ## Asking a question
