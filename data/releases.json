@@ -288,7 +288,58 @@
     "verdict": "buy",
     "gift_for": "Star Trek fans who want the themed Secret Lair drops: skip if you're not into Trek",
     "sold_out": null,
-    "last_checked": "2026-11-03"
+    "last_checked": "2026-11-06"
+  },
+  {
+    "slug": "secret-lair-extra-life-rise-of-the-polygons",
+    "name": "Secret Lair: Rise of the Polygons | Extra Life 2026",
+    "type": "Secret Lair",
+    "release_date": "2026-11-16",
+    "status": "confirmed",
+    "window": "Nov 16–Nov 30, 2026, 1 a.m. PT (sale ends), only at MagicSecretLair.com; also limited quantities at MagicCon: Atlanta Extra Life / merch booth Nov 13–15, 2026",
+    "source": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
+    "note": "Extra Life 2026 charity drop: 4 reprints plus an Elemental token in low-poly art (Balefire Dragon, Big Score, Young Pyromancer, Sword of Truth and Justice). Non-foil $39.99 / foil $49.99 (Wizards); 50% of the sales price (less third-party fees) supports Extra Life / Children's Miracle Network for Seattle Children's Hospital. Online window Nov 16–Nov 30 1 a.m. PT; limited early copies at MagicCon Atlanta Nov 13–15. Buy if you want to support Extra Life or like the art; skip as sealed speculation.",
+    "prices": [
+      {
+        "label": "Non-foil",
+        "usd": 39.99
+      },
+      {
+        "label": "Foil",
+        "usd": 49.99
+      }
+    ],
+    "contents": [
+      "Balefire Dragon",
+      "Big Score",
+      "Young Pyromancer",
+      "Sword of Truth and Justice",
+      "Elemental Token"
+    ],
+    "short_name": "Extra Life Rise of the Polygons",
+    "inside": [
+      [
+        "Rise of the Polygons | Extra Life 2026 (4 cards + token)",
+        [
+          "Balefire Dragon",
+          "Big Score",
+          "Young Pyromancer",
+          "Sword of Truth and Justice",
+          "Elemental Token"
+        ]
+      ]
+    ],
+    "inside_source": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
+    "field_sources": {
+      "release_date": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
+      "prices": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
+      "contents": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
+      "window": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
+      "charity split": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
+      "storefront Coming Soon": "https://secretlair.wizards.com/us/en/"
+    },
+    "verdict": "buy",
+    "last_checked": "2026-11-06"
   },
   {
     "slug": "secret-lair-marvel-doomsdrop",
@@ -312,9 +363,9 @@
     "name": "Magic: The Gathering | Star Trek",
     "type": "Universes Beyond",
     "release_date": "2026-11-13",
-    "window": "Prerelease Nov 6–12, 2026; Arena Nov 10; preorders open. Play Boosters and Prerelease Packs are on track everywhere; Collector Boosters, Bundles, Beam Me Up Bundles and Draft Night may arrive after Nov 13 in Europe or Asia-Pacific (Wizards, Oct 16)",
+    "window": "Prerelease Nov 6–12, 2026; Arena Nov 10; preorders open. Play Boosters and Prerelease Packs are on track everywhere (Wizards). North America: Scene Boxes and Bundles arrive after Prerelease; Draft Night, Beam Me Up Bundles and Commander decks may arrive after Nov 13. Europe/EMEA, Japan, APAC and Latin America also have select product delays (Wizards editor's note Nov 5, 2026)",
     "source": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
-    "note": "Standard-legal UB set. Play Booster $6.99, Collector $37.99, Bundle $69.99 (MSRP). Buy for drafting/Trek fans; skip sealed speculation.",
+    "note": "Standard-legal UB set. Play Booster $6.99, Collector $37.99, Bundle $69.99 (MSRP). Buy for drafting/Trek fans; skip sealed speculation. Heads-up: outside Play Boosters/Prerelease Packs, many SKUs are delayed by region (Wizards, Nov 5)—check your preorder's ship date.",
     "status": "confirmed",
     "amazon_query": "Magic The Gathering Star Trek MTG",
     "prices": [
@@ -392,7 +443,7 @@
       "prerelease": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
       "prerelease pack": "https://magic.wizards.com/en/news/feature/collecting-star-trek"
     },
-    "last_checked": "2026-10-30",
+    "last_checked": "2026-11-06",
     "prerelease": "Nov 6–12, 2026",
     "prerelease_verdict": "Buy the prerelease kit if you want the in-store event experience and the guaranteed traditional foil promo rare for the weekend (prerelease Nov 6–12, 2026 at local game stores). Each Prerelease Pack is 6 Play Boosters, 1 traditional foil rare or mythic rare, a deck box and a spindown. Wait on sealed product if you only want the cards: Play Boosters hit stores Nov 13, 2026 at $6.99 MSRP, and Play Boosters and Prerelease Packs are on track everywhere. Skip prerelease kits as speculation.",
     "buy_guide_intro": "Release is Nov 13, 2026, with prereleases at local stores Nov 6–12, and preorders are open now.",
@@ -420,9 +471,9 @@
     "name": "Star Trek Commander Decks (Federation Fleet, Landing Party, Klingon Fury, We Are the Borg)",
     "type": "Commander Precon",
     "release_date": "2026-11-13",
-    "window": "Preorders open. Wizards said on Oct 16 that the Commander decks are delayed in North America and may arrive after the Nov 13 release; English decks in Europe may also arrive after Nov 13",
+    "window": "Preorders open. Wizards (Nov 5): Commander decks delayed in North America and may arrive after the Nov 13 release; English decks in Europe may also arrive after Nov 13; French/German decks may arrive after Prerelease",
     "source": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
-    "note": "Four decks at $74.99, Collector's Editions $159.99 MSRP. NerdSnack reports regular decks preordering near MSRP and Collector's Editions well above it — buy regular, skip CE at markup. Heads-up: in North America the decks may not be on shelves on Nov 13 (Wizards, Oct 16), so check your preorder's ship date.",
+    "note": "Four decks at $74.99, Collector's Editions $159.99 MSRP. NerdSnack reports regular decks preordering near MSRP and Collector's Editions well above it — buy regular, skip CE at markup. Heads-up: in North America the decks may not be on shelves on Nov 13 (Wizards, Nov 5), so check your preorder's ship date.",
     "status": "confirmed",
     "amazon_query": "Star Trek Commander Deck MTG",
     "prices": [
@@ -472,7 +523,7 @@
       "face commanders and colors": "https://magic.wizards.com/en/news/announcements/star-trek-commander-decklists",
       "decklists": "https://magic.wizards.com/en/news/announcements/star-trek-commander-decklists"
     },
-    "last_checked": "2026-10-27"
+    "last_checked": "2026-11-06"
   },
   {
     "slug": "spider-mania-commander",
