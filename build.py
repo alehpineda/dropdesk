@@ -538,18 +538,44 @@ sl_ld = [
    {"@type": "ListItem", "position": 2, "name": "Secret Lair", "item": sl_url}]},
  {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in sl_faq]},
 ]
+# Dated sealed-vs-singles blurb for sold-out drops (editorial; no Product/Review schema).
+# Goblin Storm / Dandân comps are TabletopMeta market evidence (Nov 3, 2026); those drops are not in releases.json.
+TTM_SL = "https://www.tabletopmeta.com/blog/mtg-secret-lair"
+_ss = next((r for r in sl if r["slug"] == "secret-lair-strange-school"), None)
+_dd = next((r for r in sl if r["slug"] == "secret-lair-duality-distorted"), None)
+_atl = next((r for r in sl if r["slug"] == "secret-lair-atlanta"), None)
+_bb = next((r for r in sl if r["slug"] == "secret-lair-reality-fracture-bundle-bundles"), None)
+_sealed_links = []
+if _ss: _sealed_links.append(plink(_ss, short_name(_ss)))
+if _dd: _sealed_links.append(plink(_dd, short_name(_dd)))
+if _atl: _sealed_links.append(plink(_atl, short_name(_atl)))
+if _bb: _sealed_links.append(plink(_bb, short_name(_bb)))
+sl_sealed_html = (
+  '<h2 id="sealed-vs-singles">Sealed vs singles on sold-out drops</h2>'
+  '<div class=card>'
+  f'<p>Last checked Nov 3, 2026 · source <a href="{TTM_SL}" rel=nofollow>TabletopMeta Secret Lair guide</a>. '
+  'Goblin Storm and Dandân are not on our calendar; we cite them only as sealed-versus-singles market evidence.</p>'
+  '<p>TabletopMeta\'s Nov 3 comps: Goblin Storm about $492.76 sealed versus about $230 in singles; '
+  'Dandân about $222 sealed versus about $70 to build from singles. Sealed resale often runs well above the cards you\'d actually play.</p>'
+  '<p><b>Our call for sold-out drops we list</b>'
+  + ((" (" + "; ".join(_sealed_links) + ")") if _sealed_links else "")
+  + ': Wait — don\'t pay resale for the sealed drop; buy the singles you\'ll actually play. '
+  'For the Reality Fracture Bundle Bundles package, Skip resale: it already cost more than buying the parts at list.</p>'
+  '</div>'
+)
 page(SL_TITLE, SL_DESC,
      f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › Secret Lair</nav><h1>{E(SL_H1)}</h1>'
      f'<p>Secret Lair drops: schedule, prices and verdicts. The heading is the next dated sale. The lists below are what is on sale now, what is coming up, and what has ended.</p>'
      f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
      f'<p><b>Last updated:</b> {tdate()} · {len(sl_now)} on sale now · {len(sl_up)} upcoming · {len(sl_past)} recent / ended</p>'
      + sl_next_block
-     + f'<p><b>Secret Lair calendar feed:</b> {ics_link("secret-lair.ics")}</p>'
+     + f'<p><b>Secret Lair calendar feed:</b> {ics_link("secret-lair.ics")} Includes a timed sale (Nov 9, 9 AM PT) and a separate pre-queue (Nov 9, 8 AM PT) for Set Phasers to Superdrop; other drops stay all-day dates.</p>'
      + sl_intro + f'<p>Planning holiday buys? See <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a>, sets and Commander decks included.</p>'
      + sl_vs
      + sl_section("On sale now", sl_now, "No Secret Lair sale has opened in the last few weeks. See Upcoming below.")
      + sl_section("Upcoming Secret Lair drops", sl_up, "No upcoming Secret Lair drops are announced right now.")
      + sl_section("Recent / ended", sl_past, "Nothing here yet.")
+     + sl_sealed_html
      + '<p><small>Drops opened more than ' + str(SL_ONSALE_DAYS) + ' days ago are listed as recent / ended unless an end date is known; limited print runs may sell out sooner or stay in stock longer, so check MagicSecretLair.com.</small></p>'
      + "<h2>Secret Lair FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in sl_faq)
      + f'<h2>Get new Secret Lair drops by email</h2><p>What\'s Dropping is our free weekly email: new Secret Lair announcements, sale dates and a buy-or-skip verdict for each drop.</p>{FORM}'
@@ -571,6 +597,7 @@ def guide_item(r):
 G_SLUG = "guides/mtg-releases-fall-holiday-2026.html"; g_url = url(G_SLUG)
 G_TITLE = "MTG Releases Oct–Dec 2026 & Holiday Gift Guide | MTG Drops"
 G_H1 = "Every MTG Product Releasing This Fall/Holiday 2026"
+G_PUBLISHED = "2026-10-17"
 G_MONTHS = ["2026-10", "2026-11", "2026-12"]
 g_items = [r for r in public if r["release_date"][:7] in G_MONTHS]
 g_tba = [r for r in public if not dated(r)]
@@ -870,12 +897,16 @@ g_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> 
   + "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in g_faq)
   + f"<h2>Get the weekly release email</h2><p>What's Dropping covers what's releasing next, date and price changes, and a buy-or-skip verdict for each product.</p>{FORM}<p><small>Last updated: {tdate()}</small></p>")
 g_list = g_items + g_tba
-# This page's JSON-LD is ItemList + BreadcrumbList only. Retailer sale windows stay in the HTML.
-# Do not add Product, Review, AggregateRating, Offer, or Event. dateModified stays on the release
-# list so the build can still stamp it when the page hash changes (visible "Last updated" uses the same date).
+# This page's JSON-LD: Article + FAQPage + both ItemLists + BreadcrumbList (+ Organization).
+# Retailer sale windows stay in the HTML / BF ItemList. Do not add Product, Review,
+# AggregateRating, Rating, Offer, or Event. dateModified lives on the Article so the build
+# can still stamp it when the page hash changes (visible "Last updated" uses the same date).
 g_ld = [
+ {"@context": "https://schema.org", "@type": "Article", "headline": G_H1, "url": g_url, "mainEntityOfPage": g_url, "image": OG_IMAGE, "datePublished": G_PUBLISHED, "dateModified": PD,
+  "author": {"@id": f"{SITE_URL}/#org"}, "publisher": {"@id": f"{SITE_URL}/#org"}, "isPartOf": {"@id": f"{SITE_URL}/#website"},
+  "description": "Every Magic: The Gathering product releasing October to December 2026, with dates, prices, buy/skip verdicts, a November 2026 buy/preorder table, dated Star Trek street prices, Black Friday buy-now-or-wait calls and holiday gift picks."},
+ {"@context": "https://schema.org", **ORG},
  {"@context": "https://schema.org", "@type": "ItemList", "name": "MTG releases, October to December 2026", "numberOfItems": len(g_list),
-  "url": g_url, "dateModified": PD,
   "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate(g_list)]},
  {"@context": "https://schema.org", "@type": "ItemList", "name": "Black Friday 2026: buy now or wait", "numberOfItems": len(bf_rows),
   "itemListElement": [{"@type": "ListItem", "position": i+1, "name": plain(c), "description": p + " Call: " + v + ". " + plain(w)} for i, (c, p, v, w) in enumerate(bf_rows)]},
@@ -883,6 +914,7 @@ g_ld = [
    {"@type": "ListItem", "position": 1, "name": "MTG Drops", "item": f"{SITE_URL}/"},
    {"@type": "ListItem", "position": 2, "name": "Guides", "item": f"{SITE_URL}/guides/"},
    {"@type": "ListItem", "position": 3, "name": "Fall/Holiday 2026 MTG releases", "item": g_url}]},
+ {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in g_faq]},
 ]
 def _ld_types(o, acc):
     if isinstance(o, dict):
@@ -893,8 +925,12 @@ def _ld_types(o, acc):
     elif isinstance(o, list):
         for v in o: _ld_types(v, acc)
 _g_types = set(); _ld_types(g_ld, _g_types)
-if _g_types - {"ItemList", "BreadcrumbList", "ListItem"}:
-    raise SystemExit("fall guide JSON-LD types must stay ItemList and BreadcrumbList (ListItem is the child type): " + str(sorted(_g_types)))
+_G_LD_OK = {"ItemList", "BreadcrumbList", "ListItem", "Article", "FAQPage", "Question", "Answer", "Organization", "Brand", "WebSite"}
+_G_LD_BAN = {"Review", "AggregateRating", "Rating", "Event"}
+if _g_types & _G_LD_BAN:
+    raise SystemExit("fall guide JSON-LD must not include Review/AggregateRating/Rating/Event: " + str(sorted(_g_types & _G_LD_BAN)))
+if _g_types - _G_LD_OK:
+    raise SystemExit("fall guide JSON-LD has unexpected types: " + str(sorted(_g_types - _G_LD_OK)))
 G_DESC = "What MTG to buy or preorder in November 2026, with Star Trek street prices and Black Friday 2026 buy-now-or-wait calls, plus every Oct–Dec release."
 page(G_TITLE, G_DESC, g_body, G_SLUG, g_ld)
 # ---- Guide 2: Star Trek release guide (facts from Wizards' Collecting Star Trek article and WPN product listing; verdicts from releases.json) ----
@@ -1113,8 +1149,10 @@ open("dist/feed.xml", "w").write(f'<?xml version="1.0"?><rss version="2.0"><chan
 def lastmod(p): return new_dates[(p + "index.html") if p == "" or p.endswith("/") else p]["date"]
 open("dist/sitemap.xml","w").write('<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+"".join(f"<url><loc>{SITE_URL}/{p}</loc><lastmod>{lastmod(p)}</lastmod></url>" for p in ["","secret-lair.html","guides/"]+[g[0] for g in GUIDES]+["newsletter.html","sponsor.html"]+[f"p/{r['slug']}.html" for r in public])+"</urlset>")
 # ---- iCalendar feeds (RFC 5545): /calendar.ics (every dated release) and /secret-lair.ics (Secret Lair only) ----
-# All-day events (DTSTART;VALUE=DATE, DTEND = next day), stable UIDs (<slug>@mtgdrops.com), DTSTAMP from the entry's
-# last_checked date so an unchanged entry produces byte-identical output, CRLF line endings, lines folded at 75 octets.
+# Default: all-day events (DTSTART;VALUE=DATE, DTEND = next day). Set Phasers to Superdrop is the exception:
+# timed SALE (Nov 9 9 AM PT) + separate PRE-QUEUE (Nov 9 8 AM PT) as UTC DTSTART/DTEND, no all-day duplicate.
+# Stable UIDs (<slug>@mtgdrops.com), DTSTAMP from the entry's last_checked date so an unchanged entry produces
+# byte-identical output, CRLF line endings, lines folded at 75 octets. These are calendar events, not schema.org Event.
 def ics_esc(t): return t.replace("\\", "\\\\").replace(";", "\\;").replace(",", "\\,").replace("\n", "\\n")
 def ics_fold(line):
     b = line.encode("utf-8"); out = []; first = True
@@ -1130,16 +1168,28 @@ def ics_events(rs):
         d0 = datetime.date.fromisoformat(r["release_date"]); link = f"{SITE_URL}/p/{r['slug']}.html" if not r.get("placeholder") else f"{SITE_URL}/"
         stamp = (r.get("last_checked") or r["release_date"]).replace("-", "") + "T000000Z"
         flag = " (delayed)" if r.get("delayed") else " (sold out)" if r.get("sold_out") else "" if r["status"] == "confirmed" else f" ({r['status']})"
-        ev.append((r["slug"], d0, d0 + datetime.timedelta(days=1), short_name(r) + flag, f"{r['type']}. {r['note']} Details: {link}", link, stamp))
+        # Set Phasers: timed sale (9 AM PT) + pre-queue (8 AM PT) as UTC; skip all-day VALUE=DATE for this slug.
+        # Nov 9, 2026 is after the Nov 1 DST end, so PT = UTC-8 (9 AM PT = 17:00Z, 8 AM PT = 16:00Z).
+        if r["slug"] == "secret-lair-star-trek-set-phasers-superdrop":
+            nm = short_name(r)
+            dsc = f"{r['type']}. {r['note']} Details: {link}"
+            ev.append((r["slug"], "20261109T170000Z", "20261109T180000Z", nm + " sale (9 AM PT)", "Sale opens 9 AM PT on MagicSecretLair.com. " + dsc, link, stamp, True))
+            ev.append((r["slug"] + "-prequeue", "20261109T160000Z", "20261109T170000Z", nm + " pre-queue (8 AM PT)", "Pre-queue opens 8 AM PT on MagicSecretLair.com. " + dsc, link, stamp, True))
+            continue
+        ev.append((r["slug"], d0, d0 + datetime.timedelta(days=1), short_name(r) + flag, f"{r['type']}. {r['note']} Details: {link}", link, stamp, False))
         if r.get("prerelease") == "Nov 6–12, 2026" and r["slug"] == "star-trek":  # prerelease week as its own multi-day event
-            ev.append((r["slug"] + "-prerelease", datetime.date(2026, 11, 6), datetime.date(2026, 11, 13), short_name(r) + " prerelease (local game stores)", f"Prerelease events at local game stores, the week before the {nice_date(r)} release (Wizards). Details: {link}", link, stamp))
+            ev.append((r["slug"] + "-prerelease", datetime.date(2026, 11, 6), datetime.date(2026, 11, 13), short_name(r) + " prerelease (local game stores)", f"Prerelease events at local game stores, the week before the {nice_date(r)} release (Wizards). Details: {link}", link, stamp, False))
     return ev
 def ics(name, desc, rs):
     L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//MTG Drops//Release calendar//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
          "X-WR-CALNAME:" + ics_esc(name), "X-WR-CALDESC:" + ics_esc(desc), "REFRESH-INTERVAL;VALUE=DURATION:P1D", "X-PUBLISHED-TTL:P1D"]
-    for uid, a, b, summ, dsc, link, stamp in ics_events(rs):
-        L += ["BEGIN:VEVENT", f"UID:{uid}@mtgdrops.com", f"DTSTAMP:{stamp}", f"DTSTART;VALUE=DATE:{a:%Y%m%d}", f"DTEND;VALUE=DATE:{b:%Y%m%d}",
-              "SUMMARY:" + ics_esc(summ), "DESCRIPTION:" + ics_esc(dsc), f"URL:{link}", "TRANSP:TRANSPARENT", "END:VEVENT"]
+    for uid, a, b, summ, dsc, link, stamp, timed in ics_events(rs):
+        if timed:
+            L += ["BEGIN:VEVENT", f"UID:{uid}@mtgdrops.com", f"DTSTAMP:{stamp}", f"DTSTART:{a}", f"DTEND:{b}",
+                  "SUMMARY:" + ics_esc(summ), "DESCRIPTION:" + ics_esc(dsc), f"URL:{link}", "END:VEVENT"]
+        else:
+            L += ["BEGIN:VEVENT", f"UID:{uid}@mtgdrops.com", f"DTSTAMP:{stamp}", f"DTSTART;VALUE=DATE:{a:%Y%m%d}", f"DTEND;VALUE=DATE:{b:%Y%m%d}",
+                  "SUMMARY:" + ics_esc(summ), "DESCRIPTION:" + ics_esc(dsc), f"URL:{link}", "TRANSP:TRANSPARENT", "END:VEVENT"]
     L.append("END:VCALENDAR")
     return b"".join(ics_fold(l) + b"\r\n" for l in L)
 open("dist/calendar.ics", "wb").write(ics("MTG Drops: MTG release calendar", "Every upcoming Magic: The Gathering release from mtgdrops.com", data))
