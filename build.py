@@ -376,6 +376,325 @@ def pcard(r):
     os.makedirs("dist/products", exist_ok=True)
     for f in files: shutil.copy(f, "dist/products/")
     return tuple(f"{SITE_URL}/products/{os.path.basename(f)}" for f in files)
+# ---- Set Phasers deepen (Nov 7, 2026). One product only. ----
+# Settled verdict stays "Buy only if you really like Star Trek; otherwise skip."
+# Per-drop "buy this first" lines are Draft — pending owner OK, and labeled Proposed.
+# Five foil drops are 5 x $39.99 = $199.95, which is $0.04 under Wizards' $199.99 threshold.
+PHASERS_SLUG = "secret-lair-star-trek-set-phasers-superdrop"
+PHASERS_SETTLED = "Buy only if you really like Star Trek; otherwise skip."
+PHASERS_SET_VERDICT = "Buy for drafting/Trek fans; skip sealed speculation."
+PHASERS_CMD_VERDICT = "buy regular, skip CE at markup"
+PHASERS_WIZ = "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop"
+PHASERS_SCRYFALL = "https://scryfall.com/"
+PHASERS_ACCOUNT = "https://myaccounts.wizards.com/registration"
+PHASERS_CHECKED = "2026-11-07"
+PHASERS_PICK_ONE = "Lower Decks if you want the Thrasios and Silas Renn partners; otherwise Beam Me Up for blink and enter-the-battlefield staples."
+PHASERS_PICK_TWO = ("Lower Decks and Beam Me Up for playables. Add tlhIngan maH only if you want the red ritual package. "
+                    "KHAAAAAAAAN is theme plus mid staples. New Worlds is only for the land art. The sixth drop is unrevealed, so there is no pick.")
+PHASERS_BEAM = [("Eerie Interlude", 768), ("Momentary Blink", 19), ("Essence Flux", 62), ("Conjurer's Closet", 340)]
+PHASERS_KHAN = [("Wrath of the Skies", 284), ("Commandeer", 427), ("Illusionist's Gambit", 37), ("Buried Alive", 332), ("Genesis Wave", 39), ("Fracture", 28)]
+PHASERS_LD = [("Inti, Seneschal of the Sun", 106), ("Kambal, Profiteering Mayor", 597),
+              ("Silas Renn foil (Commander 2016; Scryfall listed no non-foil price)", 1139),
+              ("Thrasios foil (Commander 2016)", 2714), ("Weatherlight", 141)]
+PHASERS_KLINGON = [("Demand Answers", 83), ("Relentless Assault", 354), ("Seething Song", 1109), ("War's Toll", 1068), ("Warstorm Surge", 147)]
+def money_c(c):
+    c = int(c)
+    return f"${c // 100:,}.{c % 100:02d}"
+def phasers_link(href, text, nofollow=False):
+    rel = " rel=nofollow" if nofollow else ""
+    return f'<a href="{E(href)}"{rel}>{E(text)}</a>'
+def faq_visible(a):
+    """Plain FAQ answers are escaped. An answer that already contains a tag is HTML from this file."""
+    return a if "<" in a else E(a)
+def _usd_cents(rel, label):
+    hits = [p["usd"] for p in rel.get("prices") or [] if p["label"] == label]
+    if len(hits) != 1: raise SystemExit(f"price missing: {rel['slug']} {label}")
+    return int(round(hits[0] * 100))
+def phasers_facts():
+    r = next(x for x in data if x["slug"] == PHASERS_SLUG)
+    st = next(x for x in data if x["slug"] == "star-trek")
+    cmd = next(x for x in data if x["slug"] == "star-trek-commander")
+    if r.get("last_checked") != PHASERS_CHECKED: raise SystemExit("Set Phasers last_checked must be " + PHASERS_CHECKED)
+    if PHASERS_SETTLED not in r["note"]: raise SystemExit("Set Phasers settled verdict missing")
+    if PHASERS_SET_VERDICT not in st["note"]: raise SystemExit("Star Trek set verdict missing")
+    if PHASERS_CMD_VERDICT not in cmd["note"]: raise SystemExit("Star Trek Commander verdict missing")
+    if "Transporter Boondoggle" not in (r.get("window") or "") or "199.99" not in (r.get("window") or ""):
+        raise SystemExit("Set Phasers window is missing the bonus threshold")
+    if "ship" in (r.get("window") or "").lower(): raise SystemExit("Set Phasers window now mentions shipping; update the not-announced line")
+    if len(r.get("inside") or []) != 5: raise SystemExit("Set Phasers should list five revealed drops, not a guessed sixth")
+    if not any("sixth" in c.lower() for c in r.get("contents") or []): raise SystemExit("Set Phasers contents should say the sixth drop is unrevealed")
+    nonfoil, foil = _usd_cents(r, "Each drop, non-foil"), _usd_cents(r, "Each drop, foil")
+    five, six = 5 * foil, 6 * nonfoil
+    mix33, mix42 = 3 * foil + 3 * nonfoil, 4 * foil + 2 * nonfoil
+    threshold = 19999
+    if (nonfoil, foil, five, six, threshold - five, threshold - six, mix33, mix42) != (2999, 3999, 19995, 17994, 4, 2005, 20994, 21994):
+        raise SystemExit(f"Set Phasers bonus math drifted: nonfoil={nonfoil} foil={foil} five={five} six={six} mix33={mix33} mix42={mix42}")
+    beam, khan, ld, klingon = (sum(c for _, c in rows) for rows in (PHASERS_BEAM, PHASERS_KHAN, PHASERS_LD, PHASERS_KLINGON))
+    partners = PHASERS_LD[2][1] + PHASERS_LD[3][1]
+    if (beam, khan, ld, klingon, partners) != (1189, 1147, 4697, 2761, 3853):
+        raise SystemExit(f"Set Phasers Scryfall totals drifted: {beam} {khan} {ld} {klingon} {partners}")
+    inside = json.dumps(r["inside"])
+    for needle in ("Eerie Interlude", "Momentary Blink", "Essence Flux", "Conjurer's Closet", "Wrath of the Skies", "Commandeer",
+                   "Illusionist's Gambit", "Buried Alive", "Genesis Wave", "Fracture", "Inti, Seneschal of the Sun",
+                   "Kambal, Profiteering Mayor", "Silas Renn", "Thrasios", "Weatherlight", "Demand Answers", "Relentless Assault",
+                   "Seething Song", "War's Toll", "Warstorm Surge", "Alayna Danner", "U.S.S. Cerritos"):
+        if needle not in inside: raise SystemExit("Set Phasers inside list is missing " + needle)
+    st_inside, cmd_inside = json.dumps(st["inside"]), json.dumps(cmd["inside"])
+    for needle, blob in (("14 cards", st_inside), ("actor-signed headliner", st_inside), ("9 Play Boosters", st_inside),
+                         ("Ready-to-play 100-card deck", cmd_inside), ("Same 100-card list in surge foil", cmd_inside)):
+        if needle not in blob: raise SystemExit("Star Trek product text missing: " + needle)
+    bg = dict(st.get("buy_guide") or [])
+    if "easiest gift for a Trek fan" not in bg.get("Bundles / Beam Me Up Bundles", ""): raise SystemExit("Star Trek bundle line missing")
+    if "not as a sealed investment" not in bg.get("Collector Boosters", ""): raise SystemExit("Star Trek collector line missing")
+    if "Secret Lair debut" not in r["note"]: raise SystemExit("Set Phasers note lost the partner debut line")
+    return dict(r=r, st=st, cmd=cmd, nonfoil=money_c(nonfoil), foil=money_c(foil), five_foil=money_c(five), six_nonfoil=money_c(six),
+                five_short=money_c(threshold - five), six_short=money_c(threshold - six), mix33=money_c(mix33), mix42=money_c(mix42),
+                threshold=money_c(threshold), play=money_c(_usd_cents(st, "Play Booster")), collector=money_c(_usd_cents(st, "Collector Booster")),
+                bundle=money_c(_usd_cents(st, "Bundle")), cmd_price=money_c(_usd_cents(cmd, "Commander Deck (each)")),
+                ce=money_c(_usd_cents(cmd, "Collector's Edition (each)")), beam=money_c(beam), khan=money_c(khan), ld=money_c(ld),
+                klingon=money_c(klingon), partners=money_c(partners), promo=money_c(258),
+                self_path=f"{BASE}/p/{PHASERS_SLUG}.html", st_path=f"{BASE}/p/star-trek.html", cmd_path=f"{BASE}/p/star-trek-commander.html",
+                guide_path=f"{BASE}/guides/star-trek-mtg-release-guide.html")
+def phasers_time_answer(href):
+    return ("Set Phasers to Superdrop goes on sale Nov 9, 2026 at 9 a.m. PT (11 a.m. CT / 12 p.m. ET) at "
+            + phasers_link(SL_STORE, "MagicSecretLair.com")
+            + ". The pre-queue opens at 8 a.m. PT. Add any product and proceed to checkout before 9 a.m. PT; shoppers already in the pre-queue get a random spot when the sale opens. "
+            "A cart does not reserve the drop. The order is secured only when checkout is completed. Have a Wizards account ready, with shipping and payment saved. Steps: "
+            + phasers_link(href, "sale-day checklist") + ". Last checked Nov 7, 2026.")
+def phasers_which_answer(href):
+    return ("Draft — pending owner OK. The settled verdict is unchanged: Buy only if you really like Star Trek; otherwise skip. "
+            f"<span class=st>Proposed</span> — one drop: {E(PHASERS_PICK_ONE)} "
+            f"<span class=st>Proposed</span> — two drops: {E(PHASERS_PICK_TWO)} "
+            "Details: " + phasers_link(href, "If you only buy one or two drops") + ".")
+def phasers_bonus_answer(f):
+    return (f"Wizards adds one foil Return of the Wildspeaker, printed as \"Transporter Boondoggle,\" for every {f['threshold']} spent on this Superdrop, while supplies last "
+            f"({phasers_link(PHASERS_WIZ, 'Wizards')}). Five foil drops are 5 × {f['foil']} = {f['five_foil']}, which is {f['five_short']} under {f['threshold']}, so that cart is short of the published threshold. "
+            f"Six non-foil drops are 6 × {f['nonfoil']} = {f['six_nonfoil']}, which is {f['six_short']} short, so non-foil drops alone need foils or extra drops. "
+            f"Three foil and three non-foil is {f['mix33']}. Four foil and two non-foil is {f['mix42']}. Those two carts are over {f['threshold']}. "
+            f"The promo is a foil Secret Lair treatment. A non-foil Return of the Wildspeaker was about {f['promo']} on {phasers_link(PHASERS_SCRYFALL, 'Scryfall', nofollow=True)} on Nov 7, 2026; do not treat that as the promo's price. "
+            "Last checked Nov 7, 2026.")
+def phasers_collector_answer(f):
+    return ("They answer different wants, and this page does not call the Superdrop the better buy. Buy the Superdrop only if you really like Star Trek; otherwise skip. "
+            f"A Star Trek Collector Booster is {f['collector']} MSRP and is for foil Booster Fun cards and the actor-signed headliners, not a sealed investment. "
+            f"The set verdict stays: {PHASERS_SET_VERDICT} "
+            f"A Star Trek Bundle ({f['bundle']} MSRP) or a regular Commander deck ({f['cmd_price']} MSRP) usually gives more playable Magic for the money. "
+            f"Skip Collector's Edition Commander decks marked up above the {f['ce']} MSRP. See "
+            + phasers_link("#superdrop-vs-star-trek", "Superdrop vs Star Trek Play / Collector / Commander") + ".")
+def phasers_ship_answer():
+    return ("Not announced. The " + phasers_link(PHASERS_WIZ, "Wizards")
+            + " announcement does not give a shipping window for Set Phasers to Superdrop. Orders over $99 ship free under Wizards' terms (see "
+            + phasers_link(SL_STORE, "MagicSecretLair.com")
+            + " for details). That is a shipping-cost rule, not a delivery date. Last checked Nov 7, 2026.")
+def phasers_singles_answer(f):
+    return (f"Often, if you only want the playable cards in a staple-heavy drop. These are about-prices from the cheapest listed printings on {phasers_link(PHASERS_SCRYFALL, 'Scryfall', nofollow=True)} on Nov 7, 2026, not our sale prices. "
+            f"Beam Me Up playables are about {f['beam']} versus {f['nonfoil']} sealed, so singles usually win for playables and sealed is for the art and theme. "
+            f"KHAAAAAAAAN playables are about {f['khan']} versus {f['nonfoil']} sealed, so singles win for playables. "
+            f"Lower Decks is about {f['ld']} with the foil Thrasios and Silas Renn partners included, versus {f['nonfoil']} sealed, so the sealed non-foil drop can cost less than buying both partners. "
+            f"tlhIngan maH is about {f['klingon']} versus {f['nonfoil']} sealed, roughly even, and sealed is the Klingon reversible art. "
+            "New Worlds is themed basic lands by Alayna Danner, with no meaningful non-themed singles comparison, so sealed is for the art. Card-by-card figures: "
+            + phasers_link("#sealed-vs-singles", "Sealed drop vs singles build") + ". Last checked Nov 7, 2026.")
+def phasers_extra_faqs(f):
+    return [
+        ("What time does the Star Trek Secret Lair go on sale?", phasers_time_answer("#sale-day-checklist")),
+        ("Which Set Phasers drops are worth buying?", phasers_which_answer("#one-or-two-drops")),
+        ("What is the Transporter Boondoggle bonus card?", phasers_bonus_answer(f)),
+        ("Is the Star Trek Secret Lair better than Star Trek Collector Boosters?", phasers_collector_answer(f)),
+        ("When will Set Phasers to Superdrop ship?", phasers_ship_answer()),
+        ("Is it cheaper to buy Set Phasers singles instead of the sealed drops?", phasers_singles_answer(f)),
+    ]
+def phasers_hub_faqs():
+    page = f"{BASE}/p/{PHASERS_SLUG}.html"
+    return [
+        ("What time does the Star Trek Secret Lair go on sale?", phasers_time_answer(page + "#sale-day-checklist")),
+        ("Which Set Phasers drops are worth buying?", phasers_which_answer(page + "#one-or-two-drops")),
+    ]
+def _singles_bits(rows):
+    return "; ".join(f"{E(name)} {money_c(cents)}" for name, cents in rows)
+def _itemlist(name, names, urls):
+    els = []
+    for i, (n, u) in enumerate(zip(names, urls)):
+        el = {"@type": "ListItem", "position": i + 1, "name": n}
+        if u: el["url"] = u
+        els.append(el)
+    return {"@context": "https://schema.org", "@type": "ItemList", "name": name, "numberOfItems": len(els), "itemListElement": els}
+def set_phasers_deepen():
+    f = phasers_facts()
+    st_abs, cmd_abs = SITE_URL + f["st_path"], SITE_URL + f["cmd_path"]
+    self_abs = SITE_URL + f["self_path"]
+    answer = (
+        "<p><b>When is the Star Trek Secret Lair and is it worth it?</b> Secret Lair x Star Trek: Set Phasers to Superdrop goes on sale Nov 9, 2026 at 9 a.m. PT (11 a.m. CT / 12 p.m. ET) at "
+        + phasers_link(SL_STORE, "MagicSecretLair.com")
+        + f", with a pre-queue from 8 a.m. PT. It's six themed drops at {f['nonfoil']} non-foil / {f['foil']} foil each ("
+        + phasers_link(PHASERS_WIZ, "Wizards")
+        + f"), and spending {f['threshold']}+ adds the Transporter Boondoggle bonus while supplies last. Buy it if you really like Star Trek. Otherwise skip — a "
+        + phasers_link(f["st_path"], "Star Trek Bundle")
+        + " or " + phasers_link(f["cmd_path"], "regular Commander deck")
+        + " usually gives more playable Magic for the money. <i>Last checked: Nov 7, 2026.</i></p>")
+    suits = (
+        "<h2 id=one-or-two-drops>If you only buy one or two drops</h2>"
+        "<p>Who each revealed drop suits. These notes are not a ranking. The sixth drop is not revealed, so this page does not guess its cards.</p><ul>"
+        "<li><b>Beam Me Up.</b> Four reversible blink and enter-the-battlefield cards: Eerie Interlude, Momentary Blink, Essence Flux, and Conjurer's Closet. Suits a blink or enter-the-battlefield deck that wants the Trek treatment.</li>"
+        "<li><b>KHAAAAAAAAN.</b> Wrath of Khan theme, including Buried Alive, Genesis Wave, Commandeer, and Wrath of the Skies. Suits theme collectors and decks that want those reprints.</li>"
+        "<li><b>Lower Decks.</b> Secret Lair debut of Thrasios, Triton Hero and Silas Renn, Seeker Adept, plus Inti, Kambal, and Weatherlight as \"U.S.S. Cerritos, California-Class.\" Suits partner-commander players and Lower Decks fans.</li>"
+        "<li><b>tlhIngan maH.</b> Five reversible English/Klingon red cards, including Seething Song. Suits players who want that red package or the Klingon art.</li>"
+        "<li><b>New Worlds.</b> Ten basic lands by Alayna Danner, two of each basic. Suits buyers who want the land art.</li>"
+        "<li><b>Sixth drop.</b> Not revealed. No card list on this page, and no pick.</li></ul>"
+        "<div class=card><p><b>Draft — pending owner OK.</b> The lines in this box are Proposed \"buy this first\" picks. They are not the page verdict. The verdict stays: "
+        + E(PHASERS_SETTLED) + "</p><ul>"
+        f"<li><span class=st>Proposed</span> <b>One drop:</b> {E(PHASERS_PICK_ONE)}</li>"
+        f"<li><span class=st>Proposed</span> <b>Two drops:</b> {E(PHASERS_PICK_TWO)}</li></ul></div>")
+    bonus = (
+        "<h2 id=transporter-boondoggle>Transporter Boondoggle ($199.99 threshold)</h2>"
+        + checked({"last_checked": PHASERS_CHECKED, "source": PHASERS_WIZ}, with_sources=True)
+        + f"<p>For every {f['threshold']} spent, {phasers_link(PHASERS_WIZ, 'Wizards')} adds one foil Return of the Wildspeaker as \"Transporter Boondoggle,\" while supplies last. List prices on Nov 7, 2026:</p><ul>"
+        f"<li>Five foil drops: 5 × {f['foil']} = {f['five_foil']}. That is {f['five_short']} under {f['threshold']}, so five foil drops are short of the published threshold.</li>"
+        f"<li>Six non-foil drops: 6 × {f['nonfoil']} = {f['six_nonfoil']}. That is {f['six_short']} short, so non-foil drops alone need foils or extra drops.</li>"
+        f"<li>Three foil and three non-foil: {f['mix33']}, over {f['threshold']}.</li>"
+        f"<li>Four foil and two non-foil: {f['mix42']}, over {f['threshold']}.</li></ul>"
+        f"<p>The promo is a foil Secret Lair treatment. {phasers_link(PHASERS_SCRYFALL, 'Scryfall', nofollow=True)} listed a non-foil Return of the Wildspeaker at about {f['promo']} on Nov 7, 2026. Do not equate that printing with this foil promo. No other bonus is announced.</p>")
+    cmp_rows = [
+        ("Secret Lair x Star Trek: Set Phasers to Superdrop", f["self_path"], self_abs,
+         "Six themed drops. Five are revealed: Beam Me Up, KHAAAAAAAAN, Lower Decks, tlhIngan maH, and New Worlds. The sixth drop is not revealed.",
+         f"{f['nonfoil']} non-foil / {f['foil']} foil per drop (Wizards sale price)", PHASERS_SETTLED),
+        ("Star Trek Play Booster", f["st_path"], st_abs, "14-card Play Booster for drafting.", f"{f['play']} MSRP", PHASERS_SET_VERDICT),
+        ("Star Trek Collector Booster", f["st_path"], st_abs, "Collector Booster. Only place to find the 7 actor-signed headliner cards.", f"{f['collector']} MSRP",
+         "Only worth it if you're chasing foil Booster Fun cards or the actor-signed headliners, not as a sealed investment."),
+        ("Star Trek Bundle", f["st_path"], st_abs, "9 Play Boosters, lands, and accessories.", f"{f['bundle']} MSRP",
+         "Easiest gift for a Trek fan. " + PHASERS_SET_VERDICT),
+        ("Star Trek Commander deck (regular)", f["cmd_path"], cmd_abs, "Ready-to-play 100-card deck.", f"{f['cmd_price']} MSRP", "Buy regular, skip CE at markup."),
+        ("Star Trek Collector's Edition Commander deck", f["cmd_path"], cmd_abs, "Same 100-card list in surge foil.", f"{f['ce']} MSRP", "Skip CE at markup."),
+    ]
+    cmp_html = "".join("<tr><td>" + phasers_link(path, name) + f"</td><td>{E(what)}</td><td>{E(price)}</td><td>{E(who)}</td></tr>" for name, path, _abs, what, price, who in cmp_rows)
+    vs = (
+        "<h2 id=superdrop-vs-star-trek>Superdrop vs Star Trek Play / Collector / Commander</h2>"
+        f"<p>What you get, the price, and who it is for. Star Trek prices are MSRP from {phasers_link(f['st_path'], f['st']['name'])} and {phasers_link(f['cmd_path'], 'Star Trek Commander Decks')}. "
+        f"Superdrop prices are the Wizards sale price. The verdicts below are the ones already on those pages, not new set-level calls. Full notes: {phasers_link(f['guide_path'], 'MTG Star Trek release guide')}. "
+        "A Star Trek Bundle or regular Commander deck usually gives more playable Magic for the money.</p>"
+        "<table><tr><th>Product</th><th>What you get</th><th>Price</th><th>Who it's for</th></tr>" + cmp_html + "</table>")
+    singles_rows = [
+        ("Beam Me Up", f"about {f['beam']} — " + _singles_bits(PHASERS_BEAM), "Singles usually win for playables. Sealed is for the art and theme."),
+        ("KHAAAAAAAAN", f"about {f['khan']} — " + _singles_bits(PHASERS_KHAN), "Singles win for playables."),
+        ("Lower Decks", f"about {f['ld']} — " + _singles_bits(PHASERS_LD), f"Sealed non-foil can cost less than buying both foil partners (about {f['partners']} together)."),
+        ("tlhIngan maH", f"about {f['klingon']} — " + _singles_bits(PHASERS_KLINGON), "Roughly even with the non-foil drop. Sealed is for the Klingon reversible art."),
+        ("New Worlds", "No meaningful non-themed singles price. Themed basics by Alayna Danner.", "Sealed is for the art."),
+    ]
+    singles_html = "".join(f"<tr><td>{E(drop)}</td><td>{f['nonfoil']}</td><td>{bits}</td><td>{E(read)}</td></tr>" for drop, bits, read in singles_rows)
+    singles = (
+        "<h2 id=sealed-vs-singles>Sealed drop vs singles build (dated Nov 7)</h2>"
+        + checked({"last_checked": PHASERS_CHECKED, "source": PHASERS_SCRYFALL}, with_sources=True)
+        + "<p>Cheapest listed printings on Scryfall, Nov 7, 2026, in USD. These are market snapshots, not our sale prices, and not a resale database. The sealed column is the Wizards non-foil drop price.</p>"
+        "<table><tr><th>Drop</th><th>Sealed non-foil</th><th>Playable singles (Scryfall, Nov 7)</th><th>Read</th></tr>" + singles_html + "</table>"
+        f"<p>The Read column uses the {f['nonfoil']} non-foil price. A foil drop is {f['foil']}. At {f['foil']}, Beam Me Up and KHAAAAAAAAN singles still cost less, tlhIngan maH singles (about {f['klingon']}) cost less, "
+        f"and Lower Decks is above the two foil partners (about {f['partners']}) and below the five-card total (about {f['ld']}). "
+        f"The Transporter Boondoggle promo is a foil Secret Lair Return of the Wildspeaker. Scryfall's non-foil printing was about {f['promo']} on Nov 7, 2026. Do not equate that with the promo.</p>")
+    sale = (
+        "<h2 id=sale-day-checklist>Sale-day checklist</h2>"
+        + checked({"last_checked": PHASERS_CHECKED, "source": PHASERS_WIZ}, with_sources=True)
+        + "<ol>"
+        f"<li><b>Sale:</b> Nov 9, 2026, 9 a.m. PT / 11 a.m. CT / 12 p.m. ET, only at {phasers_link(SL_STORE, 'MagicSecretLair.com')}.</li>"
+        "<li><b>Pre-queue:</b> 8 a.m. PT (10 a.m. CT / 11 a.m. ET), one hour before the sale. Add any product and proceed to checkout before 9 a.m. PT. Shoppers already in the pre-queue get a random spot when the sale opens. After 9 a.m. PT, you join in the order you reach checkout.</li>"
+        f"<li><b>Account ready:</b> create a Wizards account and save shipping and payment at {phasers_link(PHASERS_ACCOUNT, 'myaccounts.wizards.com/registration')}. Double-check the shipping address. Wizards lists both on the sale checklist.</li>"
+        "<li><b>Cart does not reserve.</b> Adding products to your cart does not reserve them. The order is secured only when checkout is completed.</li>"
+        f"<li><b>Shipping window:</b> not announced. The {phasers_link(PHASERS_WIZ, 'Wizards')} announcement does not say when these orders ship.</li>"
+        f"<li><b>Shipping cost:</b> orders over $99 ship free under Wizards' terms (see {phasers_link(SL_STORE, 'MagicSecretLair.com')} for details). That is not a delivery date.</li>"
+        "<li><b>While supplies last,</b> including the Transporter Boondoggle promo.</li>"
+        "</ol>")
+    html_out = answer + suits + bonus + vs + singles + sale
+    anchor = self_abs
+    lists = [
+        _itemlist("Superdrop vs Star Trek Play / Collector / Commander", [row[0] for row in cmp_rows], [row[2] for row in cmp_rows]),
+        _itemlist("Sealed drop vs singles build, Nov 7, 2026",
+                  [f"{drop} — {read}" for drop, _bits, read in singles_rows], [anchor + "#sealed-vs-singles"] * len(singles_rows)),
+        _itemlist("Set Phasers one-or-two-drop picks (Draft — pending owner OK)",
+                  ["Proposed — one drop: " + PHASERS_PICK_ONE, "Proposed — two drops: " + PHASERS_PICK_TWO],
+                  [anchor + "#one-or-two-drops", anchor + "#one-or-two-drops"]),
+    ]
+    return html_out, phasers_extra_faqs(f), lists
+def _page_ld(html_text):
+    return [json.loads(raw) for raw in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html_text)]
+def _walk_types(o, acc):
+    if isinstance(o, dict):
+        t = o.get("@type")
+        if isinstance(t, str): acc.add(t)
+        elif isinstance(t, list): acc.update(x for x in t if isinstance(x, str))
+        for v in o.values(): _walk_types(v, acc)
+    elif isinstance(o, list):
+        for v in o: _walk_types(v, acc)
+    return acc
+def _visible_faqs(html_text, h2):
+    i = html_text.find(h2)
+    if i < 0: raise SystemExit("missing heading " + h2)
+    rest = html_text[i + len(h2):]
+    j = rest.find("<h2")
+    block = rest if j < 0 else rest[:j]
+    pairs = re.findall(r"<h3>(.*?)</h3><p>(.*?)</p>", block, flags=re.S)
+    if not pairs: raise SystemExit("no faqs under " + h2)
+    return [(html.unescape(q), a) for q, a in pairs]
+def _assert_faq_match(html_text, h2):
+    vis = _visible_faqs(html_text, h2)
+    pages = [o for o in _page_ld(html_text) if o.get("@type") == "FAQPage"]
+    if len(pages) != 1: raise SystemExit(f"{h2}: expected 1 FAQPage, found {len(pages)}")
+    ld = [(q["name"], q["acceptedAnswer"]["text"]) for q in pages[0]["mainEntity"]]
+    got = [(q, plain(a)) for q, a in vis]
+    if got != ld:
+        for i, (a, b) in enumerate(zip(got, ld)):
+            if a != b: raise SystemExit(f"FAQ mismatch at {i}: visible {a!r} vs ld {b!r}")
+        raise SystemExit(f"FAQ count visible {len(got)} vs ld {len(ld)}")
+    return got
+def _assert_no_banned(html_text):
+    acc = set()
+    for o in _page_ld(html_text): _walk_types(o, acc)
+    bad = acc & {"Review", "AggregateRating", "Rating", "Event"}
+    if bad: raise SystemExit("banned JSON-LD: " + ", ".join(sorted(bad)))
+    return acc
+def _assert_phasers_page(path):
+    html_text = open(path).read()
+    types = _assert_no_banned(html_text)
+    for need in ("FAQPage", "ItemList", "Product", "WebPage", "BreadcrumbList"):
+        if need not in types: raise SystemExit("Set Phasers JSON-LD missing " + need)
+    got = _assert_faq_match(html_text, "<h2>FAQ</h2>")
+    questions = [q for q, _ in got]
+    for q in ("What time does the Star Trek Secret Lair go on sale?", "Which Set Phasers drops are worth buying?",
+              "What is the Transporter Boondoggle bonus card?", "Is the Star Trek Secret Lair better than Star Trek Collector Boosters?",
+              "When will Set Phasers to Superdrop ship?", "Is it cheaper to buy Set Phasers singles instead of the sealed drops?",
+              "Should I buy Star Trek Superdrop?"):
+        if q not in questions: raise SystemExit("missing FAQ: " + q)
+    which = dict(got)["Which Set Phasers drops are worth buying?"]
+    if "Draft — pending owner OK" not in which or "Proposed" not in which: raise SystemExit("which-drops FAQ must say Draft and Proposed")
+    buy_at = html_text.find("<h2>Buy or skip?</h2>")
+    tcg_at = html_text.find("Check prices on TCGplayer")
+    h2s = ["<h2 id=one-or-two-drops>If you only buy one or two drops</h2>",
+           "<h2 id=transporter-boondoggle>Transporter Boondoggle ($199.99 threshold)</h2>",
+           "<h2 id=superdrop-vs-star-trek>Superdrop vs Star Trek Play / Collector / Commander</h2>",
+           "<h2 id=sealed-vs-singles>Sealed drop vs singles build (dated Nov 7)</h2>",
+           "<h2 id=sale-day-checklist>Sale-day checklist</h2>"]
+    pos = html_text.find("<h2>What's inside</h2>")
+    if pos < 0 or pos > buy_at: raise SystemExit("What's inside must stay before Buy or skip")
+    pos = buy_at
+    for h in h2s:
+        p = html_text.find(h)
+        if p < pos or p > tcg_at: raise SystemExit("section out of order: " + h)
+        pos = p
+    if "Fan-collectible and theme play, not a speculative pickup." not in html_text: raise SystemExit("base verdict paragraph missing")
+    if "$0.04 under $199.99" not in html_text: raise SystemExit("five-foil shortfall missing")
+    if "hits threshold" in html_text: raise SystemExit("do not claim five foil drops hit $199.99")
+    if "not announced" not in html_text.lower(): raise SystemExit("shipping window must stay not announced")
+    title = html.unescape(re.search(r"<title>(.*?)</title>", html_text).group(1))
+    if len(title) > 60: raise SystemExit(f"title too long ({len(title)}): {title}")
+    if "context7-site-verification" not in html_text: raise SystemExit("Context7 meta missing")
+    names = [o.get("name") for o in _page_ld(html_text) if o.get("@type") == "ItemList"]
+    for name in ("Superdrop vs Star Trek Play / Collector / Commander", "Sealed drop vs singles build, Nov 7, 2026",
+                 "Set Phasers one-or-two-drop picks (Draft — pending owner OK)"):
+        if name not in names: raise SystemExit("missing ItemList: " + name)
+    if "buttondown.com" not in html_text or "As an Amazon Associate" not in html_text: raise SystemExit("disclosure or newsletter CTA missing")
+def _assert_phasers_hub(path):
+    html_text = open(path).read()
+    _assert_no_banned(html_text)
+    got = dict(_assert_faq_match(html_text, "<h2>Secret Lair FAQ</h2>"))
+    for q in ("What time does the Star Trek Secret Lair go on sale?", "Which Set Phasers drops are worth buying?"):
+        if q not in got: raise SystemExit("hub missing FAQ: " + q)
+    if "Draft — pending owner OK" not in got["Which Set Phasers drops are worth buying?"] or "Proposed" not in got["Which Set Phasers drops are worth buying?"]:
+        raise SystemExit("hub which-drops FAQ must say Draft and Proposed")
 for r in data:
     sn = short_name(r); pu = f"{SITE_URL}/p/{r['slug']}.html"
     win = f"<p><b>Window:</b> {E(r['window'])}</p>" if r.get("window") else ""
@@ -398,7 +717,16 @@ for r in data:
            (f"Should I buy {sn}?", r["note"])]
     if r.get("contents"): faq.append((f"What's in {sn}?", "; ".join(r["contents"]) + "."))
     if r.get("prerelease_verdict"): faq.append((f"Should I buy a {sn} prerelease kit?", r["prerelease_verdict"]))
-    faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in faq)
+    deepen_html = ""
+    phasers_ld = []
+    if r["slug"] == PHASERS_SLUG:
+        deepen_html, extra_faqs, itemlists = set_phasers_deepen()
+        shown = [(q, E(a)) for q, a in faq] + extra_faqs
+        faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{a}</p>" for q, a in shown)
+        phasers_ld = [{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in shown]}] + itemlists
+    else:
+        faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in faq)
     pre_html = f'<h3>Prerelease kits</h3><p><span class=t>Buy / Wait / Skip</span> {E(r["prerelease_verdict"])}</p>' if r.get("prerelease_verdict") else ""
     # Product snippet markup only (Google: "Product snippets: for product pages where people can't directly purchase the product").
     # MTG Drops sells nothing, so no offer may name us or our page as the place to buy: each Offer is the publisher's
@@ -448,8 +776,9 @@ for r in data:
     crumbs = f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › {(f'<a href="{BASE}/secret-lair.html">Secret Lair</a>' if r["type"] == "Secret Lair" else E(r["type"]))} › {E(sn)}</nav>{hubl}'
     desc = r.get("meta_desc") or f"{sn} release date: {nice_date(r)}. " + r["note"]
     page(title_for(r), desc,
-         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])}){f" · <b>Prerelease:</b> {E(r['prerelease'])}" if r.get("prerelease") else ""}{" · <b>Sold out</b> at the official store" if r.get("sold_out") else ""}{" · <b>Delayed</b>: stock may arrive after this date" if r.get("delayed") else ""}</p>{win}<h2>Price</h2>{ptab}{contents}{facts}<h2>Buy or skip?</h2><p>{E(r["note"])}{(" " + E(r["buy_guide_intro"])) if r.get("buy_guide_intro") else ""}</p>{("<ul>" + "".join(f"<li><b>{E(k)}:</b> {E(v)}</li>" for k, v in r["buy_guide"]) + "</ul>") if r.get("buy_guide") else ""}{pre_html}{f"<p><i>{E(r['preorder_call'])}</i></p>" if r.get("preorder_call") else ""}{("<p>Other Commander decks coming in 2027: " + ", ".join(plink(x, x["name"]) + f" ({nice_date(x)})" for x in h_cmd27 if x is not r) + ".</p>") if r.get("preorder_call") and r in h_cmd27 else ""}<p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}<p class=disc><small>{E(DISCLOSURE)}</small></p>{tinfo}{howto}{relhtml}{y27}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}{checked(r, with_sources=False)}<p><small>Last updated: {tdate()}</small></p>{FORM}',
-         f"p/{r['slug']}.html", main_ld + [bc], noindex=bool(r.get("placeholder")), og=(card[1], 1200, 630) if card else None)
+         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])}){f" · <b>Prerelease:</b> {E(r['prerelease'])}" if r.get("prerelease") else ""}{" · <b>Sold out</b> at the official store" if r.get("sold_out") else ""}{" · <b>Delayed</b>: stock may arrive after this date" if r.get("delayed") else ""}</p>{win}<h2>Price</h2>{ptab}{contents}{facts}<h2>Buy or skip?</h2><p>{E(r["note"])}{(" " + E(r["buy_guide_intro"])) if r.get("buy_guide_intro") else ""}</p>{("<ul>" + "".join(f"<li><b>{E(k)}:</b> {E(v)}</li>" for k, v in r["buy_guide"]) + "</ul>") if r.get("buy_guide") else ""}{pre_html}{f"<p><i>{E(r['preorder_call'])}</i></p>" if r.get("preorder_call") else ""}{("<p>Other Commander decks coming in 2027: " + ", ".join(plink(x, x["name"]) + f" ({nice_date(x)})" for x in h_cmd27 if x is not r) + ".</p>") if r.get("preorder_call") and r in h_cmd27 else ""}{deepen_html}<p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}<p class=disc><small>{E(DISCLOSURE)}</small></p>{tinfo}{howto}{relhtml}{y27}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}{checked(r, with_sources=False)}<p><small>Last updated: {tdate()}</small></p>{FORM}',
+         f"p/{r['slug']}.html", main_ld + phasers_ld + [bc], noindex=bool(r.get("placeholder")), og=(card[1], 1200, 630) if card else None)
+    if r["slug"] == PHASERS_SLUG: _assert_phasers_page(os.path.join("dist", f"p/{r['slug']}.html"))
 # ---- Secret Lair hub (/secret-lair.html): generated from releases.json, so data updates keep it current ----
 SL_SRC = {"about": "https://secretlair.wizards.com/us/en/about-us",
           "faq": "https://secretlair-support.wizards.com/hc/en-us/articles/45369886769300-About-Secret-Lair-FAQ",
@@ -501,6 +830,7 @@ sl_faq = [
  ("What is the difference between foil and non-foil Secret Lair drops?",
   "Most drops come in a non-foil edition and a traditional foil edition (Wizards renamed its rainbow foil to traditional foil), usually $10 apart. Some products use special foils instead, such as the surge foils that can turn up in the Marvel Countdown Kit."),
 ]
+sl_faq += phasers_hub_faqs()
 sl_intro = (f'<h2>What is Secret Lair and how do drops work?</h2>'
  f'<p>Secret Lair is Wizards of the Coast\'s direct-to-fan line of collectible Magic: The Gathering cards, sold at MagicSecretLair.com. '
  f'A drop is an exclusive, limited-time selection of usually 4 to 8 cards with new art or treatments, often a crossover with an artist or franchise, and most drops come in both foil and non-foil editions (<a href="{SL_SRC["about"]}">Secret Lair: About</a>). '
@@ -536,7 +866,7 @@ sl_ld = [
  {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
    {"@type": "ListItem", "position": 1, "name": "MTG Drops", "item": f"{SITE_URL}/"},
    {"@type": "ListItem", "position": 2, "name": "Secret Lair", "item": sl_url}]},
- {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in sl_faq]},
+ {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in sl_faq]},
 ]
 # Dated sealed-vs-singles blurb for sold-out drops (editorial; no Product/Review schema).
 # Goblin Storm / Dandân comps are TabletopMeta market evidence (Nov 3, 2026); those drops are not in releases.json.
@@ -577,10 +907,11 @@ page(SL_TITLE, SL_DESC,
      + sl_section("Recent / ended", sl_past, "Nothing here yet.")
      + sl_sealed_html
      + '<p><small>Drops opened more than ' + str(SL_ONSALE_DAYS) + ' days ago are listed as recent / ended unless an end date is known; limited print runs may sell out sooner or stay in stock longer, so check MagicSecretLair.com.</small></p>'
-     + "<h2>Secret Lair FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in sl_faq)
+     + "<h2>Secret Lair FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{faq_visible(a)}</p>" for q, a in sl_faq)
      + f'<h2>Get new Secret Lair drops by email</h2><p>What\'s Dropping is our free weekly email: new Secret Lair announcements, sale dates and a buy-or-skip verdict for each drop.</p>{FORM}'
      + f'<p class=disc><small>{E(DISCLOSURE)}</small></p><p><small>Last updated: {tdate()}</small></p>',
      "secret-lair.html", sl_ld)
+_assert_phasers_hub("dist/secret-lair.html")
 SL_LLMS = "".join(f"- [{r['name']}]({SITE_URL}/p/{r['slug']}.html): {lab}; {sl_when(r)}; price: {sl_price(r)}\n" for lab, rs in (("on sale now", sl_now), ("upcoming", sl_up), ("recent/ended", sl_past)) for r in rs)
 SL_LLMS = f"Hub: [Secret Lair drops: schedule, prices & verdicts]({sl_url})\n" + SL_LLMS
 # ---- Guides: generated from releases.json ----
