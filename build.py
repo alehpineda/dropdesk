@@ -378,8 +378,14 @@ def pcard(r):
     return tuple(f"{SITE_URL}/products/{os.path.basename(f)}" for f in files)
 # ---- Set Phasers deepen (Nov 7, 2026). One product only. ----
 # Settled verdict stays "Buy only if you really like Star Trek; otherwise skip."
-# Per-drop "buy this first" lines are Draft — pending owner OK, and labeled Proposed.
+# Owner approved Nov 7, 2026, 11:51 AM CT (MTG Drops 1:1): one drop is Lower Decks or Beam Me Up;
+# two drops are both. Those two lines are published with no Proposed, Draft, or pending-owner label.
 # Five foil drops are 5 x $39.99 = $199.95, which is $0.04 under Wizards' $199.99 threshold.
+# Unpublished opinions — owner did not approve these. Do not render them. Approval of the one- and
+# two-drop picks is not an endorsement of tlhIngan maH, KHAAAAAAAAN, or New Worlds:
+# "Add tlhIngan maH only if you want the red ritual package."
+# "KHAAAAAAAAN is theme plus mid staples."
+# "New Worlds is only for the land art."
 PHASERS_SLUG = "secret-lair-star-trek-set-phasers-superdrop"
 PHASERS_SETTLED = "Buy only if you really like Star Trek; otherwise skip."
 PHASERS_SET_VERDICT = "Buy for drafting/Trek fans; skip sealed speculation."
@@ -389,8 +395,13 @@ PHASERS_SCRYFALL = "https://scryfall.com/"
 PHASERS_ACCOUNT = "https://myaccounts.wizards.com/registration"
 PHASERS_CHECKED = "2026-11-07"
 PHASERS_PICK_ONE = "Lower Decks if you want the Thrasios and Silas Renn partners; otherwise Beam Me Up for blink and enter-the-battlefield staples."
-PHASERS_PICK_TWO = ("Lower Decks and Beam Me Up for playables. Add tlhIngan maH only if you want the red ritual package. "
-                    "KHAAAAAAAAN is theme plus mid staples. New Worlds is only for the land art. The sixth drop is unrevealed, so there is no pick.")
+PHASERS_PICK_TWO = "Lower Decks and Beam Me Up for playables. The sixth drop is unrevealed, so there is no pick."
+# Same sentences as the comment above. Used only to reject a build that renders them. Not interpolated into HTML.
+PHASERS_UNPUBLISHED = (
+    "Add tlhIngan maH only if you want the red ritual package.",
+    "KHAAAAAAAAN is theme plus mid staples.",
+    "New Worlds is only for the land art.",
+)
 PHASERS_BEAM = [("Eerie Interlude", 768), ("Momentary Blink", 19), ("Essence Flux", 62), ("Conjurer's Closet", 340)]
 PHASERS_KHAN = [("Wrath of the Skies", 284), ("Commandeer", 427), ("Illusionist's Gambit", 37), ("Buried Alive", 332), ("Genesis Wave", 39), ("Fracture", 28)]
 PHASERS_LD = [("Inti, Seneschal of the Sun", 106), ("Kambal, Profiteering Mayor", 597),
@@ -462,9 +473,9 @@ def phasers_time_answer(href):
             "A cart does not reserve the drop. The order is secured only when checkout is completed. Have a Wizards account ready, with shipping and payment saved. Steps: "
             + phasers_link(href, "sale-day checklist") + ". Last checked Nov 7, 2026.")
 def phasers_which_answer(href):
-    return ("Draft — pending owner OK. The settled verdict is unchanged: Buy only if you really like Star Trek; otherwise skip. "
-            f"<span class=st>Proposed</span> — one drop: {E(PHASERS_PICK_ONE)} "
-            f"<span class=st>Proposed</span> — two drops: {E(PHASERS_PICK_TWO)} "
+    return ("The settled verdict is unchanged: Buy only if you really like Star Trek; otherwise skip. "
+            f"One drop: {E(PHASERS_PICK_ONE)} "
+            f"Two drops: {E(PHASERS_PICK_TWO)} "
             "Details: " + phasers_link(href, "If you only buy one or two drops") + ".")
 def phasers_bonus_answer(f):
     return (f"Wizards adds one foil Return of the Wildspeaker, printed as \"Transporter Boondoggle,\" for every {f['threshold']} spent on this Superdrop, while supplies last "
@@ -539,10 +550,10 @@ def set_phasers_deepen():
         "<li><b>tlhIngan maH.</b> Five reversible English/Klingon red cards, including Seething Song. Suits players who want that red package or the Klingon art.</li>"
         "<li><b>New Worlds.</b> Ten basic lands by Alayna Danner, two of each basic. Suits buyers who want the land art.</li>"
         "<li><b>Sixth drop.</b> Not revealed. No card list on this page, and no pick.</li></ul>"
-        "<div class=card><p><b>Draft — pending owner OK.</b> The lines in this box are Proposed \"buy this first\" picks. They are not the page verdict. The verdict stays: "
+        "<div class=card><p><b>One drop, or two.</b> The page verdict stays: "
         + E(PHASERS_SETTLED) + "</p><ul>"
-        f"<li><span class=st>Proposed</span> <b>One drop:</b> {E(PHASERS_PICK_ONE)}</li>"
-        f"<li><span class=st>Proposed</span> <b>Two drops:</b> {E(PHASERS_PICK_TWO)}</li></ul></div>")
+        f"<li><b>One drop:</b> {E(PHASERS_PICK_ONE)}</li>"
+        f"<li><b>Two drops:</b> {E(PHASERS_PICK_TWO)}</li></ul></div>")
     bonus = (
         "<h2 id=transporter-boondoggle>Transporter Boondoggle ($199.99 threshold)</h2>"
         + checked({"last_checked": PHASERS_CHECKED, "source": PHASERS_WIZ}, with_sources=True)
@@ -605,8 +616,8 @@ def set_phasers_deepen():
         _itemlist("Superdrop vs Star Trek Play / Collector / Commander", [row[0] for row in cmp_rows], [row[2] for row in cmp_rows]),
         _itemlist("Sealed drop vs singles build, Nov 7, 2026",
                   [f"{drop} — {read}" for drop, _bits, read in singles_rows], [anchor + "#sealed-vs-singles"] * len(singles_rows)),
-        _itemlist("Set Phasers one-or-two-drop picks (Draft — pending owner OK)",
-                  ["Proposed — one drop: " + PHASERS_PICK_ONE, "Proposed — two drops: " + PHASERS_PICK_TWO],
+        _itemlist("Set Phasers one-or-two-drop picks",
+                  ["One drop: " + PHASERS_PICK_ONE, "Two drops: " + PHASERS_PICK_TWO],
                   [anchor + "#one-or-two-drops", anchor + "#one-or-two-drops"]),
     ]
     return html_out, phasers_extra_faqs(f), lists
@@ -660,7 +671,12 @@ def _assert_phasers_page(path):
               "Should I buy Star Trek Superdrop?"):
         if q not in questions: raise SystemExit("missing FAQ: " + q)
     which = dict(got)["Which Set Phasers drops are worth buying?"]
-    if "Draft — pending owner OK" not in which or "Proposed" not in which: raise SystemExit("which-drops FAQ must say Draft and Proposed")
+    _assert_published_picks(html_text, which)
+    box_at = html_text.find("<h2 id=one-or-two-drops>")
+    bonus_at = html_text.find("<h2 id=transporter-boondoggle>")
+    box = html_text[box_at:bonus_at]
+    if PHASERS_PICK_ONE not in box or PHASERS_PICK_TWO not in box: raise SystemExit("one-or-two section missing an approved pick")
+    if PHASERS_SETTLED not in box: raise SystemExit("one-or-two section dropped the settled verdict")
     buy_at = html_text.find("<h2>Buy or skip?</h2>")
     tcg_at = html_text.find("Check prices on TCGplayer")
     h2s = ["<h2 id=one-or-two-drops>If you only buy one or two drops</h2>",
@@ -684,8 +700,12 @@ def _assert_phasers_page(path):
     if "context7-site-verification" not in html_text: raise SystemExit("Context7 meta missing")
     names = [o.get("name") for o in _page_ld(html_text) if o.get("@type") == "ItemList"]
     for name in ("Superdrop vs Star Trek Play / Collector / Commander", "Sealed drop vs singles build, Nov 7, 2026",
-                 "Set Phasers one-or-two-drop picks (Draft — pending owner OK)"):
+                 "Set Phasers one-or-two-drop picks"):
         if name not in names: raise SystemExit("missing ItemList: " + name)
+    picks = next(o for o in _page_ld(html_text) if o.get("@type") == "ItemList" and o.get("name") == "Set Phasers one-or-two-drop picks")
+    got_picks = [el["name"] for el in picks["itemListElement"]]
+    want_picks = ["One drop: " + PHASERS_PICK_ONE, "Two drops: " + PHASERS_PICK_TWO]
+    if got_picks != want_picks: raise SystemExit("one-or-two ItemList drifted: " + repr(got_picks))
     if "buttondown.com" not in html_text or "As an Amazon Associate" not in html_text: raise SystemExit("disclosure or newsletter CTA missing")
 def _assert_phasers_hub(path):
     html_text = open(path).read()
@@ -693,8 +713,14 @@ def _assert_phasers_hub(path):
     got = dict(_assert_faq_match(html_text, "<h2>Secret Lair FAQ</h2>"))
     for q in ("What time does the Star Trek Secret Lair go on sale?", "Which Set Phasers drops are worth buying?"):
         if q not in got: raise SystemExit("hub missing FAQ: " + q)
-    if "Draft — pending owner OK" not in got["Which Set Phasers drops are worth buying?"] or "Proposed" not in got["Which Set Phasers drops are worth buying?"]:
-        raise SystemExit("hub which-drops FAQ must say Draft and Proposed")
+    _assert_published_picks(html_text, got["Which Set Phasers drops are worth buying?"])
+def _assert_published_picks(html_text, which):
+    for banned in ("Draft — pending owner OK", "Proposed", "pending owner", "awaiting owner", "awaiting-owner"):
+        if banned in which or banned in html_text: raise SystemExit("draft label still public: " + banned)
+    if PHASERS_PICK_ONE not in which or PHASERS_PICK_TWO not in which: raise SystemExit("which-drops FAQ is missing an approved pick")
+    if "One drop:" not in which or "Two drops:" not in which: raise SystemExit("which-drops FAQ is missing the one/two labels")
+    for line in PHASERS_UNPUBLISHED:
+        if line in html_text or line in which: raise SystemExit("unpublished opinion rendered: " + line)
 for r in data:
     sn = short_name(r); pu = f"{SITE_URL}/p/{r['slug']}.html"
     win = f"<p><b>Window:</b> {E(r['window'])}</p>" if r.get("window") else ""
