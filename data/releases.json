@@ -523,7 +523,19 @@
       "face commanders and colors": "https://magic.wizards.com/en/news/announcements/star-trek-commander-decklists",
       "decklists": "https://magic.wizards.com/en/news/announcements/star-trek-commander-decklists"
     },
-    "last_checked": "2026-11-06"
+    "last_checked": "2026-11-06",
+    "amazon_asin": "B0H6H4PL4G",
+    "amazon_evidence": {
+      "asin": "B0H6H4PL4G",
+      "amazon_title": "Magic: The Gathering | Star Trek Commander Deck Bundle",
+      "seller": "No featured Amazon.com buy box on 2026-11-08 (the product page shows 'No featured offers available' and Amazon's 'High price' notice). All Buying Options listed three new pre-order sellers, all below the $299.96 4 x $74.99 MSRP: Hoboken Game Lounge at $264.97 (ships from and sold by Hoboken Game Lounge; 4 stars, 142 ratings, 80% positive last 12 months); EmpireGameCenter at $264.97 (4.5 stars, 1,344 ratings, 90% positive); and Kings Games at $274.95 (5 stars, 11,228 ratings, 98% positive). No scalper markup versus official per-deck MSRP.",
+      "price_seen_usd": [
+        264.97,
+        274.95
+      ],
+      "checked": "2026-11-08",
+      "match_reason": "Official Wizards of the Coast listing fetched 2026-11-08: Manufacturer Wizards of the Coast, model/part D58990000, UPC 195166335988, set name Star Trek, Model Year 2026. Title and Included Components read 'Includes all 4 Decks (Federation Fleet, Landing Party, Klingon Fury, We Are the Borg)', matching this four-deck release. Bullets and product description: all four 100-card decks, each with 33 new-to-Magic Commander cards and a Traditional Foil Borderless commander, plus 10 double-sided token cards, a deck box, a strategy guide, and a reference card per deck. This is the regular 4-deck bundle (offers $264.97-$274.95, far below a Collector's Edition 4 x $159.99 = $639.96 set), same approach as the Darkhold Destiny Commander Deck Bundle."
+    }
   },
   {
     "slug": "spider-mania-commander",
