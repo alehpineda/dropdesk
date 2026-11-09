@@ -980,7 +980,7 @@ nv_st_price = nv_prices(nv_st) + (f"; Beam Me Up Bundle: ${_bmu_usd[0]}" if _bmu
 nv_pre_link = f'<a href="{BASE}/guides/star-trek-mtg-release-guide.html#prerelease-kits">Star Trek prerelease</a>'
 nv_rows = [
  ("Nov 2", plink(nv_kit, nv_kit["name"]), nv_prices(nv_kit), nv_label(nv_kit, "wait", "Wait unless you're a Marvel collector"),
-  nv_why(nv_kit, "wait", "30 Marvel-art cards, mostly reprints plus 2 early Darkhold Destiny uncommons, about $6.67 a card; limited quantity at MagicSecretLair.com from 9 AM PT. Price out the singles you'd actually play.")),
+  nv_why(nv_kit, "wait", "30 Marvel-art cards, mostly reprints plus 2 early Darkhold Destiny uncommons, about $6.67 a card. The $199.99 limited-quantity sale at MagicSecretLair.com opened Nov 2 at 9 AM PT; the official store CTA is sold out as of Nov 9, 2026 (shipping began Nov 4). Price out the singles you'd actually play.")),
  ("Nov 6–12", nv_pre_link + " (local game stores)", "Set by each store", ("Buy for the event; Wait if you only want cards; Skip as speculation" if nv_st.get("prerelease_verdict") else "No verdict yet"),
   ("Each Prerelease Pack is 6 Play Boosters, 1 traditional foil rare or mythic rare, a deck box and a spindown; Play Boosters hit stores Nov 13 at $6.99 MSRP." if nv_st.get("prerelease_verdict") else "Prerelease events at local game stores; see the Star Trek guide.")),
  ("Nov 9", plink(nv_ph, nv_ph["name"]), "About $30 non-foil / $40 foil per drop" if nv_ph.get("prices") else "TBA", nv_label(nv_ph, "buy", "Buy if you really like Star Trek; otherwise Skip"),
@@ -1114,7 +1114,7 @@ g_nov_html = (f'<h2 id="{G_NOV_ID}">What MTG to buy or preorder in November 2026
 # - Sold-out drops: "Wait: don't pay resale for the sealed drop; buy the singles you'll actually play."
 # The "not discounted at MagicSecretLair.com" sentence is the settled Secret Lair exception.
 # It is not a new per-drop verdict.
-# Countdown Kit stays on sale in our data. This section must not call it sold out. The poller owns that flip.
+# Countdown Kit sold out as of Nov 9, 2026 (official store CTA). Do not describe it as still on sale.
 _st_settled = "Buy for drafting/Trek fans; skip sealed speculation."
 _ph_settled = "Buy only if you really like Star Trek; otherwise skip."
 _cmd_settled = "buy regular, skip CE at markup"
@@ -1198,7 +1198,7 @@ g_bf_html = (
  + g_bf_frame
  + "<h3>Gift-buyer warnings</h3><ul>"
  + (f"<li><b>US shipping warning — {plink(_corn, _corn['short_name'])}:</b> Wizards expects US orders to ship Dec 15, 2026 – Mar 15, 2027. Don't count on it under the tree.</li>" if "Dec 15, 2026" in (_corn.get("window") or "") else "")
- + f"<li>{plink(nv_kit, nv_kit['short_name'])} is still listed as on sale on our Secret Lair page. Check MagicSecretLair.com before you pay anyone else. If the official listing is gone, {_sold_settled}</li>"
+ + f"<li>{plink(nv_kit, nv_kit['short_name'])} sold out at the official store as of Nov 9, 2026. The Nov 2, 2026, 9 AM PT sale at $199.99 stayed available until that confirmation (shipping began Nov 4). {_sold_settled}</li>"
  + f"<li>Star Trek Collector Boosters, Bundles, Beam Me Up Bundles and Draft Night may arrive after Nov 13 in Europe or Asia-Pacific, and the Commander decks may arrive after Nov 13 in North America (Wizards, Oct 16). Read the ship date on a preorder before you treat it as a gift that will be here in November.</li>"
  + "</ul>"
  + "<h3>Where to check prices</h3>"
@@ -1212,7 +1212,7 @@ nv_faq = [
   f"For November 2026: the Star Trek set ({nv_label(nv_st, 'buy', 'Buy')} for drafting and Trek fans; Play Boosters {fmt(nv_st['prices'][0])}, Bundle {fmt(nv_st['prices'][2])}) and the regular Star Trek Commander decks ({fmt(nv_cmd['prices'][0])}, {nv_label(nv_cmd, 'buy', 'Buy')}; skip Collector's Editions at markup). "
   f"Set Phasers to Superdrop (Nov 9): {nv_label(nv_ph, 'buy', 'buy if you really like Star Trek, otherwise skip')}. The Marvel History of Heroes Countdown Kit (Nov 2, {fmt(nv_kit['prices'][0])}): {nv_label(nv_kit, 'wait', 'wait unless you are a Marvel collector')}. Don't preorder anything above MSRP to speculate."),
  ("Is the Marvel History of Heroes Countdown Kit worth $199.99?",
-  f"{_kit_note} It goes on sale {nice_date(nv_kit)} at 9 AM PT, only at MagicSecretLair.com."),
+  f"{_kit_note}"),
  ("Should I preorder the Star Trek Bundle or Collector Boosters?",
   " ".join(f"{a}: {b}" for a, b in (nv_st.get("buy_guide") or []) if a in ("Bundles / Beam Me Up Bundles", "Collector Boosters")) or nv_st["note"]),
  ("Will Star Trek Commander decks be in stores on Nov 13?",
