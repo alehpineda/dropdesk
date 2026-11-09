@@ -141,9 +141,9 @@
     "name": "Countdown Kit: Secret Lair: Marvel's History of Heroes",
     "type": "Secret Lair",
     "release_date": "2026-11-02",
-    "window": "Nov 2, 2026, 9 AM PT, only at MagicSecretLair.com · $199.99 · limited quantity",
+    "window": "Went on sale Nov 2, 2026, 9 AM PT at MagicSecretLair.com for $199.99 (limited quantity). The official store CTA is sold out as of Nov 9, 2026; shipping began Nov 4",
     "source": "https://magic.wizards.com/en/news/announcements/secret-lair-countdown-kit-marvels-history-of-heroes",
-    "note": "30 Marvel-art cards for $199.99 (about $6.67 a card), on sale Nov 2 at MagicSecretLair.com in limited quantity. Wizards revealed the full list on Oct 16: mostly reprints (Fierce Guardianship, Force of Virtue, Opposition Agent, Snuff Out, Damn, Lightning Bolt) plus 2 early Darkhold Destiny uncommons. Price out the singles you'd actually play. Wait unless you're a Marvel collector.",
+    "note": "Sold out as of Nov 9, 2026: the official MagicSecretLair.com buy-button CTA is sold out. The $199.99 limited-quantity sale opened Nov 2, 2026 at 9 AM PT and stayed available until this Nov 9 confirmation; shipping began Nov 4. 30 Marvel-art cards (about $6.67 a card). Wizards revealed the full list on Oct 16: mostly reprints (Fierce Guardianship, Force of Virtue, Opposition Agent, Snuff Out, Damn, Lightning Bolt) plus 2 early Darkhold Destiny uncommons. Price out the singles you'd actually play. Wait unless you're a Marvel collector.",
     "status": "confirmed",
     "prices": [
       {
@@ -197,10 +197,12 @@
     "field_sources": {
       "release_date": "https://magic.wizards.com/en/news/announcements/secret-lair-countdown-kit-marvels-history-of-heroes",
       "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-countdown-kit-marvels-history-of-heroes",
-      "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-countdown-kit-marvels-history-of-heroes"
+      "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-countdown-kit-marvels-history-of-heroes",
+      "availability": "https://secretlair.wizards.com/us/en/product/1255609/secret-lair-countdown-kit-marvel-s-history-of-heroes"
     },
     "verdict": "wait",
-    "last_checked": "2026-10-31"
+    "last_checked": "2026-11-09",
+    "sold_out": true
   },
   {
     "slug": "secret-lair-star-trek-set-phasers-superdrop",
