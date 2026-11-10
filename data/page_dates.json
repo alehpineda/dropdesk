@@ -9,15 +9,15 @@
  },
  "guides/mtg-releases-fall-holiday-2026.html": {
   "date": "2026-11-09",
-  "hash": "1b04452eb4b7076f"
+  "hash": "12ddcb41d508801e"
  },
  "guides/star-trek-mtg-release-guide.html": {
-  "date": "2026-11-06",
-  "hash": "c0a8d592ac4db364"
+  "date": "2026-11-09",
+  "hash": "5826c814acc3888d"
  },
  "index.html": {
   "date": "2026-11-09",
-  "hash": "8e90b05be9c62e45"
+  "hash": "49a544d07b3040d0"
  },
  "newsletter.html": {
   "date": "2026-10-23",
@@ -72,8 +72,8 @@
   "hash": "3381a466efa163f0"
  },
  "p/secret-lair-extra-life-rise-of-the-polygons.html": {
-  "date": "2026-11-06",
-  "hash": "744d38ab97fe5159"
+  "date": "2026-11-09",
+  "hash": "e8487f924083cbc7"
  },
  "p/secret-lair-marvel-doomsdrop.html": {
   "date": "2026-11-03",
@@ -92,8 +92,8 @@
   "hash": "76807861f32e07dc"
  },
  "p/secret-lair-star-trek-set-phasers-superdrop.html": {
-  "date": "2026-11-07",
-  "hash": "88cc4bc4c45ca5f3"
+  "date": "2026-11-09",
+  "hash": "c082d9cdcbe88d53"
  },
  "p/secret-lair-strange-school.html": {
   "date": "2026-11-03",
@@ -104,8 +104,8 @@
   "hash": "afcb178a4363150d"
  },
  "p/star-trek-commander.html": {
-  "date": "2026-11-06",
-  "hash": "0b9b8f1b92b8785c"
+  "date": "2026-11-09",
+  "hash": "710fecb50f679226"
  },
  "p/star-trek.html": {
   "date": "2026-11-06",
@@ -129,7 +129,7 @@
  },
  "secret-lair.html": {
   "date": "2026-11-09",
-  "hash": "a19b510d49e55910"
+  "hash": "d5b7869f87aa3f2a"
  },
  "sponsor.html": {
   "date": "2026-10-31",
