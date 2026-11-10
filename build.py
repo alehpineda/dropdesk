@@ -1324,8 +1324,8 @@ g_nov_html = (f'<h2 id="{G_NOV_ID}">What MTG to buy or preorder in November 2026
   + "<h3>Don't preorder</h3><ul>" + "".join(f"<li>{x}</li>" for x in nv_dont) + "</ul>"
   + f'<p><b>How we decide:</b> Buy means worth it at MSRP for the people we name, Wait means hold for better stock, a better price or more information, and Skip means not worth it at the current price. The free <a href="{BASE}/newsletter.html">What\'s Dropping newsletter</a> flags new verdicts and price or date changes every Monday.</p>')
 # Black Friday category verdicts. Owner approved these for publish on Nov 3, 2026.
-# Published timing calls (substance unchanged from the former Proposed lines):
-# - Star Trek Play Booster box and Bundle: Wait
+# Published timing calls:
+# - Star Trek Play Booster box and Bundle: Buy now (owner t158s988, Nov 9, 2026; was Wait)
 # - Star Trek Collector Booster box above MSRP: Skip / Wait for singles
 # - Star Trek Commander: don't pay above MSRP; expect Black Friday discounts
 #   (the "buy regular, skip CE at markup" line is the existing verdict, not a new one)
@@ -1346,11 +1346,13 @@ for _need, _blob in ((_st_settled, nv_st["note"]), (_ph_settled, nv_ph["note"]),
     if _need not in _blob: raise SystemExit("settled verdict missing from releases.json: " + _need)
 _rf = g_r("secret-lair-chaos-vault-reality-fracture")
 G_BF_ID = "black-friday-2026"
+_st_sku_href = f"{BASE}/guides/star-trek-mtg-release-guide.html#per-sku-wait-skip"
+_st_sku_link = f'<a href="{_st_sku_href}">per-SKU Buy/Wait/Skip table</a>'
 bf_rows = [
  (f'{plink(nv_st, "Star Trek Play Booster box")} and {plink(nv_st, "Bundle")}',
   f"Already under MSRP before the Nov 13 release. Nov 9 store lows: Play Booster Display $100 (MSRP {fmt({'usd': _play_box_msrp})}) and Bundle $39.99 (MSRP {fmt({'usd': _bundle_msrp})}). See the Nov 9 price table. GamesRadar (updated Nov 2, 2026) says cuts often start in mid-November.",
-  "Wait",
-  f"The set-level verdict stays: {_st_settled} This row is only about timing. Street prices are already under MSRP, so there is no need to preorder today if you can check again nearer Nov 27."),
+  "Buy now",
+  f"The set-level verdict stays: {_st_settled} This row is only about timing. Street prices are already under MSRP, so buy now at or below those prices rather than waiting for Black Friday. See the {_st_sku_link}."),
  (f'{plink(nv_st, "Star Trek Collector Booster box")} above MSRP',
   f"Pack-math MSRP is {fmt({'usd': _coll_box_msrp})} (12 × {fmt({'usd': _cpack})}). On Nov 9 the cheapest store preorder was $449.99, which is under that figure. This call applies when a listing is above {fmt({'usd': _coll_box_msrp})}.",
   "Skip above MSRP / Wait for singles",
@@ -1394,7 +1396,7 @@ g_bf_frame = (
  + "<p>The calls in the table are unchanged. Here is how they apply to Commander decks, beginner and starter boxes, bundles, and older Secret Lairs.</p><ul>"
  + f"<li><b>Commander decks.</b> Older 2026 Commander decks already in stores: Wait for Black Friday. {plink(nv_cmd, 'Star Trek Commander decks')}: buy regular decks, skip Collector's Editions at markup. Don't pay above MSRP, and expect Black Friday discounts.{_bf_cmd_extra}</li>"
  + "<li><b>Beginner and starter boxes.</b> Beginner or starter products already in stores from earlier in 2026: Wait for Black Friday. Wizards removed the Star Trek Beginner Box, so a leftover listing of that box is not a product we are telling you to buy.</li>"
- + f"<li><b>Bundles.</b> {plink(nv_st, 'Star Trek Bundle')}: Wait. On Nov 9 a store listed it at $39.99, under the {fmt({'usd': _bundle_msrp})} MSRP.{_bf_bundle_extra}</li>"
+ + f"<li><b>Bundles.</b> {plink(nv_st, 'Star Trek Bundle')}: Buy now. On Nov 9 a store listed it at $39.99, under the {fmt({'usd': _bundle_msrp})} MSRP. See the {_st_sku_link}.{_bf_bundle_extra}</li>"
  + f"<li><b>Older Secret Lairs.</b> Not discounted at MagicSecretLair.com. {plink(nv_ph, 'Set Phasers to Superdrop')} on Nov 9: {_ph_settled} A drop that has already sold out at the official store: {_sold_settled}{_bf_corn}</li>"
  + "</ul>"
  + f'<p>Compare a percent-off tag with what the box costs on an ordinary day. For Commander decks, check {retail_links("Magic The Gathering Commander Deck")}. The <a href="#star-trek-preorder-prices">Nov 9 Star Trek table</a> has a Check prices column for that set. Amazon links use the mtgdrops-20 tag. TCGplayer links are Impact affiliate links.</p>')
@@ -1404,7 +1406,7 @@ g_bf_html = (
  + "<p><b>Should you buy MTG now or wait for Black Friday 2026?</b> For most sealed Magic, the call is to wait. "
  "Black Friday is Nov 27, 2026, and Cyber Monday is Nov 30, 2026. "
  f'<a href="{GR_BF}" rel=nofollow>GamesRadar</a> (updated Nov 2, 2026) says the official Magic deals start on Nov 27, with price cuts often showing up from mid-November, and that discounts usually continue through Cyber Monday. '
- f"Star Trek Play Booster boxes and Bundles were already listed below MSRP at some stores before the Nov 13 release (see <a href=\"#star-trek-preorder-prices\">the Nov 9 price table</a>). "
+ f"Star Trek Play Booster boxes and Bundles are a Buy now: store preorders were already under MSRP before the Nov 13 release (see <a href=\"#star-trek-preorder-prices\">the Nov 9 price table</a> and the {_st_sku_link}). "
  f"Secret Lair is the exception: drops are not discounted at MagicSecretLair.com, so buy Set Phasers to Superdrop on Nov 9 only if you really like Star Trek. Last checked: Nov 3, 2026.</p>"
  + "<h3>When MTG Black Friday deals start</h3>"
  + f'<p>The sale date is Friday, Nov 27, 2026. The Monday after it, Cyber Monday, is Nov 30, 2026. '
@@ -1455,11 +1457,11 @@ g_faq += [
   "Walmart Early Black Friday Deals are Nov 12–15. Walmart Black Friday Deals are Nov 23–29 (online at 12:01 a.m. ET; in stores Nov 12 and Nov 27 at 6 a.m. local; Walmart+ early access on Nov 12 and Nov 23). Walmart's Cyber Monday is Nov 30 – Dec 2. "
   "Amazon has not announced US Black Friday dates yet."),
  ("Should I wait for Black Friday to buy MTG Star Trek?",
-  f"Wait on a Star Trek Play Booster box or Bundle. On Nov 9, 2026, MTG Compare showed store preorders under MSRP ($100 for a Play Booster Display against the {fmt({'usd': _play_box_msrp})} pack-math MSRP, and $39.99 for a Bundle against {fmt({'usd': _bundle_msrp})}). The set-level verdict is unchanged: {_st_settled} Skip a Collector Booster box priced above {fmt({'usd': _coll_box_msrp})} and wait for singles. Commander stays: {_cmd_settled}. Don't pay above MSRP, and expect Black Friday discounts."),
+  f"Buy now on a Star Trek Play Booster box or Bundle at or below today's street prices, rather than waiting for Black Friday. On Nov 9, 2026, MTG Compare showed store preorders already under MSRP ($100 for a Play Booster Display against the {fmt({'usd': _play_box_msrp})} pack-math MSRP, and $39.99 for a Bundle against {fmt({'usd': _bundle_msrp})}). See the {_st_sku_link}. The set-level verdict is unchanged: {_st_settled} Skip a Collector Booster box priced above {fmt({'usd': _coll_box_msrp})} and wait for singles. Commander stays: {_cmd_settled}. Don't pay above MSRP, and expect Black Friday discounts."),
  ("Are Secret Lair drops discounted on Black Friday?",
   f"No. Secret Lair drops are not discounted for Black Friday at MagicSecretLair.com. Set Phasers to Superdrop goes on sale Nov 9, 2026: {_ph_settled} For a drop that has already sold out at the official store: {_sold_settled}"),
  ("What MTG products are worth buying on Black Friday?",
-  "Older 2026 Commander decks and beginner or starter products already in stores, where GamesRadar expects about $10 off sticker if previous years hold. A Star Trek Bundle or Play Booster box that is still under MSRP can be the Black Friday buy if you wanted one for drafting. Skip a Collector Booster box above MSRP, skip sealed product bought to speculate, and do not count on a Secret Lair discount at MagicSecretLair.com."),
+  "Older 2026 Commander decks and beginner or starter products already in stores, where GamesRadar expects about $10 off sticker if previous years hold. A Star Trek Bundle or Play Booster box at or below today's street prices is a Buy now rather than a reason to wait for Black Friday. Skip a Collector Booster box above MSRP, skip sealed product bought to speculate, and do not count on a Secret Lair discount at MagicSecretLair.com."),
  ("Is it better to buy MTG Commander decks on Black Friday?",
   f"For Commander decks that have been out for a few months, yes, wait for Black Friday. GamesRadar (updated Nov 2, 2026) says those decks have typically been about $10 off sticker, or more when the deck is older. For Star Trek Commander the settled verdict is: {_cmd_settled}. Don't pay above the {fmt({'usd': _cmd_msrp})} or {fmt({'usd': _ce_msrp})} MSRP, and expect discounts. On Nov 9, MTG Compare already showed Klingon Fury at $44.99."),
 ]
@@ -1473,7 +1475,7 @@ g_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> 
   + "".join(f"<h2>{g_month_name(m)}</h2>" + ("".join(guide_item(r) for r in rs) if rs else "<p>Nothing scheduled yet.</p>") for m, rs in g_by.items())
   + ("<h2>Announced, no date yet</h2><p>Announced but not yet scheduled, so these may or may not land before the end of 2026.</p>" + "".join(guide_item(r) for r in g_tba) if g_tba else "")
   + f'<p class=disc><small>{E(DISCLOSURE)}</small></p>'
-  + "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in g_faq)
+  + "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{a}</p>" for q, a in g_faq)
   + f"<h2>Get the weekly release email</h2><p>What's Dropping covers what's releasing next, date and price changes, and a buy-or-skip verdict for each product.</p>{FORM}<p><small>Last updated: {tdate()}</small></p>")
 g_list = g_items + g_tba
 # This page's JSON-LD: Article + FAQPage + both ItemLists + BreadcrumbList (+ Organization).
@@ -1493,7 +1495,7 @@ g_ld = [
    {"@type": "ListItem", "position": 1, "name": "MTG Drops", "item": f"{SITE_URL}/"},
    {"@type": "ListItem", "position": 2, "name": "Guides", "item": f"{SITE_URL}/guides/"},
    {"@type": "ListItem", "position": 3, "name": "Fall/Holiday 2026 MTG releases", "item": g_url}]},
- {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in g_faq]},
+ {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in g_faq]},
 ]
 def _ld_types(o, acc):
     if isinstance(o, dict):
@@ -1512,6 +1514,14 @@ if _g_types - _G_LD_OK:
     raise SystemExit("fall guide JSON-LD has unexpected types: " + str(sorted(_g_types - _G_LD_OK)))
 G_DESC = "What MTG to buy or preorder in November 2026, with Star Trek street prices and Black Friday 2026 buy-now-or-wait calls, plus every Oct–Dec release."
 page(G_TITLE, G_DESC, g_body, G_SLUG, g_ld)
+_g_html = open(os.path.join("dist", G_SLUG)).read()
+_assert_faq_match(_g_html, "<h2>FAQ</h2>")
+if "Wait on a Star Trek Play Booster box or Bundle" in _g_html:
+    raise SystemExit("fall guide still says Wait on a Star Trek Play Booster box or Bundle")
+if "Proposed" in _g_html:
+    raise SystemExit("Proposed copy still on the fall guide")
+if "Buy now on a Star Trek Play Booster box or Bundle" not in _g_html:
+    raise SystemExit("fall guide FAQ is missing the Buy now Star Trek box/Bundle call")
 # ---- Guide 2: Star Trek release guide (facts from Wizards' Collecting Star Trek article and WPN product listing; verdicts from releases.json) ----
 ST_SRC = {"collect": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
           "wpn": "https://wpn.wizards.com/en/products/star-trek"}
