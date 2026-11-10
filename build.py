@@ -635,6 +635,161 @@ def set_phasers_deepen():
                   [anchor + "#one-or-two-drops", anchor + "#one-or-two-drops"]),
     ]
     return html_out, phasers_extra_faqs(f), lists
+# ---- Extra Life deepen (Nov 9, 2026). One product only. The published verdict stays unchanged. ----
+EL_SLUG = "secret-lair-extra-life-rise-of-the-polygons"
+EL_WIZ = "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026"
+EL_SETTLED = "Buy if you want to support Extra Life or like the art; skip as sealed speculation."
+EL_CHECKED = "2026-11-09"
+EL_SCRYFALL = "https://scryfall.com/"
+# Cheapest listed non-foil printings on Scryfall, Nov 9, 2026, in cents USD.
+EL_SINGLES = [
+    ("Balefire Dragon", 1582),
+    ("Big Score", 50),
+    ("Young Pyromancer", 24),
+    ("Sword of Truth and Justice", 2734),
+]
+def extra_life_facts():
+    r = next(x for x in data if x["slug"] == EL_SLUG)
+    if r.get("last_checked") != EL_CHECKED: raise SystemExit("Extra Life last_checked must be " + EL_CHECKED)
+    if EL_SETTLED not in r["note"]: raise SystemExit("Extra Life settled verdict missing")
+    win = r.get("window") or ""
+    if "Nov 16–Nov 30" not in win or "1 a.m. PT" not in win: raise SystemExit("Extra Life window missing official sale dates")
+    if "Nov 13–15" not in win: raise SystemExit("Extra Life window missing MagicCon early dates")
+    if re.search(r"9\s*a\.?m\.?\s*PT", win, flags=re.I): raise SystemExit("Extra Life window invents a 9 AM PT start")
+    nonfoil, foil = _usd_cents(r, "Non-foil"), _usd_cents(r, "Foil")
+    if (nonfoil, foil) != (3999, 4999): raise SystemExit(f"Extra Life prices drifted: {nonfoil} {foil}")
+    singles = sum(c for _, c in EL_SINGLES)
+    if singles != 4390: raise SystemExit(f"Extra Life Scryfall totals drifted: {singles}")
+    blob = json.dumps(r.get("inside")) + " " + " ".join(r.get("contents") or [])
+    for needle in ("Balefire Dragon", "Big Score", "Young Pyromancer", "Sword of Truth and Justice", "Elemental Token"):
+        if needle not in blob: raise SystemExit("Extra Life contents missing " + needle)
+    return dict(r=r, nonfoil=money_c(nonfoil), foil=money_c(foil), singles=money_c(singles),
+                self_path=f"{BASE}/p/{EL_SLUG}.html", hub_path=f"{BASE}/secret-lair.html")
+def extra_life_sale_answer():
+    return ("Secret Lair: Rise of the Polygons | Extra Life 2026 is at " + phasers_link(SL_STORE, "MagicSecretLair.com")
+            + " from Nov 16 through Nov 30, 2026 at 1 a.m. PT (3 a.m. CT). The "
+            + phasers_link(EL_WIZ, "Wizards")
+            + " announcement does not state a start hour on Nov 16. Limited early copies are also at the MagicCon: Atlanta Extra Life / merch booth Nov 13–15, while supplies last. Last checked Nov 9, 2026.")
+def extra_life_magiccon_answer():
+    return ("Yes, in limited quantities at the Extra Life / merch booth at MagicCon: Atlanta, Nov 13–15, 2026, while supplies last ("
+            + phasers_link(EL_WIZ, "Wizards")
+            + "). Wizards says 100% of proceeds from Extra Life merchandise and this drop at the booth (minus third-party fees) go to Extra Life. Dragon Shield playmats ($25) and sleeves ($20) are MagicCon-only; $10 from each item goes to Extra Life. This page does not promise booth stock or hours. Last checked Nov 9, 2026.")
+def extra_life_singles_answer(f):
+    return (f"Often only if you want one or two of the cards, not the whole drop. Cheapest listed printings on {phasers_link(EL_SCRYFALL, 'Scryfall', nofollow=True)} on Nov 9, 2026 total about {f['singles']} versus {f['nonfoil']} for the sealed non-foil drop, so sealed is a little cheaper for all four cards and also includes the Elemental token, the art, and the charity split. Buy the drop if you want to support Extra Life or like the art; skip it as sealed speculation. Card-by-card figures: "
+            + phasers_link("#sealed-vs-singles", "Sealed drop vs singles") + ". Last checked Nov 9, 2026.")
+def extra_life_charity_answer():
+    return ("Online, fifty percent (50%) of the sales price (less third-party transaction fees) is donated to Children's Miracle Network via Our Change Foundation for Seattle Children's Hospital ("
+            + phasers_link(EL_WIZ, "Wizards")
+            + "). At the MagicCon: Atlanta booth, Wizards says 100% of proceeds from Extra Life merchandise and this drop (minus third-party fees) go to Extra Life. Last checked Nov 9, 2026.")
+def extra_life_ship_answer():
+    return ("Not announced. The " + phasers_link(EL_WIZ, "Wizards")
+            + " announcement does not give a shipping window for Rise of the Polygons. Treat holiday delivery as unknown, and don't count on it as a Christmas gift. Last checked Nov 9, 2026.")
+def extra_life_extra_faqs(f):
+    return [
+        ("When does the Extra Life Secret Lair go on sale?", extra_life_sale_answer()),
+        ("Can I buy Rise of the Polygons at MagicCon Atlanta?", extra_life_magiccon_answer()),
+        ("Is the Extra Life Secret Lair worth it compared to singles?", extra_life_singles_answer(f)),
+        ("How much of Extra Life Secret Lair sales go to charity?", extra_life_charity_answer()),
+        ("Will Rise of the Polygons arrive before Christmas?", extra_life_ship_answer()),
+    ]
+def extra_life_hub_faqs():
+    page = f"{BASE}/p/{EL_SLUG}.html"
+    return [
+        ("When does the Extra Life Secret Lair go on sale?", extra_life_sale_answer()),
+        ("Can I buy Rise of the Polygons at MagicCon Atlanta?", extra_life_magiccon_answer()),
+    ]
+def extra_life_deepen():
+    f = extra_life_facts()
+    self_abs = SITE_URL + f["self_path"]
+    answer = (
+        "<p><b>When is the Extra Life Secret Lair and is it worth it?</b> Secret Lair: Rise of the Polygons | Extra Life 2026 is at "
+        + phasers_link(SL_STORE, "MagicSecretLair.com")
+        + " from Nov 16 through Nov 30, 2026 at 1 a.m. PT (3 a.m. CT), and in limited quantities at the MagicCon: Atlanta Extra Life / merch booth Nov 13–15. It's four reprints plus an Elemental token (Balefire Dragon, Big Score, Young Pyromancer, Sword of Truth and Justice) at "
+        + f"{f['nonfoil']} non-foil / {f['foil']} foil ("
+        + phasers_link(EL_WIZ, "Wizards")
+        + "). Online, 50% of the sales price (less third-party fees) supports Extra Life / Children's Miracle Network for Seattle Children's Hospital; Wizards says 100% of booth proceeds for this drop and Extra Life merch (minus fees) go to Extra Life. Buy it if you want to support Extra Life or like the art. Skip it as sealed speculation — price the singles if you only want one or two of the playable cards. <i>Last checked: Nov 9, 2026.</i></p>")
+    magiccon = (
+        "<h2 id=magiccon-early>MagicCon: Atlanta early window (Nov 13–15)</h2>"
+        + checked({"last_checked": EL_CHECKED, "source": EL_WIZ}, with_sources=True)
+        + "<p>Limited early copies are at the Extra Life / merch booth at MagicCon: Atlanta, Nov 13–15, 2026, while supplies last ("
+        + phasers_link(EL_WIZ, "Wizards")
+        + "). Wizards says 100% of proceeds from Extra Life merchandise and Rise of the Polygons at the booth, minus third-party fees, go to Extra Life. That is a higher stated charity split than the online sale (50% of the sales price, less fees).</p>"
+        + "<p>Dragon Shield playmats ($25) and sleeves ($20) are MagicCon-only; $10 from each item is donated to Extra Life. This page does not invent booth stock or hours, and it does not treat a convention ticket as a guaranteed copy of the drop.</p>")
+    singles_html = "".join(
+        f"<tr><td>{E(name)}</td><td>{money_c(cents)}</td></tr>" for name, cents in EL_SINGLES)
+    singles = (
+        "<h2 id=sealed-vs-singles>Sealed drop vs singles (dated Nov 9)</h2>"
+        + checked({"last_checked": EL_CHECKED, "source": EL_SCRYFALL}, with_sources=True)
+        + f"<p>Cheapest listed printings on {phasers_link(EL_SCRYFALL, 'Scryfall', nofollow=True)}, Nov 9, 2026, in USD. These are market snapshots, not our sale prices, and not a resale database. The sealed column is the Wizards non-foil drop price ({f['nonfoil']}). The Elemental token has no meaningful singles comparison.</p>"
+        + "<table><tr><th>Card</th><th>Cheapest listed single (Scryfall, Nov 9)</th></tr>" + singles_html
+        + f"<tr><td>Four-card total</td><td>about {f['singles']}</td></tr></table>"
+        + f"<p>The four cheapest listed printings total about {f['singles']}, a little more than the {f['nonfoil']} non-foil drop. Sealed also includes the Elemental token, the low-poly art, and the charity split. If you only want one or two of the cards, buying those singles can still cost less. A foil drop is {f['foil']}. "
+        + E(EL_SETTLED) + "</p>")
+    sale = (
+        "<h2 id=sale-checklist>Online sale checklist</h2>"
+        + checked({"last_checked": EL_CHECKED, "source": EL_WIZ}, with_sources=True)
+        + "<ol>"
+        + "<li><b>Online window:</b> Nov 16 through Nov 30, 2026 at 1 a.m. PT (3 a.m. CT), only at "
+        + phasers_link(SL_STORE, "MagicSecretLair.com")
+        + ". The " + phasers_link(EL_WIZ, "Wizards") + " announcement does not state a start hour on Nov 16.</li>"
+        + f"<li><b>Price:</b> {f['nonfoil']} non-foil / {f['foil']} foil (Wizards).</li>"
+        + "<li><b>Account:</b> have a Wizards account ready, with shipping and payment saved, before the window. Recent Secret Lair sales say a cart does not reserve a drop; the order is secured only when checkout is completed.</li>"
+        + "<li><b>Shipping window:</b> not announced. The " + phasers_link(EL_WIZ, "Wizards") + " announcement does not say when these orders ship. Treat holiday delivery as unknown.</li>"
+        + "<li><b>Charity split (online):</b> 50% of the sales price, less third-party transaction fees, supports Extra Life / Children's Miracle Network for Seattle Children's Hospital.</li>"
+        + "</ol>")
+    arena = (
+        "<h2 id=arena-cosmetics>MTG Arena cosmetics</h2>"
+        + checked({"last_checked": EL_CHECKED, "source": EL_WIZ}, with_sources=True)
+        + "<p>Two sleeve bundles and a sticker emote are in the MTG Arena store from Nov 16–30: the Secret Lair sleeve bundle is 3,000 gems, the Extra Life sleeve bundle is 1,800 gems, and the emote is 800 gems ("
+        + phasers_link(EL_WIZ, "Wizards")
+        + "). All proceeds, less transaction fees, are donated to Extra Life, benefiting Seattle Children's Hospital. These are cosmetics, not a substitute for the paper drop.</p>")
+    html_out = answer + magiccon + singles + sale + arena
+    lists = [
+        _itemlist("Sealed drop vs singles, Nov 9, 2026",
+                  [f"{name} {money_c(cents)}" for name, cents in EL_SINGLES],
+                  [self_abs + "#sealed-vs-singles"] * len(EL_SINGLES)),
+    ]
+    return html_out, extra_life_extra_faqs(f), lists
+def _assert_extra_life_page(path):
+    html_text = open(path).read()
+    types = _assert_no_banned(html_text)
+    for need in ("FAQPage", "ItemList", "Product", "WebPage", "BreadcrumbList"):
+        if need not in types: raise SystemExit("Extra Life JSON-LD missing " + need)
+    got = _assert_faq_match(html_text, "<h2>FAQ</h2>")
+    questions = [q for q, _ in got]
+    for q in ("When does the Extra Life Secret Lair go on sale?", "Can I buy Rise of the Polygons at MagicCon Atlanta?",
+              "Is the Extra Life Secret Lair worth it compared to singles?", "How much of Extra Life Secret Lair sales go to charity?",
+              "Will Rise of the Polygons arrive before Christmas?"):
+        if q not in questions: raise SystemExit("missing FAQ: " + q)
+    if EL_SETTLED not in html_text: raise SystemExit("Extra Life settled verdict missing from the page")
+    if re.search(r"9\s*a\.?m\.?\s*PT", html_text, flags=re.I): raise SystemExit("Extra Life page invents a 9 AM PT start")
+    if "not announced" not in html_text.lower(): raise SystemExit("Extra Life shipping window must stay not announced")
+    for banned in ("Draft — pending owner OK", "Proposed", "pending owner", "awaiting owner"):
+        if banned in html_text: raise SystemExit("draft label still public: " + banned)
+    title = html.unescape(re.search(r"<title>(.*?)</title>", html_text).group(1))
+    if len(title) > 60: raise SystemExit(f"title too long ({len(title)}): {title}")
+    if "context7-site-verification" not in html_text: raise SystemExit("Context7 meta missing")
+    buy_at = html_text.find("<h2>Buy or skip?</h2>")
+    tcg_at = html_text.find("Check prices on TCGplayer")
+    h2s = ["<h2 id=magiccon-early>MagicCon: Atlanta early window (Nov 13–15)</h2>",
+           "<h2 id=sealed-vs-singles>Sealed drop vs singles (dated Nov 9)</h2>",
+           "<h2 id=sale-checklist>Online sale checklist</h2>",
+           "<h2 id=arena-cosmetics>MTG Arena cosmetics</h2>"]
+    pos = buy_at
+    for h in h2s:
+        p = html_text.find(h)
+        if p < pos or p > tcg_at: raise SystemExit("section out of order: " + h)
+        pos = p
+    if "buttondown.com" not in html_text or "As an Amazon Associate" not in html_text: raise SystemExit("disclosure or newsletter CTA missing")
+def _assert_extra_life_hub(path):
+    html_text = open(path).read()
+    _assert_no_banned(html_text)
+    got = dict(_assert_faq_match(html_text, "<h2>Secret Lair FAQ</h2>"))
+    for q in ("When does the Extra Life Secret Lair go on sale?", "Can I buy Rise of the Polygons at MagicCon Atlanta?"):
+        if q not in got: raise SystemExit("hub missing Extra Life FAQ: " + q)
+    if re.search(r"9\s*a\.?m\.?\s*PT", got["When does the Extra Life Secret Lair go on sale?"], flags=re.I):
+        raise SystemExit("hub Extra Life FAQ invents a 9 AM PT start")
+    if "Proposed" in html_text: raise SystemExit("Proposed copy on the hub")
 def _page_ld(html_text):
     return [json.loads(raw) for raw in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html_text)]
 def _walk_types(o, acc):
@@ -765,6 +920,12 @@ for r in data:
         faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{a}</p>" for q, a in shown)
         phasers_ld = [{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
             {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in shown]}] + itemlists
+    elif r["slug"] == EL_SLUG:
+        deepen_html, extra_faqs, itemlists = extra_life_deepen()
+        shown = [(q, E(a)) for q, a in faq] + extra_faqs
+        faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{a}</p>" for q, a in shown)
+        phasers_ld = [{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in shown]}] + itemlists
     else:
         faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in faq)
     pre_html = f'<h3>Prerelease kits</h3><p><span class=t>Buy / Wait / Skip</span> {E(r["prerelease_verdict"])}</p>' if r.get("prerelease_verdict") else ""
@@ -819,6 +980,7 @@ for r in data:
          f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])}){f" · <b>Prerelease:</b> {E(r['prerelease'])}" if r.get("prerelease") else ""}{" · <b>Sold out</b> at the official store" if r.get("sold_out") else ""}{" · <b>Delayed</b>: stock may arrive after this date" if r.get("delayed") else ""}</p>{win}<h2>Price</h2>{ptab}{contents}{facts}<h2>Buy or skip?</h2><p>{E(r["note"])}{(" " + E(r["buy_guide_intro"])) if r.get("buy_guide_intro") else ""}</p>{("<ul>" + "".join(f"<li><b>{E(k)}:</b> {E(v)}</li>" for k, v in r["buy_guide"]) + "</ul>") if r.get("buy_guide") else ""}{pre_html}{f"<p><i>{E(r['preorder_call'])}</i></p>" if r.get("preorder_call") else ""}{("<p>Other Commander decks coming in 2027: " + ", ".join(plink(x, x["name"]) + f" ({nice_date(x)})" for x in h_cmd27 if x is not r) + ".</p>") if r.get("preorder_call") and r in h_cmd27 else ""}{deepen_html}<p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}<p class=disc><small>{E(DISCLOSURE)}</small></p>{tinfo}{howto}{relhtml}{y27}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}{checked(r, with_sources=False)}<p><small>Last updated: {tdate()}</small></p>{FORM}',
          f"p/{r['slug']}.html", main_ld + phasers_ld + [bc], noindex=bool(r.get("placeholder")), og=(card[1], 1200, 630) if card else None)
     if r["slug"] == PHASERS_SLUG: _assert_phasers_page(os.path.join("dist", f"p/{r['slug']}.html"))
+    if r["slug"] == EL_SLUG: _assert_extra_life_page(os.path.join("dist", f"p/{r['slug']}.html"))
 # ---- Secret Lair hub (/secret-lair.html): generated from releases.json, so data updates keep it current ----
 SL_SRC = {"about": "https://secretlair.wizards.com/us/en/about-us",
           "faq": "https://secretlair-support.wizards.com/hc/en-us/articles/45369886769300-About-Secret-Lair-FAQ",
@@ -871,6 +1033,7 @@ sl_faq = [
   "Most drops come in a non-foil edition and a traditional foil edition (Wizards renamed its rainbow foil to traditional foil), usually $10 apart. Some products use special foils instead, such as the surge foils that can turn up in the Marvel Countdown Kit."),
 ]
 sl_faq += phasers_hub_faqs()
+sl_faq += extra_life_hub_faqs()
 sl_intro = (f'<h2>What is Secret Lair and how do drops work?</h2>'
  f'<p>Secret Lair is Wizards of the Coast\'s direct-to-fan line of collectible Magic: The Gathering cards, sold at MagicSecretLair.com. '
  f'A drop is an exclusive, limited-time selection of usually 4 to 8 cards with new art or treatments, often a crossover with an artist or franchise, and most drops come in both foil and non-foil editions (<a href="{SL_SRC["about"]}">Secret Lair: About</a>). '
@@ -952,6 +1115,7 @@ page(SL_TITLE, SL_DESC,
      + f'<p class=disc><small>{E(DISCLOSURE)}</small></p><p><small>Last updated: {tdate()}</small></p>',
      "secret-lair.html", sl_ld)
 _assert_phasers_hub("dist/secret-lair.html")
+_assert_extra_life_hub("dist/secret-lair.html")
 SL_LLMS = "".join(f"- [{r['name']}]({SITE_URL}/p/{r['slug']}.html): {lab}; {sl_when(r)}; price: {sl_price(r)}\n" for lab, rs in (("on sale now", sl_now), ("upcoming", sl_up), ("recent/ended", sl_past)) for r in rs)
 SL_LLMS = f"Hub: [Secret Lair drops: schedule, prices & verdicts]({sl_url})\n" + SL_LLMS
 # ---- Guides: generated from releases.json ----
