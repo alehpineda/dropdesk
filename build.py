@@ -294,6 +294,10 @@ h_sl_when = (f'{plink(h_sl, h_sl["name"])} goes on sale {nice_date(h_sl)}{sl_tim
              else "The next Secret Lair drop is TBA: no upcoming Secret Lair sale has a date on our calendar yet")
 home_faq.append(("When is the next Secret Lair drop?", h_sl_when + f'. See every drop on the <a href="{BASE}/secret-lair.html">Secret Lair schedule</a>.'))
 if h_sold: home_faq.append(("Which recent MTG releases are sold out?", and_list([plink(r) + f" ({nice_date(r)})" for r in h_sold]) + " sold out at the official store. Check each page before paying resale prices."))
+home_faq.append(("When do MTG Black Friday deals start?",
+ "Black Friday is Nov 27, 2026, and Cyber Monday is Nov 30, 2026. GamesRadar (updated Nov 2, 2026) says the official Magic deals start on Nov 27, with price cuts often appearing from mid-November, and that discounts usually continue through Cyber Monday. "
+ "Walmart Early Black Friday Deals are Nov 12–15. Walmart Black Friday Deals are Nov 23–29. Target's early Black Friday sale was Thu Nov 5 – Sat Nov 7. Amazon has not announced US Black Friday dates yet (last checked Nov 5, 2026). "
+ f'For buy-now-or-wait calls, see <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html#black-friday-2026">Black Friday 2026: buy now or wait</a>.'))
 home_faq.append(("How often is the MTG Drops calendar updated?", "We check official Wizards of the Coast announcements and reputable MTG news every Tuesday and Friday. Each entry shows the date it was last checked and links to its sources."))
 home_faq.append(("How do I add MTG release dates to Google Calendar?",
  "Use the Add to Google Calendar link on this page (https://calendar.google.com/calendar/r?cid=webcal://mtgdrops.com/calendar.ics). If it does not open a subscribe dialog, in Google Calendar choose Other calendars, then From URL, and paste https://mtgdrops.com/calendar.ics. Apple Calendar can open webcal://mtgdrops.com/calendar.ics. Outlook can subscribe from the web with the same https URL. The file itself is https://mtgdrops.com/calendar.ics. Secret Lair dates alone are a separate feed at https://mtgdrops.com/secret-lair.ics."))
@@ -321,6 +325,10 @@ home_ld = [{"@context": "https://schema.org", "@type": "WebSite", "@id": f"{SITE
            {"@context": "https://schema.org", "@type": "ItemList", "@id": f"{SITE_URL}/#releases", "name": "Upcoming Magic: The Gathering releases", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate([r for r in up if not r.get("placeholder")])]}]
 page("MTG Release Calendar 2026–2027 | MTG Drops", HOME_DESC,
      f"<h1>MTG Release Calendar 2026–2027</h1><p><b>What's dropping in Magic.</b> Last updated: {tdate()}</p><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p><p>Every upcoming MTG product, with a short buy/skip note. New: <a href=\"{BASE}/guides/mtg-releases-fall-holiday-2026.html\">every MTG product releasing this fall/holiday 2026</a>, with gift picks, the <a href=\"{BASE}/guides/star-trek-mtg-release-guide.html\">MTG Star Trek release guide</a>, and the <a href=\"{BASE}/secret-lair.html\">Secret Lair drop schedule</a>.</p>{FORM}<p class=disc><small>{E(DISCLOSURE)}</small></p><p><b>Calendar feed:</b> {ics_link("calendar.ics")}</p>{CAL_HOWTO}{home_next_sl}<div class=f>{btns}</div>" + months + home_faq_html + js, "index.html", home_ld)
+_home_html = open(os.path.join("dist", "index.html")).read()
+if "When do MTG Black Friday deals start?" not in _home_html or "#black-friday-2026" not in _home_html:
+    raise SystemExit("home is missing the Black Friday FAQ deep link")
+
 def title_for(r):
     sn = short_name(r); m = mon_yyyy(r).replace("Date TBA", "TBA")
     for t in (f"{sn} Release Date ({m}), Price & Preorder | MTG Drops", f"{sn} Release Date ({m}) | MTG Drops", f"{sn} Release Date, {m} | MTG Drops", f"{sn} Release Date | MTG Drops", f"{sn} ({m}) | MTG Drops", f"{sn} | MTG Drops"):
@@ -1013,6 +1021,9 @@ for r in data:
         y27 = f'<p>Every 2027 set and Commander deck: <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>.</p>'
     elif dated(r) and "2026-10-01" <= r["release_date"] <= "2026-12-31":
         y27 = f'<p>Every MTG product releasing fall/holiday 2026: <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a>.</p>'
+        if r["slug"] == "countdown-kit-marvels-history-of-heroes":
+            y27 += (f'<p><a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html#black-friday-2026">Black Friday 2026: buy now or wait</a>. '
+                    "Secret Lair drops are not discounted at MagicSecretLair.com. This kit sold out at the official store as of Nov 9, 2026.</p>")
     else:
         y27 = ""
     crumbs = f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › {(f'<a href="{BASE}/secret-lair.html">Secret Lair</a>' if r["type"] == "Secret Lair" else E(r["type"]))} › {E(sn)}</nav>{hubl}'
@@ -1022,6 +1033,10 @@ for r in data:
          f"p/{r['slug']}.html", main_ld + phasers_ld + [bc], noindex=bool(r.get("placeholder")), og=(card[1], 1200, 630) if card else None)
     if r["slug"] == PHASERS_SLUG: _assert_phasers_page(os.path.join("dist", f"p/{r['slug']}.html"))
     if r["slug"] == EL_SLUG: _assert_extra_life_page(os.path.join("dist", f"p/{r['slug']}.html"))
+    if r["slug"] == "countdown-kit-marvels-history-of-heroes":
+        _kit_html = open(os.path.join("dist", f"p/{r['slug']}.html")).read()
+        if "#black-friday-2026" not in _kit_html or "Black Friday 2026: buy now or wait" not in _kit_html:
+            raise SystemExit("Countdown Kit page is missing the Black Friday deep link")
 # ---- Secret Lair hub (/secret-lair.html): generated from releases.json, so data updates keep it current ----
 SL_SRC = {"about": "https://secretlair.wizards.com/us/en/about-us",
           "faq": "https://secretlair-support.wizards.com/hc/en-us/articles/45369886769300-About-Secret-Lair-FAQ",
