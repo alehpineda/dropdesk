@@ -314,12 +314,14 @@
       "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop",
       "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop",
       "bonus card": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop",
-      "window": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop"
+      "window": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop",
+      "store_offer": "https://secretlair.wizards.com/us/en/product/1255841/secret-lair-x-star-trek-assimilation"
     },
     "short_name": "Star Trek Superdrop",
     "verdict": "buy",
     "gift_for": "Star Trek fans who want the themed Secret Lair drops: skip if you're not into Trek",
     "sold_out": null,
+    "store_offer": "PreOrder",
     "last_checked": "2026-11-09"
   },
   {

@@ -226,25 +226,45 @@ def sl_cost(r, home=False):
 def sl_checked_date(rs): return min(SL_NEXT_CHECKED if sl_cur(r) else (r.get("last_checked") or SL_NEXT_CHECKED) for r in rs)
 def sl_drop_link(r): return f'<a href="{BASE}/p/{r["slug"]}.html">{E(r["name"])}</a>'
 SL_TBA = "The next Secret Lair drop is TBA: no upcoming Secret Lair sale has a date on our calendar yet."
-def sl_head_label(r):
-    """Short 'Name, Mon D' for the hub title and H1. The <title> is 'Next Secret Lair: {this} | MTG Drops' and must stay at 60 characters or fewer."""
+def sl_date_label(r):
     d = datetime.date.fromisoformat(r["release_date"])
-    date = f"{MON[d.month-1]} {d.day}"
-    wrap = len("Next Secret Lair: ") + len(f", {date} | MTG Drops")
-    budget = 60 - wrap
+    return f"{MON[d.month-1]} {d.day}"
+def sl_short_drop_name(r, budget):
+    """A drop name that fits in `budget` characters for the hub <title>.
+
+    Rule: 'Next Secret Lair: {name}, {Mon D} | MTG Drops' must stay at 60 characters or fewer.
+    If the usual short_name would overflow, use the short drop title (the name after
+    'Secret Lair:' / 'Secret Lair x …:' and before a pipe) — e.g. Rise of the Polygons,
+    not the pipe suffix Extra Life 2026. The H1 and description keep the full short_name.
+    """
+    full = short_name(r)
+    if budget < 1:
+        return full
+    if len(full) <= budget:
+        return full
     cands = []
-    if "Set Phasers to Superdrop" in r["name"]:
+    name = r["name"]
+    if "Set Phasers to Superdrop" in name:
         cands.append("Set Phasers to Superdrop")
-    cands.append(short_name(r))
-    if "|" in r["name"]:
-        left, right = [s.strip() for s in r["name"].split("|", 1)]
-        cands.append(right)
-        cands.append(left.replace("Secret Lair:", "").strip())
-    cands.append(r["name"])
+    if "|" in name:
+        left, right = [s.strip() for s in name.split("|", 1)]
+        left_drop = re.sub(r"^Secret Lair(?:\s+x\s+[^:]+)?:\s*", "", left).strip()
+        for c in (left_drop, left.replace("Secret Lair:", "").strip(), right):
+            if c and c not in cands:
+                cands.append(c)
     label = next((c for c in cands if c and len(c) <= budget), None)
     if not label:
-        label = (cands[0][: budget - 1].rstrip(" ,") + "…") if budget > 1 else cands[0]
-    return f"{label}, {date}"
+        src = cands[0] if cands else full
+        label = (src[: budget - 1].rstrip(" ,") + "…") if budget > 1 else src
+    return label
+def sl_title_head(r):
+    """'Name, Mon D' for the hub <title> only."""
+    date = sl_date_label(r)
+    wrap = len("Next Secret Lair: ") + len(f", {date} | MTG Drops")
+    return f"{sl_short_drop_name(r, 60 - wrap)}, {date}"
+def sl_display_head(r):
+    """Full short name + date for the hub H1 and description (not capped at 60)."""
+    return f"{short_name(r)}, {sl_date_label(r)}"
 def sl_next_copy(linked):
     if not h_sl: return SL_TBA
     nm = lambda r: sl_drop_link(r) if linked else r["name"]
@@ -790,6 +810,11 @@ def _assert_extra_life_hub(path):
     if re.search(r"9\s*a\.?m\.?\s*PT", got["When does the Extra Life Secret Lair go on sale?"], flags=re.I):
         raise SystemExit("hub Extra Life FAQ invents a 9 AM PT start")
     if "Proposed" in html_text: raise SystemExit("Proposed copy on the hub")
+    title = html.unescape(re.search(r"<title>(.*?)</title>", html_text).group(1))
+    h1 = html.unescape(re.search(r"<h1>(.*?)</h1>", html_text).group(1))
+    if len(title) > 60: raise SystemExit(f"hub title too long ({len(title)}): {title}")
+    if short_name(next(x for x in data if x["slug"] == EL_SLUG)) not in h1:
+        raise SystemExit("hub H1 dropped the full Extra Life short name")
 def _page_ld(html_text):
     return [json.loads(raw) for raw in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html_text)]
 def _walk_types(o, acc):
@@ -876,6 +901,14 @@ def _assert_phasers_page(path):
     want_picks = ["One drop: " + PHASERS_PICK_ONE, "Two drops: " + PHASERS_PICK_TWO]
     if got_picks != want_picks: raise SystemExit("one-or-two ItemList drifted: " + repr(got_picks))
     if "buttondown.com" not in html_text or "As an Amazon Associate" not in html_text: raise SystemExit("disclosure or newsletter CTA missing")
+    avails = set()
+    for o in _page_ld(html_text):
+        if o.get("@type") == "Product":
+            for off in (o.get("offers") or []):
+                if isinstance(off, dict) and off.get("availability"):
+                    avails.add(off["availability"])
+    if avails != {"https://schema.org/PreOrder"}:
+        raise SystemExit("Set Phasers Offers must be PreOrder to match the official store, got " + repr(avails))
 def _assert_phasers_hub(path):
     html_text = open(path).read()
     _assert_no_banned(html_text)
@@ -951,6 +984,10 @@ for r in data:
     # announced date (still orderable ahead of arrival, so PreOrder: it is not on shelves yet).
     if r.get("sold_out"): avail = "https://schema.org/SoldOut"
     elif r.get("delayed"): avail = "https://schema.org/PreOrder"
+    elif r.get("store_offer") == "PreOrder":
+        # Official store Offer is PreOrder (sale may be open; ships later). Set only after
+        # confirming store JSON-LD Offer = PreOrder and CTA is not SOLD_OUT (stock-check-rules.md).
+        avail = "https://schema.org/PreOrder"
     if offers:
         def offer(p):
             o = {"@type": "Offer", "name": p["label"], "price": f"{p['usd']:.2f}", "priceCurrency": p.get("currency", "USD"), "availability": avail, "description": odesc}
@@ -1044,10 +1081,13 @@ sl_list = sl_now + sl_up + sl_past
 sl_url = f"{SITE_URL}/secret-lair.html"
 # Title and H1 lead with the next drop so "next Secret Lair" answers name the sale. The schedule framing stays in the subtitle.
 if h_sl:
-    _sl_head = sl_head_label(h_sl)
-    SL_TITLE = f"Next Secret Lair: {_sl_head} | MTG Drops"
-    SL_H1 = f"Next Secret Lair: {_sl_head}"
-    SL_DESC = f"Next Secret Lair: {_sl_head}. Schedule of drops on sale now, upcoming and recent, with dates, prices and buy/skip verdicts."
+    SL_TITLE = f"Next Secret Lair: {sl_title_head(h_sl)} | MTG Drops"
+    SL_H1 = f"Next Secret Lair: {sl_display_head(h_sl)}"
+    SL_DESC = f"Next Secret Lair: {sl_display_head(h_sl)}. Schedule of drops on sale now, upcoming and recent, with dates, prices and buy/skip verdicts."
+    if len(SL_TITLE) > 60:
+        raise SystemExit(f"hub title too long ({len(SL_TITLE)}): {SL_TITLE}")
+    if short_name(h_sl) not in SL_H1 or short_name(h_sl) not in SL_DESC:
+        raise SystemExit("hub H1 and description must keep the full short name")
 else:
     SL_TITLE = "Secret Lair Drops: Schedule, Prices & Verdicts | MTG Drops"
     SL_H1 = "Secret Lair Drops: Schedule, Prices & Verdicts"
