@@ -934,7 +934,11 @@ for r in data:
     fs = r.get("field_sources") or {}
     fsrc = ("<p><small>Sources by field: " + " · ".join(f'{E(k.replace("_", " "))}: <a href="{E(v)}">{E(urllib.parse.urlsplit(v).netloc)}</a>' for k, v in fs.items()) + "</small></p>") if fs else ""
     hubl = f'<p>See every drop on one page: <a href="{BASE}/secret-lair.html">Secret Lair drops: schedule, prices &amp; verdicts</a>.</p>' if r["type"] == "Secret Lair" else ""
-    if r["slug"] in ("star-trek", "star-trek-commander"): hubl += f'<p>Planning your Star Trek buys? Read the <a href="{BASE}/guides/star-trek-mtg-release-guide.html">MTG Star Trek release guide</a>: every product, MSRP, Commander deck and key date.</p>'
+    if r["slug"] in ("star-trek", "star-trek-commander"):
+        hubl += f'<p>Planning your Star Trek buys? Read the <a href="{BASE}/guides/star-trek-mtg-release-guide.html">MTG Star Trek release guide</a>: every product, MSRP, Commander deck and key date.</p>'
+        hubl += (f'<p>A dated per-SKU Wait/Skip table of US street prices (checked Nov 9, 2026) is on the '
+                 f'<a href="{BASE}/guides/star-trek-mtg-release-guide.html#per-sku-wait-skip">Star Trek release guide</a>. '
+                 'The per-SKU calls there are Proposed until approved. The set and Commander verdicts on this page are unchanged.</p>')
     facts = ("<h2>Key facts</h2><ul>" + "".join(f"<li>{E(f)}</li>" for f in r["facts"]) + "</ul>") if r.get("facts") else ""
     ti = TYPE_INFO.get(r["type"]); tinfo = f"<h2>{E(ti[0])}</h2><p>{E(ti[1])}</p>" if ti else ""
     howto = f"<h2>{HOWTO[0]}</h2><p>{E(HOWTO[1])}</p>" if not r.get("placeholder") and (not dated(r) or r["release_date"] > today or r.get("delayed")) else ""
@@ -1224,23 +1228,20 @@ nv_dont = [f"{plink(nv_cmd, _ce_name)} above their {fmt(nv_cmd['prices'][1])} MS
            f"{plink(_bb, _bb['short_name'])} on resale (our verdict: Skip)." if _bb.get("verdict") == "skip" else None,
            f"{plink(_spm, _spm['short_name'])} (Dec 4, unconfirmed leak): wait for Wizards to confirm it and show the decklist." if _spm.get("verdict") == "wait" and _spm["status"] != "confirmed" else None]
 nv_dont = [x for x in nv_dont if x]
-# Dated Star Trek street prices, fetched 2026-11-03. Do not change a number without a new fetch and a new date.
-# Never print a percent off: the table shows MSRP and the store low only.
+# Dated Star Trek street prices, fetched 2026-11-09 from https://mtgcompare.app/us/preorders/star-trek.
+# MTG Compare's <time> on that page was 2026-11-09T00:04:39.589Z (Nov 8, 2026, 6:04 PM CT); we fetched the page Nov 9.
+# Only open US preorders; sold-out rows were ignored. Never print a percent off.
 # Play Booster Display is 30 packs (releases.json inside text, from Wizards), so box MSRP is 30 x $6.99.
 # Older sets used 36-pack displays. Star Trek does not, so this table does not use 36 x $6.99.
-# Source A (Play Booster Display): https://mtgcompare.app/us/p/star-trek-play-booster-box
-#   Page said "checked 20 min ago". Store low $117.95 at Poke-Collect. TCGplayer line on that page $118.62. Shipping excluded.
-# Source B (other rows): https://mtgcompare.app/us/preorders/star-trek
-#   Page said "Prices checked 2 hours ago".
-#   Bundle $42.99 Double Infinity Gaming; Draft Night $86.99 Double Infinity Gaming;
-#   Collector Booster box $449.99 Gate City Games; Beam Me Up Bundle $99.99 at 4GS Games;
-#   regular Commander low Klingon Fury $49.95 Galactic Toys;
-#   Collector's Edition Commander store low $159.99 Cole Street Game Vault (Federation Fleet);
-#   that same Collector's Edition section showed a TCGplayer preorder at $215.58;
-#   Enterprise-Q Scene Box $33.95 Lazarus Games.
-# Source C: https://www.coolstuffinc.com/p/443286 fetched the same day. Draft Night was Out of Stock and the page
-#   did not display a price. A Nov 2 public listing had shown $94.99 against the $119.99 MSRP. That $94.99 is not today's low.
-ST_PRE_CHECKED = "2026-11-03"
+# Lows: Play box $100 1st Capital Gaming (+$9.25 ship); Play pack $4.00 Collector Store;
+# Bundle $39.99 Double Infinity Gaming (+$9.90); Draft Night $81.99 Double Infinity Gaming (+$9.90);
+# Collector box $449.99 Cadets Toys and Comics (+$9.95); Collector pack $39.99 Constellation Collective Sacramento;
+# Beam Me Up $99.99 Gate City Games (shipping at checkout);
+# regular Commander lowest Klingon Fury $44.99 Phantomich (+$7.95); Landing Party $51.95, Federation Fleet $52.93, We Are the Borg $60.00;
+# CE lowest Klingon Fury $85.00 Vegas Singles (free ship); Landing Party $134.99, Federation Fleet $159.99, We Are the Borg $160;
+# Scene Box: Divergent Timeline $31.95 Poke-Collect (+$9.95), Enterprise-Q $31.99 Gator's Card Den (+$10.75).
+# Beginner Box listings were ignored (product cancelled). CoolStuffInc and the separate play-box page were not re-fetched this pass.
+ST_PRE_CHECKED = "2026-11-09"
 ST_PRE_PAGE = "https://mtgcompare.app/us/preorders/star-trek"
 ST_PLAY_PAGE = "https://mtgcompare.app/us/p/star-trek-play-booster-box"
 CSI_DRAFT = "https://www.coolstuffinc.com/p/443286"
@@ -1273,46 +1274,34 @@ def _prow(product, msrp, street, where, query, amz_url=None):
 _st_link = plink(nv_st, "MTG Star Trek")
 _cmd_link = plink(nv_cmd, "Star Trek Commander")
 st_price_rows = [
- _prow(f"Play Booster Display (box, 30 packs) — {_st_link}", fmt({"usd": _play_box_msrp}) + f" (30 × {fmt({'usd': _pb_usd})})", "$117.95",
-        "Poke-Collect, via MTG Compare. The same page showed TCGplayer at $118.62.", "Magic The Gathering Star Trek Play Booster Box"),
- _prow(f"Draft Night — {_st_link}", fmt({"usd": _draft_msrp}), "$86.99",
-        "Double Infinity Gaming, via MTG Compare.", "Magic The Gathering Star Trek Draft Night"),
- _prow(f"Bundle — {_st_link}", fmt({"usd": _bundle_msrp}), "$42.99",
-        "Double Infinity Gaming, via MTG Compare.", "Magic The Gathering Star Trek Bundle", amazon(nv_st)),
- _prow(f"Commander deck (regular) — {_cmd_link}", fmt({"usd": _cmd_msrp}) + " each", "$49.95",
-        "Lowest single deck: Klingon Fury at Galactic Toys. Other regular decks on the page were $54.95 to $64.99.", "Magic The Gathering Star Trek Commander Deck"),
- _prow(f"Collector's Edition Commander deck — {_cmd_link}", fmt({"usd": _ce_msrp}) + " each", "$159.99",
-        "Federation Fleet at Cole Street Game Vault. The same section showed a TCGplayer preorder at $215.58.", "Magic The Gathering Star Trek Collector Edition Commander Deck"),
+ _prow(f"Play Booster Display (box, 30 packs) — {_st_link}", fmt({"usd": _play_box_msrp}) + f" (30 × {fmt({'usd': _pb_usd})})", "$100.00",
+        "1st Capital Gaming, via MTG Compare ($9.25 shipping).", "Magic The Gathering Star Trek Play Booster Box"),
+ _prow(f"Draft Night — {_st_link}", fmt({"usd": _draft_msrp}), "$81.99",
+        "Double Infinity Gaming, via MTG Compare ($9.90 shipping).", "Magic The Gathering Star Trek Draft Night"),
+ _prow(f"Bundle — {_st_link}", fmt({"usd": _bundle_msrp}), "$39.99",
+        "Double Infinity Gaming, via MTG Compare ($9.90 shipping).", "Magic The Gathering Star Trek Bundle", amazon(nv_st)),
+ _prow(f"Commander deck (regular) — {_cmd_link}", fmt({"usd": _cmd_msrp}) + " each", "$44.99",
+        "Lowest single deck: Klingon Fury at Phantomich ($7.95 shipping). Also Landing Party $51.95, Federation Fleet $52.93, We Are the Borg $60.00.", "Magic The Gathering Star Trek Commander Deck"),
+ _prow(f"Collector's Edition Commander deck — {_cmd_link}", fmt({"usd": _ce_msrp}) + " each", "$85.00",
+        "Lowest: Klingon Fury at Vegas Singles (free shipping). Also Landing Party $134.99, Federation Fleet $159.99, We Are the Borg $160.", "Magic The Gathering Star Trek Collector Edition Commander Deck"),
  _prow(f"Collector Booster box (12 packs) — {_st_link}", fmt({"usd": _coll_box_msrp}) + f" (12 × {fmt({'usd': _cpack})})", "$449.99",
-        "Gate City Games, via MTG Compare. Keystone Games listed $455.88 on the same page.", "Magic The Gathering Star Trek Collector Booster Box"),
+        "Cadets Toys and Comics, via MTG Compare ($9.95 shipping). Just under the pack-math MSRP.", "Magic The Gathering Star Trek Collector Booster Box"),
  _prow(f"Beam Me Up Bundle — {_st_link}", fmt({"usd": _bmu_msrp}), "$99.99",
-        "4GS Games, via MTG Compare.", "Magic The Gathering Star Trek Beam Me Up Bundle"),
- _prow(f"Scene Box (Enterprise-Q) — {_st_link}", fmt({"usd": _scene_msrp}), "$33.95",
-        "Lazarus Games, via MTG Compare. Divergent Timeline was also $33.95.", "Magic The Gathering Star Trek Scene Box"),
+        "Gate City Games, via MTG Compare (shipping at checkout).", "Magic The Gathering Star Trek Beam Me Up Bundle"),
+ _prow(f"Scene Box — {_st_link}", fmt({"usd": _scene_msrp}) + " each", "$31.95",
+        "Lowest: Divergent Timeline at Poke-Collect ($9.95 shipping). Enterprise-Q was $31.99 at Gator's Card Den.", "Magic The Gathering Star Trek Scene Box"),
 ]
 st_price_html = (
- f'<h3 id="star-trek-preorder-prices">Star Trek preorder prices, Nov 3</h3>'
- + checked({"last_checked": ST_PRE_CHECKED, "source": ST_PRE_PAGE, "field_sources": {"play box": ST_PLAY_PAGE, "coolstuffinc draft night": CSI_DRAFT, "wizards": nv_st["source"]}})
- + "<p>MSRP is Wizards' price (Play Booster, Collector Booster and Bundle from the set entry; Draft Night, Beam Me Up Bundle and Scene Box from the same Wizards product list stored on that entry). "
- "A display MSRP is pack-count arithmetic: the Star Trek Play Booster Display is 30 packs, not a 36-pack display, and the Collector Booster box is 12. Both counts are in Wizards' collecting article, already stored on the set entry. "
- "Street low is the cheapest US store preorder <a href=\"" + ST_PRE_PAGE + "\" rel=nofollow>MTG Compare</a> showed on Nov 3, 2026, except the Play Booster Display, which uses the "
- f'<a href="{ST_PLAY_PAGE}" rel=nofollow>Play Booster Box page</a> fetched the same day because it was a few dollars lower. '
- "Those prices exclude shipping and tax. This table does not state a percent off.</p>"
- + "<table><tr><th>Product</th><th>MSRP</th><th>Street low, Nov 3</th><th>Where we saw the low</th><th>Check prices</th></tr>"
- + "".join(st_price_rows) + "</table>"
- + "<p><small>Footnotes, all Nov 3, 2026 unless noted. "
- f"Play Booster Display: <a href=\"{ST_PLAY_PAGE}\" rel=nofollow>MTG Compare</a> said the $117.95 Poke-Collect preorder was checked 20 minutes before we fetched the page. Shipping there was quoted at $6.71 to $9.16. "
- f"The other rows are from <a href=\"{ST_PRE_PAGE}\" rel=nofollow>MTG Compare's Star Trek preorder page</a>, which said its prices had been checked 2 hours earlier. "
- "Bundle $42.99 and Draft Night $86.99 were both Double Infinity Gaming, each with $9.90 shipping on that page. "
- f"CoolStuffInc's <a href=\"{CSI_DRAFT}\" rel=nofollow>Draft Night page</a> was Out of Stock and showed no price when we opened it. "
- "On Nov 2 that listing had shown $94.99 against the $119.99 MSRP, so $94.99 is not the Nov 3 low. "
- "Collector's Edition store lows were at the $159.99 MSRP; the $215.58 figure is the TCGplayer preorder MTG Compare printed beside Federation Fleet, not the cheapest store. "
- "MTG Compare still listed a Star Trek Beginner Box. Wizards removed that product, so it is not in this table. "
- "Check prices uses our Amazon Associates tag (mtgdrops-20) and TCGplayer Impact links. The Bundle's Amazon link is the approved product page. The other Amazon links are searches.</small></p>")
+    f'<h3 id="star-trek-preorder-prices">Star Trek preorder prices, Nov 9</h3>'
+    + checked({"last_checked": ST_PRE_CHECKED, "source": ST_PRE_PAGE, "field_sources": {"wizards": nv_st["source"]}})
+    + "<p>MSRP is Wizards' price (Play Booster, Collector Booster and Bundle from the set entry; Draft Night, Beam Me Up Bundle and Scene Box from the same Wizards product list stored on that entry). A display MSRP is pack-count arithmetic: the Star Trek Play Booster Display is 30 packs, not a 36-pack display, and the Collector Booster box is 12. Both counts are in Wizards' collecting article, already stored on the set entry. Street low is the cheapest open US store preorder <a href='" + ST_PRE_PAGE + "' rel=nofollow>MTG Compare</a> showed on Nov 9, 2026. MTG Compare's timestamp on that page was Nov 8, 2026, 6:04 PM CT. Sold-out rows were ignored. Listed street prices exclude tax; shipping, when the page quoted it, is in the Where column. This table does not state a percent off.</p>"
+    + "<table><tr><th>Product</th><th>MSRP</th><th>Street low, Nov 9</th><th>Where we saw the low</th><th>Check prices</th></tr>"
+    + "".join(st_price_rows) + "</table>"
+    + "<p><small>Footnotes, all Nov 9, 2026 unless noted. All lows are from <a href='" + ST_PRE_PAGE + "' rel=nofollow>MTG Compare's Star Trek preorder page</a>. Play Booster Display $100 at 1st Capital Gaming, $9.25 shipping. Bundle $39.99 and Draft Night $81.99 were both Double Infinity Gaming, each with $9.90 shipping. Collector Booster box $449.99 at Cadets Toys and Comics, $9.95 shipping, just under the $455.88 pack-math MSRP. Beam Me Up Bundle was $99.99 at Gate City Games, shipping at checkout. Regular Commander low is Klingon Fury $44.99 at Phantomich. Collector's Edition low is Klingon Fury $85.00 at Vegas Singles (free shipping); other CE decks were $134.99 to $160. Cheapest Scene Box is Divergent Timeline $31.95 at Poke-Collect; Enterprise-Q was $31.99 at Gator's Card Den. MTG Compare still listed a Star Trek Beginner Box. Wizards removed that product, so it is not in this table. Check prices uses our Amazon Associates tag (mtgdrops-20) and TCGplayer Impact links. The Bundle's Amazon link is the approved product page. The other Amazon links are searches.</small></p>")
 g_nov_html = (f'<h2 id="{G_NOV_ID}">What MTG to buy or preorder in November 2026</h2>'
   + checked({"last_checked": G_NOV_CHECKED, "source": nv_kit["source"], "field_sources": {"st": nv_st["source"], "ph": nv_ph["source"], "delays": nv_cmd["field_sources"]["delays"]}})
   + "<p>Four buying moments in 12 days. Here is our call on each, week by week, with Wizards' MSRPs (store prices vary). Click a product for its sources. "
-  f'Street prices for the Star Trek products are in <a href="#star-trek-preorder-prices">Star Trek preorder prices, Nov 3</a>.</p>'
+  f'Street prices for the Star Trek products are in <a href="#star-trek-preorder-prices">Star Trek preorder prices, Nov 9</a>.</p>'
   + "<table><tr><th>Date</th><th>Product</th><th>MSRP</th><th>Buy / Wait / Skip</th><th>Why</th></tr>"
   + "".join(f"<tr><td>{E(d)}</td><td>{p}</td><td>{E(m)}</td><td><b>{E(v)}</b></td><td>{E(w)}</td></tr>" for d, p, m, v, w in nv_rows) + "</table>"
   + st_price_html
@@ -1344,15 +1333,15 @@ _rf = g_r("secret-lair-chaos-vault-reality-fracture")
 G_BF_ID = "black-friday-2026"
 bf_rows = [
  (f'{plink(nv_st, "Star Trek Play Booster box")} and {plink(nv_st, "Bundle")}',
-  f"Already under MSRP before the Nov 13 release. Nov 3 store lows: Play Booster Display $117.95 (MSRP {fmt({'usd': _play_box_msrp})}) and Bundle $42.99 (MSRP {fmt({'usd': _bundle_msrp})}). See the Nov 3 price table. GamesRadar (updated Nov 2, 2026) says cuts often start in mid-November.",
+  f"Already under MSRP before the Nov 13 release. Nov 9 store lows: Play Booster Display $100 (MSRP {fmt({'usd': _play_box_msrp})}) and Bundle $39.99 (MSRP {fmt({'usd': _bundle_msrp})}). See the Nov 9 price table. GamesRadar (updated Nov 2, 2026) says cuts often start in mid-November.",
   "Wait",
   f"The set-level verdict stays: {_st_settled} This row is only about timing. Street prices are already under MSRP, so there is no need to preorder today if you can check again nearer Nov 27."),
  (f'{plink(nv_st, "Star Trek Collector Booster box")} above MSRP',
-  f"Pack-math MSRP is {fmt({'usd': _coll_box_msrp})} (12 × {fmt({'usd': _cpack})}). On Nov 3 the cheapest store preorder was $449.99, which is under that figure. This call applies when a listing is above {fmt({'usd': _coll_box_msrp})}.",
+  f"Pack-math MSRP is {fmt({'usd': _coll_box_msrp})} (12 × {fmt({'usd': _cpack})}). On Nov 9 the cheapest store preorder was $449.99, which is under that figure. This call applies when a listing is above {fmt({'usd': _coll_box_msrp})}.",
   "Skip above MSRP / Wait for singles",
   "Collector Boosters are for chase cards, not a sealed bet. Skip a box priced above MSRP and buy the singles you want after release, once prices settle."),
  (plink(nv_cmd, "Star Trek Commander decks"),
-  f"Regular decks are {fmt({'usd': _cmd_msrp})} MSRP and Collector's Editions are {fmt({'usd': _ce_msrp})} MSRP. On Nov 3 the lowest regular deck MTG Compare showed was Klingon Fury at $49.95. Collector's Edition store lows were {fmt({'usd': _ce_msrp})}, with a TCGplayer preorder at $215.58 on the Federation Fleet section.",
+  f"Regular decks are {fmt({'usd': _cmd_msrp})} MSRP and Collector's Editions are {fmt({'usd': _ce_msrp})} MSRP. On Nov 9 the lowest regular deck MTG Compare showed was Klingon Fury at $44.99. Collector's Edition store lows started at $85.00 (Klingon Fury); other CE decks were $134.99 to $160.",
   f"Settled: {_cmd_settled}. Don't pay above MSRP; expect Black Friday discounts.",
   f"Existing verdict, unchanged: {_cmd_settled}. Don't pay more than the MSRP, and expect stores to discount these decks."),
  ("Older 2026 Commander decks and beginner or starter products",
@@ -1390,17 +1379,17 @@ g_bf_frame = (
  + "<p>The calls in the table are unchanged. Here is how they apply to Commander decks, beginner and starter boxes, bundles, and older Secret Lairs.</p><ul>"
  + f"<li><b>Commander decks.</b> Older 2026 Commander decks already in stores: Wait for Black Friday. {plink(nv_cmd, 'Star Trek Commander decks')}: buy regular decks, skip Collector's Editions at markup. Don't pay above MSRP, and expect Black Friday discounts.{_bf_cmd_extra}</li>"
  + "<li><b>Beginner and starter boxes.</b> Beginner or starter products already in stores from earlier in 2026: Wait for Black Friday. Wizards removed the Star Trek Beginner Box, so a leftover listing of that box is not a product we are telling you to buy.</li>"
- + f"<li><b>Bundles.</b> {plink(nv_st, 'Star Trek Bundle')}: Wait. On Nov 3 a store listed it at $42.99, under the {fmt({'usd': _bundle_msrp})} MSRP.{_bf_bundle_extra}</li>"
+ + f"<li><b>Bundles.</b> {plink(nv_st, 'Star Trek Bundle')}: Wait. On Nov 9 a store listed it at $39.99, under the {fmt({'usd': _bundle_msrp})} MSRP.{_bf_bundle_extra}</li>"
  + f"<li><b>Older Secret Lairs.</b> Not discounted at MagicSecretLair.com. {plink(nv_ph, 'Set Phasers to Superdrop')} on Nov 9: {_ph_settled} A drop that has already sold out at the official store: {_sold_settled}{_bf_corn}</li>"
  + "</ul>"
- + f'<p>Compare a percent-off tag with what the box costs on an ordinary day. For Commander decks, check {retail_links("Magic The Gathering Commander Deck")}. The <a href="#star-trek-preorder-prices">Nov 3 Star Trek table</a> has a Check prices column for that set. Amazon links use the mtgdrops-20 tag. TCGplayer links are Impact affiliate links.</p>')
+ + f'<p>Compare a percent-off tag with what the box costs on an ordinary day. For Commander decks, check {retail_links("Magic The Gathering Commander Deck")}. The <a href="#star-trek-preorder-prices">Nov 9 Star Trek table</a> has a Check prices column for that set. Amazon links use the mtgdrops-20 tag. TCGplayer links are Impact affiliate links.</p>')
 g_bf_html = (
  f'<h2 id="{G_BF_ID}">Black Friday 2026: buy now or wait?</h2>'
  + checked({"last_checked": ST_PRE_CHECKED, "source": GR_BF, "field_sources": {"mtg compare": ST_PRE_PAGE, "play box": ST_PLAY_PAGE}})
  + "<p><b>Should you buy MTG now or wait for Black Friday 2026?</b> For most sealed Magic, the call is to wait. "
  "Black Friday is Nov 27, 2026, and Cyber Monday is Nov 30, 2026. "
  f'<a href="{GR_BF}" rel=nofollow>GamesRadar</a> (updated Nov 2, 2026) says the official Magic deals start on Nov 27, with price cuts often showing up from mid-November, and that discounts usually continue through Cyber Monday. '
- f"Star Trek Play Booster boxes and Bundles were already listed below MSRP at some stores before the Nov 13 release (see <a href=\"#star-trek-preorder-prices\">the Nov 3 price table</a>). "
+ f"Star Trek Play Booster boxes and Bundles were already listed below MSRP at some stores before the Nov 13 release (see <a href=\"#star-trek-preorder-prices\">the Nov 9 price table</a>). "
  f"Secret Lair is the exception: drops are not discounted at MagicSecretLair.com, so buy Set Phasers to Superdrop on Nov 9 only if you really like Star Trek. Last checked: Nov 3, 2026.</p>"
  + "<h3>When MTG Black Friday deals start</h3>"
  + f'<p>The sale date is Friday, Nov 27, 2026. The Monday after it, Cyber Monday, is Nov 30, 2026. '
@@ -1420,7 +1409,7 @@ g_bf_html = (
  + f"<li>Star Trek Collector Boosters, Bundles, Beam Me Up Bundles and Draft Night may arrive after Nov 13 in Europe or Asia-Pacific, and the Commander decks may arrive after Nov 13 in North America (Wizards, Oct 16). Read the ship date on a preorder before you treat it as a gift that will be here in November.</li>"
  + "</ul>"
  + "<h3>Where to check prices</h3>"
- + f'<p>Use the Check prices links in the <a href="#star-trek-preorder-prices">Nov 3 Star Trek table</a> (Amazon tag mtgdrops-20, TCGplayer Impact). '
+ + f'<p>Use the Check prices links in the <a href="#star-trek-preorder-prices">Nov 9 Star Trek table</a> (Amazon tag mtgdrops-20, TCGplayer Impact). '
  f'Or start from <a href="{E(tcg("Magic The Gathering Star Trek"))}" rel="sponsored nofollow">TCGplayer</a> and '
  f'<a href="{E(amazon(nv_st))}" rel="sponsored nofollow noopener" target="_blank">Amazon</a>. '
  "We don't track live deal prices. The street lows above are a dated check, not a feed, and a store can change them the same day.</p>")
@@ -1451,13 +1440,13 @@ g_faq += [
   "Walmart Early Black Friday Deals are Nov 12–15. Walmart Black Friday Deals are Nov 23–29 (online at 12:01 a.m. ET; in stores Nov 12 and Nov 27 at 6 a.m. local; Walmart+ early access on Nov 12 and Nov 23). Walmart's Cyber Monday is Nov 30 – Dec 2. "
   "Amazon has not announced US Black Friday dates yet."),
  ("Should I wait for Black Friday to buy MTG Star Trek?",
-  f"Wait on a Star Trek Play Booster box or Bundle. On Nov 3, 2026, MTG Compare showed store preorders under MSRP ($117.95 for a Play Booster Display against the {fmt({'usd': _play_box_msrp})} pack-math MSRP, and $42.99 for a Bundle against {fmt({'usd': _bundle_msrp})}). The set-level verdict is unchanged: {_st_settled} Skip a Collector Booster box priced above {fmt({'usd': _coll_box_msrp})} and wait for singles. Commander stays: {_cmd_settled}. Don't pay above MSRP, and expect Black Friday discounts."),
+  f"Wait on a Star Trek Play Booster box or Bundle. On Nov 9, 2026, MTG Compare showed store preorders under MSRP ($100 for a Play Booster Display against the {fmt({'usd': _play_box_msrp})} pack-math MSRP, and $39.99 for a Bundle against {fmt({'usd': _bundle_msrp})}). The set-level verdict is unchanged: {_st_settled} Skip a Collector Booster box priced above {fmt({'usd': _coll_box_msrp})} and wait for singles. Commander stays: {_cmd_settled}. Don't pay above MSRP, and expect Black Friday discounts."),
  ("Are Secret Lair drops discounted on Black Friday?",
   f"No. Secret Lair drops are not discounted for Black Friday at MagicSecretLair.com. Set Phasers to Superdrop goes on sale Nov 9, 2026: {_ph_settled} For a drop that has already sold out at the official store: {_sold_settled}"),
  ("What MTG products are worth buying on Black Friday?",
   "Older 2026 Commander decks and beginner or starter products already in stores, where GamesRadar expects about $10 off sticker if previous years hold. A Star Trek Bundle or Play Booster box that is still under MSRP can be the Black Friday buy if you wanted one for drafting. Skip a Collector Booster box above MSRP, skip sealed product bought to speculate, and do not count on a Secret Lair discount at MagicSecretLair.com."),
  ("Is it better to buy MTG Commander decks on Black Friday?",
-  f"For Commander decks that have been out for a few months, yes, wait for Black Friday. GamesRadar (updated Nov 2, 2026) says those decks have typically been about $10 off sticker, or more when the deck is older. For Star Trek Commander the settled verdict is: {_cmd_settled}. Don't pay above the {fmt({'usd': _cmd_msrp})} or {fmt({'usd': _ce_msrp})} MSRP, and expect discounts. On Nov 3, MTG Compare already showed Klingon Fury at $49.95."),
+  f"For Commander decks that have been out for a few months, yes, wait for Black Friday. GamesRadar (updated Nov 2, 2026) says those decks have typically been about $10 off sticker, or more when the deck is older. For Star Trek Commander the settled verdict is: {_cmd_settled}. Don't pay above the {fmt({'usd': _cmd_msrp})} or {fmt({'usd': _ce_msrp})} MSRP, and expect discounts. On Nov 9, MTG Compare already showed Klingon Fury at $44.99."),
 ]
 g_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › <a href="{BASE}/guides/">Guides</a> › Fall/Holiday 2026</nav><h1>{E(G_H1)}</h1>'
   f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
@@ -1548,10 +1537,67 @@ st_faq = [
  ("Where do you find the signed Star Trek cards?", "Only in Collector Boosters. There are 7 different actor-signed headliner cards, about 250 copies of each, in Collector Boosters of any language (the signed cards are always in English). Wizards has not published per-pack odds."),
  ("Is there a Star Trek Beginner Box?", "Not any more: Wizards removed the Beginner Box from its Star Trek product article after the product was cancelled."),
  ("What should I buy from MTG Star Trek?", f"Our verdict on the set: {st_vs.get(st_set.get('verdict'), 'no verdict yet')}, for {st_set.get('gift_for', 'drafting and Trek fans')}. On the Commander decks: {st_vs.get(st_cmd.get('verdict'), 'no verdict yet')}, for {st_cmd.get('gift_for', 'Commander players')}."),
+ ("What should I buy from Star Trek at today's street prices?",
+  "Proposed, pending owner sign-off, based on the cheapest open US preorders MTG Compare showed on Nov 9, 2026. "
+  "Proposed Buy: Play Boosters ($4.00 versus the $6.99 MSRP), the Play Booster box ($100 versus the $209.70 pack-math MSRP), the Bundle ($39.99 versus the $69.99 MSRP), Draft Night ($81.99 versus the $119.99 MSRP), and regular Commander decks at or below the $74.99 MSRP (lowest $44.99). "
+  "Proposed Buy the Beam Me Up Bundle at the $99.99 MSRP; Wait above that. "
+  "Proposed Skip Collector Boosters above the $37.99 MSRP (street $39.99) and Skip the Collector Booster box as sealed speculation unless you are chasing signed headliners (street $449.99, just under the $455.88 pack-math MSRP). "
+  "Proposed Wait on Scene Boxes — they are optional display products, and street lows are under the $41.99 MSRP. "
+  "Proposed Skip Collector's Edition Commander decks above the $159.99 MSRP; some street lows are under MSRP, but that is not a new per-deck buy pick. "
+  "The published set and Commander verdicts are unchanged. The cancelled Beginner Box is not in the table."),
 ]
 if st_set.get("prerelease_verdict"): st_faq.append(("Should I buy a Star Trek prerelease kit?", st_set["prerelease_verdict"]))
 st_pre = (f'<div class=card><h3 id="prerelease-kits">Prerelease kits</h3><p><span class=t>Buy / Wait / Skip</span> {E(st_set["prerelease_verdict"])}</p>'
           f'<p><small>Prerelease pack contents and dates per {st_a("collect")}.</small></p>{checked(st_set, with_sources=False)}</div>') if st_set.get("prerelease_verdict") else ""
+ST_SKU_ID = "per-sku-wait-skip"
+st_sku_rows = [
+ ("Play Booster", fmt({"usd": _pb_usd}), "$4.00",
+  "Collector Store, via MTG Compare (shipping at checkout).",
+  "Proposed Buy at or below MSRP"),
+ ("Play Booster box (30 packs)", fmt({"usd": _play_box_msrp}) + f" (30 × {fmt({'usd': _pb_usd})})", "$100.00",
+  "1st Capital Gaming, via MTG Compare ($9.25 shipping).",
+  "Proposed Buy — well under pack-math MSRP"),
+ ("Bundle", fmt({"usd": _bundle_msrp}), "$39.99",
+  "Double Infinity Gaming, via MTG Compare ($9.90 shipping).",
+  "Proposed Buy at or below MSRP"),
+ ("Beam Me Up Bundle", fmt({"usd": _bmu_msrp}), "$99.99",
+  "Gate City Games, via MTG Compare (shipping at checkout).",
+  "Proposed Buy at $99.99 MSRP; Wait above MSRP"),
+ ("Draft Night", fmt({"usd": _draft_msrp}), "$81.99",
+  "Double Infinity Gaming, via MTG Compare ($9.90 shipping).",
+  "Proposed Buy at or below MSRP"),
+ ("Collector Booster", fmt({"usd": _cpack}), "$39.99",
+  "Constellation Collective Sacramento, via MTG Compare (shipping at checkout).",
+  "Proposed Skip above MSRP"),
+ ("Collector Booster box (12 packs)", fmt({"usd": _coll_box_msrp}) + f" (12 × {fmt({'usd': _cpack})})", "$449.99",
+  "Cadets Toys and Comics, via MTG Compare ($9.95 shipping). Just under pack-math MSRP.",
+  "Proposed Skip as sealed speculation unless you are chasing signed headliners"),
+ ("Scene Box (each)", fmt({"usd": _scene_msrp}), "$31.95",
+  "Lowest: Divergent Timeline at Poke-Collect ($9.95 shipping). Enterprise-Q was $31.99 at Gator's Card Den ($10.75 shipping).",
+  "Proposed Wait — optional display product, not the main way into the set"),
+ ("Commander deck (regular, each)", fmt({"usd": _cmd_msrp}), "$44.99",
+  "Lowest: Klingon Fury at Phantomich ($7.95 shipping). Also Landing Party $51.95 (Poke-Collect), Federation Fleet $52.93 (Cards N MO), We Are the Borg $60.00 (Littleroot Games — Dublin). No per-deck pick.",
+  "Proposed Buy at or below MSRP"),
+ ("Collector's Edition Commander deck (each)", fmt({"usd": _ce_msrp}), "$85.00",
+  "Lowest: Klingon Fury at Vegas Singles (free shipping). Also Landing Party $134.99 (Blue Mist), Federation Fleet $159.99 (Black Vault Gaming), We Are the Borg $160 (Dynamic Card Collectors). No new per-deck buy pick.",
+  "Proposed Skip above $159.99 MSRP"),
+]
+st_sku_html = (
+ f'<h2 id="{ST_SKU_ID}">Per-SKU Wait/Skip (street prices, Nov 9)</h2>'
+ + checked({"last_checked": ST_PRE_CHECKED, "source": ST_PRE_PAGE, "field_sources": {"wizards": st_set["source"]}})
+ + "<p><b>These per-SKU calls are Proposed until the owner approves them.</b> "
+ "They do not change the published set verdict (Buy for drafting and Trek fans; skip sealed speculation) "
+ "or the published Commander verdict (buy regular decks; skip Collector's Editions at markup). "
+ "Street lows are the cheapest open US preorders "
+ f'<a href="{ST_PRE_PAGE}" rel=nofollow>MTG Compare</a> showed on Nov 9, 2026 '
+ "(the page timestamp was Nov 8, 2026, 6:04 PM CT). Sold-out rows were ignored. "
+ "Prices exclude tax; shipping is noted where the page quoted it. This table does not state a percent off. "
+ "The cancelled Beginner Box is omitted even if a store still lists it. "
+ f'Walmart Early Black Friday is Nov 12–15; see <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html#black-friday-2026">Black Friday 2026: buy now or wait</a> for retailer windows. Amazon has not announced US Black Friday dates.</p>'
+ + "<table><tr><th>Product</th><th>MSRP</th><th>Street low, Nov 9</th><th>Where we saw the low</th><th>Proposed call</th></tr>"
+ + "".join(f"<tr><td>{E(n)}</td><td>{E(m)}</td><td>{E(s)}</td><td>{E(w)}</td><td><b>{E(c)}</b></td></tr>" for n, m, s, w, c in st_sku_rows)
+ + "</table>"
+)
 st_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › <a href="{BASE}/guides/">Guides</a> › Star Trek</nav><h1>{E(ST_H1)}</h1>'
   f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
   f'<p><b>Last updated:</b> {tdate()} · release {nice_date(st_set)} ({E(st_set["status"])})</p>'
@@ -1577,6 +1623,7 @@ st_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a>
   + f'<div class=card><h3><a href="{BASE}/p/{st_cmd["slug"]}.html">{E(st_cmd["name"])}</a></h3><p>{vtag(st_cmd)}{E(st_cmd["note"])}</p>' + (f'<p><b>Good gift for:</b> {E(st_cmd["gift_for"])}.</p>' if st_cmd.get("gift_for") else "") + f'{amz_btn(st_cmd)}</div>'
   "<h3>Value at MSRP</h3><p>Simple arithmetic from Wizards' MSRPs, so you can compare the boxes:</p><ul>" + "".join(f"<li><b>{E(a)}:</b> {E(b)}</li>" for a, b in st_math) + "</ul>"
   "<p>If you want to collect the signed cards or the surge foil Booster Fun, that is Collector Booster territory; for drafting or a first taste of the set, Play Boosters, a Bundle or Draft Night are the cheaper way in. Prices in stores often fall after release, so preordering mainly makes sense if you want the product on day one.</p>"
+  + st_sku_html +
   f'<p class=disc><small>{E(DISCLOSURE)}</small></p>'
   "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in st_faq)
   + f'<p>More releases: <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a>, the <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>, the <a href="{BASE}/secret-lair.html">Secret Lair drop schedule</a> and the full <a href="{BASE}/">release calendar</a>.</p>'
@@ -1596,6 +1643,15 @@ st_ld = [
  {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in st_faq]},
 ]
 page(ST_TITLE, ST_DESC, st_body, ST_SLUG, st_ld)
+_st_html = open(os.path.join("dist", ST_SLUG)).read()
+_assert_no_banned(_st_html)
+_assert_faq_match(_st_html, "<h2>FAQ</h2>")
+if "Proposed Buy at or below MSRP" not in _st_html or "Proposed Skip above $159.99 MSRP" not in _st_html:
+    raise SystemExit("Star Trek guide is missing Proposed per-SKU calls")
+if "These per-SKU calls are Proposed until the owner approves them." not in _st_html:
+    raise SystemExit("Star Trek guide is missing the Proposed disclaimer")
+if "$100.00" not in open(os.path.join("dist", "guides/mtg-releases-fall-holiday-2026.html")).read():
+    raise SystemExit("fall guide street-low table was not refreshed to the Nov 9 Play box low")
 # ---- Guide 3: MTG 2027 release schedule (dates/notes from releases.json; set-count and MagicCon facts from Wizards' Jul 17, 2026 announcement) ----
 Y_SRC = "https://magic.wizards.com/en/news/announcements/everything-announced-for-the-magic-multiverse-in-2027"
 Y_SLUG = "guides/mtg-2027-release-schedule.html"; y_url = url(Y_SLUG)
