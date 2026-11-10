@@ -938,7 +938,7 @@ for r in data:
         hubl += f'<p>Planning your Star Trek buys? Read the <a href="{BASE}/guides/star-trek-mtg-release-guide.html">MTG Star Trek release guide</a>: every product, MSRP, Commander deck and key date.</p>'
         hubl += (f'<p>A dated per-SKU Wait/Skip table of US street prices (checked Nov 9, 2026) is on the '
                  f'<a href="{BASE}/guides/star-trek-mtg-release-guide.html#per-sku-wait-skip">Star Trek release guide</a>. '
-                 'The per-SKU calls there are Proposed until approved. The set and Commander verdicts on this page are unchanged.</p>')
+                 'The set and Commander verdicts on this page are unchanged.</p>')
     facts = ("<h2>Key facts</h2><ul>" + "".join(f"<li>{E(f)}</li>" for f in r["facts"]) + "</ul>") if r.get("facts") else ""
     ti = TYPE_INFO.get(r["type"]); tinfo = f"<h2>{E(ti[0])}</h2><p>{E(ti[1])}</p>" if ti else ""
     howto = f"<h2>{HOWTO[0]}</h2><p>{E(HOWTO[1])}</p>" if not r.get("placeholder") and (not dated(r) or r["release_date"] > today or r.get("delayed")) else ""
@@ -1538,12 +1538,12 @@ st_faq = [
  ("Is there a Star Trek Beginner Box?", "Not any more: Wizards removed the Beginner Box from its Star Trek product article after the product was cancelled."),
  ("What should I buy from MTG Star Trek?", f"Our verdict on the set: {st_vs.get(st_set.get('verdict'), 'no verdict yet')}, for {st_set.get('gift_for', 'drafting and Trek fans')}. On the Commander decks: {st_vs.get(st_cmd.get('verdict'), 'no verdict yet')}, for {st_cmd.get('gift_for', 'Commander players')}."),
  ("What should I buy from Star Trek at today's street prices?",
-  "Proposed, pending owner sign-off, based on the cheapest open US preorders MTG Compare showed on Nov 9, 2026. "
-  "Proposed Buy: Play Boosters ($4.00 versus the $6.99 MSRP), the Play Booster box ($100 versus the $209.70 pack-math MSRP), the Bundle ($39.99 versus the $69.99 MSRP), Draft Night ($81.99 versus the $119.99 MSRP), and regular Commander decks at or below the $74.99 MSRP (lowest $44.99). "
-  "Proposed Buy the Beam Me Up Bundle at the $99.99 MSRP; Wait above that. "
-  "Proposed Skip Collector Boosters above the $37.99 MSRP (street $39.99) and Skip the Collector Booster box as sealed speculation unless you are chasing signed headliners (street $449.99, just under the $455.88 pack-math MSRP). "
-  "Proposed Wait on Scene Boxes — they are optional display products, and street lows are under the $41.99 MSRP. "
-  "Proposed Skip Collector's Edition Commander decks above the $159.99 MSRP; some street lows are under MSRP, but that is not a new per-deck buy pick. "
+  "Based on the cheapest open US preorders MTG Compare showed on Nov 9, 2026. "
+  "Buy: Play Boosters ($4.00 versus the $6.99 MSRP), the Play Booster box ($100 versus the $209.70 pack-math MSRP), the Bundle ($39.99 versus the $69.99 MSRP), Draft Night ($81.99 versus the $119.99 MSRP), and regular Commander decks at or below the $74.99 MSRP (lowest $44.99). "
+  "Buy the Beam Me Up Bundle at the $99.99 MSRP; Wait above that. "
+  "Skip Collector Boosters above the $37.99 MSRP (street $39.99) and Skip the Collector Booster box as sealed speculation unless you are chasing signed headliners (street $449.99, just under the $455.88 pack-math MSRP). "
+  "Wait on Scene Boxes — they are optional display products, and street lows are under the $41.99 MSRP. "
+  "Skip Collector's Edition Commander decks above the $159.99 MSRP; some street lows are under MSRP, but that is not a new per-deck buy pick. "
   "The published set and Commander verdicts are unchanged. The cancelled Beginner Box is not in the table."),
 ]
 if st_set.get("prerelease_verdict"): st_faq.append(("Should I buy a Star Trek prerelease kit?", st_set["prerelease_verdict"]))
@@ -1553,40 +1553,39 @@ ST_SKU_ID = "per-sku-wait-skip"
 st_sku_rows = [
  ("Play Booster", fmt({"usd": _pb_usd}), "$4.00",
   "Collector Store, via MTG Compare (shipping at checkout).",
-  "Proposed Buy at or below MSRP"),
+  "Buy at or below MSRP"),
  ("Play Booster box (30 packs)", fmt({"usd": _play_box_msrp}) + f" (30 × {fmt({'usd': _pb_usd})})", "$100.00",
   "1st Capital Gaming, via MTG Compare ($9.25 shipping).",
-  "Proposed Buy — well under pack-math MSRP"),
+  "Buy"),
  ("Bundle", fmt({"usd": _bundle_msrp}), "$39.99",
   "Double Infinity Gaming, via MTG Compare ($9.90 shipping).",
-  "Proposed Buy at or below MSRP"),
+  "Buy at or below MSRP"),
  ("Beam Me Up Bundle", fmt({"usd": _bmu_msrp}), "$99.99",
   "Gate City Games, via MTG Compare (shipping at checkout).",
-  "Proposed Buy at $99.99 MSRP; Wait above MSRP"),
+  "Buy at MSRP, Wait above"),
  ("Draft Night", fmt({"usd": _draft_msrp}), "$81.99",
   "Double Infinity Gaming, via MTG Compare ($9.90 shipping).",
-  "Proposed Buy at or below MSRP"),
+  "Buy at or below MSRP"),
  ("Collector Booster", fmt({"usd": _cpack}), "$39.99",
   "Constellation Collective Sacramento, via MTG Compare (shipping at checkout).",
-  "Proposed Skip above MSRP"),
+  "Skip above MSRP"),
  ("Collector Booster box (12 packs)", fmt({"usd": _coll_box_msrp}) + f" (12 × {fmt({'usd': _cpack})})", "$449.99",
   "Cadets Toys and Comics, via MTG Compare ($9.95 shipping). Just under pack-math MSRP.",
-  "Proposed Skip as sealed speculation unless you are chasing signed headliners"),
+  "Skip as speculation"),
  ("Scene Box (each)", fmt({"usd": _scene_msrp}), "$31.95",
   "Lowest: Divergent Timeline at Poke-Collect ($9.95 shipping). Enterprise-Q was $31.99 at Gator's Card Den ($10.75 shipping).",
-  "Proposed Wait — optional display product, not the main way into the set"),
+  "Wait"),
  ("Commander deck (regular, each)", fmt({"usd": _cmd_msrp}), "$44.99",
   "Lowest: Klingon Fury at Phantomich ($7.95 shipping). Also Landing Party $51.95 (Poke-Collect), Federation Fleet $52.93 (Cards N MO), We Are the Borg $60.00 (Littleroot Games — Dublin). No per-deck pick.",
-  "Proposed Buy at or below MSRP"),
+  "Buy at or below MSRP"),
  ("Collector's Edition Commander deck (each)", fmt({"usd": _ce_msrp}), "$85.00",
   "Lowest: Klingon Fury at Vegas Singles (free shipping). Also Landing Party $134.99 (Blue Mist), Federation Fleet $159.99 (Black Vault Gaming), We Are the Borg $160 (Dynamic Card Collectors). No new per-deck buy pick.",
-  "Proposed Skip above $159.99 MSRP"),
+  "Skip above $159.99"),
 ]
 st_sku_html = (
  f'<h2 id="{ST_SKU_ID}">Per-SKU Wait/Skip (street prices, Nov 9)</h2>'
  + checked({"last_checked": ST_PRE_CHECKED, "source": ST_PRE_PAGE, "field_sources": {"wizards": st_set["source"]}})
- + "<p><b>These per-SKU calls are Proposed until the owner approves them.</b> "
- "They do not change the published set verdict (Buy for drafting and Trek fans; skip sealed speculation) "
+ + "<p>These per-SKU calls do not change the published set verdict (Buy for drafting and Trek fans; skip sealed speculation) "
  "or the published Commander verdict (buy regular decks; skip Collector's Editions at markup). "
  "Street lows are the cheapest open US preorders "
  f'<a href="{ST_PRE_PAGE}" rel=nofollow>MTG Compare</a> showed on Nov 9, 2026 '
@@ -1594,7 +1593,7 @@ st_sku_html = (
  "Prices exclude tax; shipping is noted where the page quoted it. This table does not state a percent off. "
  "The cancelled Beginner Box is omitted even if a store still lists it. "
  f'Walmart Early Black Friday is Nov 12–15; see <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html#black-friday-2026">Black Friday 2026: buy now or wait</a> for retailer windows. Amazon has not announced US Black Friday dates.</p>'
- + "<table><tr><th>Product</th><th>MSRP</th><th>Street low, Nov 9</th><th>Where we saw the low</th><th>Proposed call</th></tr>"
+ + "<table><tr><th>Product</th><th>MSRP</th><th>Street low, Nov 9</th><th>Where we saw the low</th><th>Call</th></tr>"
  + "".join(f"<tr><td>{E(n)}</td><td>{E(m)}</td><td>{E(s)}</td><td>{E(w)}</td><td><b>{E(c)}</b></td></tr>" for n, m, s, w, c in st_sku_rows)
  + "</table>"
 )
@@ -1646,10 +1645,16 @@ page(ST_TITLE, ST_DESC, st_body, ST_SLUG, st_ld)
 _st_html = open(os.path.join("dist", ST_SLUG)).read()
 _assert_no_banned(_st_html)
 _assert_faq_match(_st_html, "<h2>FAQ</h2>")
-if "Proposed Buy at or below MSRP" not in _st_html or "Proposed Skip above $159.99 MSRP" not in _st_html:
-    raise SystemExit("Star Trek guide is missing Proposed per-SKU calls")
-if "These per-SKU calls are Proposed until the owner approves them." not in _st_html:
-    raise SystemExit("Star Trek guide is missing the Proposed disclaimer")
+if "Proposed" in _st_html:
+    raise SystemExit("Proposed copy still on the Star Trek guide")
+if "Buy at or below MSRP" not in _st_html or "Skip above $159.99" not in _st_html:
+    raise SystemExit("Star Trek guide is missing published per-SKU calls")
+if "street prices, Nov 9" not in _st_html or "mtgcompare.app" not in _st_html:
+    raise SystemExit("Star Trek guide is missing the Nov 9 MTG Compare source note")
+for _slug in ("star-trek", "star-trek-commander"):
+    _phtml = open(os.path.join("dist", f"p/{_slug}.html")).read()
+    if "Proposed" in _phtml:
+        raise SystemExit("Proposed copy still on /p/" + _slug + ".html")
 if "$100.00" not in open(os.path.join("dist", "guides/mtg-releases-fall-holiday-2026.html")).read():
     raise SystemExit("fall guide street-low table was not refreshed to the Nov 9 Play box low")
 # ---- Guide 3: MTG 2027 release schedule (dates/notes from releases.json; set-count and MagicCon facts from Wizards' Jul 17, 2026 announcement) ----
