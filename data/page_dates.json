@@ -9,15 +9,15 @@
  },
  "guides/mtg-releases-fall-holiday-2026.html": {
   "date": "2026-11-16",
-  "hash": "aa07e31ec32d6282"
+  "hash": "545beddfffd3288d"
  },
  "guides/star-trek-mtg-release-guide.html": {
   "date": "2026-11-16",
-  "hash": "fb4eaae17db9cf61"
+  "hash": "d608c36be872f9c1"
  },
  "index.html": {
   "date": "2026-11-16",
-  "hash": "43368f0d7bc11c08"
+  "hash": "0c99137c646c97a6"
  },
  "newsletter.html": {
   "date": "2026-10-23",
@@ -25,19 +25,19 @@
  },
  "p/countdown-kit-marvels-history-of-heroes.html": {
   "date": "2026-11-16",
-  "hash": "a99ddcad6b41cfc8"
+  "hash": "abba12fab279ae2c"
  },
  "p/kamigawa-titanbreach-commander.html": {
-  "date": "2026-10-31",
-  "hash": "6786dad8254ad15b"
+  "date": "2026-11-16",
+  "hash": "02292f1a1bd1a8ac"
  },
  "p/kamigawa-titanbreach.html": {
   "date": "2026-10-31",
   "hash": "d9c379946791aa80"
  },
  "p/marvel-darkhold-destiny-commander.html": {
-  "date": "2026-11-03",
-  "hash": "2e6b1206b9102b63"
+  "date": "2026-11-16",
+  "hash": "2359ef55e3578d4f"
  },
  "p/marvel-darkhold-destiny.html": {
   "date": "2026-11-03",
@@ -49,7 +49,7 @@
  },
  "p/nauctis-commander.html": {
   "date": "2026-11-16",
-  "hash": "37463e432003d790"
+  "hash": "6d079592841de7c7"
  },
  "p/nauctis-the-sunken-realm.html": {
   "date": "2026-11-16",
@@ -93,19 +93,19 @@
  },
  "p/secret-lair-star-trek-set-phasers-superdrop.html": {
   "date": "2026-11-16",
-  "hash": "d1311c9546a66077"
+  "hash": "4acdc0b4c95d90d1"
  },
  "p/secret-lair-strange-school.html": {
   "date": "2026-11-16",
   "hash": "023757400430d04b"
  },
  "p/spider-mania-commander.html": {
-  "date": "2026-11-03",
-  "hash": "afcb178a4363150d"
+  "date": "2026-11-16",
+  "hash": "fb8a3a73989f972c"
  },
  "p/star-trek-commander.html": {
   "date": "2026-11-16",
-  "hash": "08ba93cc3cd6c4ef"
+  "hash": "44f2d10acef06245"
  },
  "p/star-trek.html": {
   "date": "2026-11-16",
@@ -129,7 +129,7 @@
  },
  "secret-lair.html": {
   "date": "2026-11-16",
-  "hash": "fba3f1ebd42c6a04"
+  "hash": "1107d59069b553c2"
  },
  "sponsor.html": {
   "date": "2026-10-31",

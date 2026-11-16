@@ -211,7 +211,7 @@
     "type": "Secret Lair",
     "release_date": "2026-11-09",
     "status": "confirmed",
-    "window": "On sale since Nov 9, 2026, 9 AM PT / 12 PM ET (pre-queue from 8 AM PT), only at MagicSecretLair.com · while supplies last · one foil Return of the Wildspeaker as \"Transporter Boondoggle\" promo for every $199.99 spent, while supplies last",
+    "window": "On sale since Nov 9, 2026, 9 AM PT / 12 PM ET (pre-queue from 8 AM PT), only at MagicSecretLair.com · while supplies last · one foil Return of the Wildspeaker as \"Transporter Boondoggle\" promo for every $199.99 spent, while supplies last. Dec 16, 2026 is the US release and ship date, not a new sale. US store release Dec 16, 2026; expected shipping Dec 17, 2026 – Mar 17, 2027 (EU/UK release Jan 25, 2027; shipping Jan 26, 2027 – Apr 26, 2027), per the Secret Lair shipping-status page",
     "source": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop",
     "note": "6 Star Trek drops at $29.99 non-foil / $39.99 foil each (Wizards), on sale Nov 9: Beam Me Up (4 reversible blink cards incl. Momentary Blink), KHAAAAAAAAN (6 Wrath of Khan cards incl. Buried Alive, Genesis Wave), Lower Decks (Thrasios and Silas Renn's Secret Lair debut, Weatherlight), tlhIngan maH (5 reversible English/Klingon red cards incl. Seething Song), New Worlds (10 basic lands by Alayna Danner), and Assimilation (5 Borg-themed cards incl. Hive Mind, Gix, and K'rrik). Buy only if you really like Star Trek; otherwise skip. Fan-collectible and theme play, not a speculative pickup.",
     "prices": [
@@ -316,7 +316,8 @@
       "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop",
       "bonus card": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop",
       "window": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop",
-      "store_offer": "https://secretlair.wizards.com/us/en/product/1255841/secret-lair-x-star-trek-assimilation"
+      "store_offer": "https://secretlair.wizards.com/us/en/product/1255841/secret-lair-x-star-trek-assimilation",
+      "shipping": "https://secretlair-support.wizards.com/hc/en-us/articles/5149533669652-Secret-Lair-Production-and-Shipping-Status"
     },
     "short_name": "Star Trek Superdrop",
     "verdict": "buy",
@@ -511,9 +512,9 @@
     "name": "Star Trek Commander Decks (Federation Fleet, Landing Party, Klingon Fury, We Are the Borg)",
     "type": "Commander Precon",
     "release_date": "2026-11-13",
-    "window": "Released Nov 13, 2026. Wizards (Nov 5): Commander decks delayed in North America and may arrive after the Nov 13 release; English decks in Europe may also arrive after Nov 13; French/German decks may arrive after Prerelease",
+    "window": "Released Nov 13, 2026. Per Wizards' Nov 5, 2026 update, North American Commander decks may ship or arrive after Nov 13; English decks in Europe may also arrive after Nov 13; French/German decks may arrive after Prerelease",
     "source": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
-    "note": "Four decks at $74.99, Collector's Editions $159.99 MSRP. NerdSnack reports regular decks preordering near MSRP and Collector's Editions well above it — buy regular, skip CE at markup. Heads-up: in North America the decks may not be on shelves on Nov 13 (Wizards, Nov 5), so check your preorder's ship date.",
+    "note": "Four decks at $74.99, Collector's Editions $159.99 MSRP. NerdSnack reports regular decks preordering near MSRP and Collector's Editions well above it — buy regular, skip CE at markup. Heads-up: per Wizards' Nov 5, 2026 update, North American decks may ship or arrive after Nov 13. Check your retailer or preorder ship date.",
     "status": "confirmed",
     "amazon_query": "Star Trek Commander Deck MTG",
     "prices": [
@@ -563,7 +564,7 @@
       "face commanders and colors": "https://magic.wizards.com/en/news/announcements/star-trek-commander-decklists",
       "decklists": "https://magic.wizards.com/en/news/announcements/star-trek-commander-decklists"
     },
-    "last_checked": "2026-11-06",
+    "last_checked": "2026-11-16",
     "amazon_asin": "B0H6H4PL4G",
     "amazon_evidence": {
       "asin": "B0H6H4PL4G",

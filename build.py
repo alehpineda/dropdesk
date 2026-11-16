@@ -365,7 +365,7 @@ def related(r):
     return picked[:max(4, len(sib) + len(univ))]
 TYPE_INFO = {
  "Secret Lair": ("What is a Secret Lair drop?", "Secret Lair is Wizards of the Coast's direct-to-fan line of limited Magic products, sold mainly at MagicSecretLair.com. Most drops are small sets of cards with alternate art, often reprints, sold for a limited time or while supplies last, and not restocked once they end. Cards are tournament-legal wherever the original card is legal. Because supply is limited, prices on the secondary market can move quickly in either direction after a drop closes."),
- "Commander Precon": ("What is a Commander precon?", "A Commander precon (preconstructed deck) is a ready-to-play 100-card deck for Commander, Magic's most popular multiplayer format. Each deck is built around a legendary face commander, usually comes with tokens and a deck box, and can be played straight out of the box or used as a base to upgrade. Precons typically include a mix of new-to-Magic cards and reprints, so many players buy them both to play and for specific singles."),
+ "Commander Precon": ("What is a Commander precon?", "A Commander precon (preconstructed deck) is a ready-to-play 100-card deck for Commander (also called EDH), Magic's most popular multiplayer format. Each deck is built around a legendary face commander, usually comes with tokens and a deck box, and can be played straight out of the box or used as a base to upgrade. Precons typically include a mix of new-to-Magic cards and reprints, so many players buy them both to play and for specific singles."),
  "Universes Beyond": ("What is Universes Beyond?", "Universes Beyond is the Magic: The Gathering line that brings other franchises (films, TV, games and comics) into Magic cards. Some Universes Beyond releases are full sets with Play Boosters, Collector Boosters and Bundles that can be legal in Standard; others are Commander decks or Secret Lair drops. Check each product's legality notes before building a deck around it."),
  "Main Set": ("What is a main Magic set?", "A main (premier) set is a Standard-legal Magic expansion released through the year. Main sets are typically sold as Play Boosters (designed for both drafting and opening), Collector Boosters (more foils and alternate-art cards), Bundles, and Commander decks released alongside the set. Prerelease events at local game stores usually run the week before the tabletop release."),
  "Supplemental": ("What is a supplemental product?", "Supplemental products are Magic releases outside the main Standard sets, such as draft-focused remastered sets, Mystery Booster editions and special boxes. They are usually not Standard-legal and are often aimed at Commander or casual play. Availability and print runs vary, so check the official announcement for how and where each one is sold."),
@@ -440,6 +440,8 @@ PHASERS_SETTLED = "Buy only if you really like Star Trek; otherwise skip."
 PHASERS_SET_VERDICT = "Buy for drafting/Trek fans; skip sealed speculation."
 PHASERS_CMD_VERDICT = "buy regular, skip CE at markup"
 PHASERS_WIZ = "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop"
+PHASERS_SHIP = "https://secretlair-support.wizards.com/hc/en-us/articles/5149533669652-Secret-Lair-Production-and-Shipping-Status"
+PHASERS_SHIP_CHECKED = "2026-11-16"
 PHASERS_SCRYFALL = "https://scryfall.com/"
 PHASERS_ACCOUNT = "https://myaccounts.wizards.com/registration"
 PHASERS_CHECKED = "2026-11-09"
@@ -482,7 +484,9 @@ def phasers_facts():
     if PHASERS_CMD_VERDICT not in cmd["note"]: raise SystemExit("Star Trek Commander verdict missing")
     if "Transporter Boondoggle" not in (r.get("window") or "") or "199.99" not in (r.get("window") or ""):
         raise SystemExit("Set Phasers window is missing the bonus threshold")
-    if "ship" in (r.get("window") or "").lower(): raise SystemExit("Set Phasers window now mentions shipping; update the not-announced line")
+    if "not a new sale" not in (r.get("window") or ""): raise SystemExit("Set Phasers window must say Dec 16 is not a new sale")
+    if "December 17, 2026" not in (r.get("window") or "") and "Dec 17, 2026" not in (r.get("window") or ""): raise SystemExit("Set Phasers window is missing the official US shipping window")
+    if PHASERS_SHIP not in (r.get("field_sources") or {}).values(): raise SystemExit("Set Phasers field_sources must cite the shipping-status page")
     if len(r.get("inside") or []) != 6: raise SystemExit("Set Phasers should list all six revealed drops")
     if not any("Assimilation" in c for c in r.get("contents") or []): raise SystemExit("Set Phasers contents should name Assimilation")
     nonfoil, foil = _usd_cents(r, "Each drop, non-foil"), _usd_cents(r, "Each drop, foil")
@@ -549,10 +553,13 @@ def phasers_collector_answer(f):
             f"Skip Collector's Edition Commander decks marked up above the {f['ce']} MSRP. See "
             + phasers_link("#superdrop-vs-star-trek", "Superdrop vs Star Trek Play / Collector / Commander") + ".")
 def phasers_ship_answer():
-    return ("Not announced. The " + phasers_link(PHASERS_WIZ, "Wizards")
-            + " announcement does not give a shipping window for Set Phasers to Superdrop. Orders over $99 ship free under Wizards' terms (see "
+    return ("Dec 16, 2026 is the US release and ship date, not a new sale. The sale opened Nov 9, 2026, and stays open while supplies last. "
+            + "Wizards' " + phasers_link(PHASERS_SHIP, "Secret Lair shipping-status page")
+            + " lists the official window: US store release Dec 16, 2026; expected shipping Dec 17, 2026 – Mar 17, 2027. "
+            + "EU/UK stores: release Jan 25, 2027; expected shipping Jan 26, 2027 – Apr 26, 2027. "
+            + "Orders over $99 ship free under Wizards' terms (see "
             + phasers_link(SL_STORE, "MagicSecretLair.com")
-            + " for details). That is a shipping-cost rule, not a delivery date. Last checked Nov 9, 2026.")
+            + " for details). That is a shipping-cost rule, not a delivery date. Last checked Nov 16, 2026.")
 def phasers_singles_answer(f):
     return (f"Often, if you only want the playable cards in a staple-heavy drop. These are about-prices from the cheapest listed printings on {phasers_link(PHASERS_SCRYFALL, 'Scryfall', nofollow=True)} on Nov 7, 2026, not our sale prices. "
             f"Beam Me Up playables are about {f['beam']} versus {f['nonfoil']} sealed, so singles usually win for playables and sealed is for the art and theme. "
@@ -575,6 +582,7 @@ def phasers_hub_faqs():
     return [
         (PHASERS_TIME_Q, phasers_time_answer(page + "#sale-day-checklist")),
         ("Which Set Phasers drops are worth buying?", phasers_which_answer(page + "#one-or-two-drops")),
+        ("When will Set Phasers to Superdrop ship?", phasers_ship_answer()),
     ]
 def _singles_bits(rows):
     return "; ".join(f"{E(name)} {money_c(cents)}" for name, cents in rows)
@@ -600,7 +608,7 @@ def set_phasers_deepen():
         + f"), and spending {f['threshold']}+ adds the Transporter Boondoggle bonus while supplies last. Buy it if you really like Star Trek. Otherwise skip — a "
         + phasers_link(f["st_path"], "Star Trek Bundle")
         + " or " + phasers_link(f["cmd_path"], "regular Commander deck")
-        + " usually gives more playable Magic for the money. <i>Last checked: Nov 9, 2026.</i></p>")
+        + " usually gives more playable Magic for the money. Dec 16, 2026 is the US release and ship date, not a new sale; Wizards expects US orders to ship Dec 17, 2026 – Mar 17, 2027. <i>Last checked: Nov 9, 2026 (shipping window checked Nov 16, 2026).</i></p>")
     suits = (
         "<h2 id=one-or-two-drops>If you only buy one or two drops</h2>"
         "<p>Who each revealed drop suits. These notes are not a ranking. There is no approved pick for Assimilation.</p><ul>"
@@ -668,7 +676,7 @@ def set_phasers_deepen():
            "<li><b>Pre-queue:</b> 8 a.m. PT (10 a.m. CT / 11 a.m. ET), one hour before the sale. Add any product and proceed to checkout before 9 a.m. PT. Shoppers already in the pre-queue get a random spot when the sale opens. After 9 a.m. PT, you join in the order you reach checkout.</li>")
         + f"<li><b>Account ready:</b> create a Wizards account and save shipping and payment at {phasers_link(PHASERS_ACCOUNT, 'myaccounts.wizards.com/registration')}. Double-check the shipping address. Wizards lists both on the sale checklist.</li>"
         "<li><b>Cart does not reserve.</b> Adding products to your cart does not reserve them. The order is secured only when checkout is completed.</li>"
-        f"<li><b>Shipping window:</b> not announced. The {phasers_link(PHASERS_WIZ, 'Wizards')} announcement does not say when these orders ship.</li>"
+        f"<li><b>Shipping window:</b> Dec 16, 2026 is the US release and ship date, not a new sale. Official window, per Wizards' {phasers_link(PHASERS_SHIP, 'Secret Lair shipping-status page')}: US store release Dec 16, 2026; expected shipping Dec 17, 2026 – Mar 17, 2027 (EU/UK release Jan 25, 2027; shipping Jan 26, 2027 – Apr 26, 2027). Last checked Nov 16, 2026.</li>"
         f"<li><b>Shipping cost:</b> orders over $99 ship free under Wizards' terms (see {phasers_link(SL_STORE, 'MagicSecretLair.com')} for details). That is not a delivery date.</li>"
         "<li><b>While supplies last,</b> including the Transporter Boondoggle promo.</li>"
         "</ol>")
@@ -841,7 +849,10 @@ def _assert_extra_life_hub(path):
     title = html.unescape(re.search(r"<title>(.*?)</title>", html_text).group(1))
     h1 = html.unescape(re.search(r"<h1>(.*?)</h1>", html_text).group(1))
     if len(title) > 60: raise SystemExit(f"hub title too long ({len(title)}): {title}")
-    if short_name(next(x for x in data if x["slug"] == EL_SLUG)) not in h1:
+    el = next(x for x in data if x["slug"] == EL_SLUG)
+    # After Extra Life's sale opens, the hub H1 rolls off "Next Secret Lair: …" (see sl_sale_open).
+    # Keep the full short name in the H1 only while Extra Life is still the next drop.
+    if h_sl and h_sl["slug"] == EL_SLUG and short_name(el) not in h1:
         raise SystemExit("hub H1 dropped the full Extra Life short name")
 def _page_ld(html_text):
     return [json.loads(raw) for raw in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html_text)]
@@ -916,7 +927,10 @@ def _assert_phasers_page(path):
     if "Fan-collectible and theme play, not a speculative pickup." not in html_text: raise SystemExit("base verdict paragraph missing")
     if "$0.04 under $199.99" not in html_text: raise SystemExit("five-foil shortfall missing")
     if "hits threshold" in html_text: raise SystemExit("do not claim five foil drops hit $199.99")
-    if "not announced" not in html_text.lower(): raise SystemExit("shipping window must stay not announced")
+    if "not a new sale" not in html_text: raise SystemExit("Set Phasers page must say Dec 16 is not a new sale")
+    if "Dec 17, 2026" not in html_text or "Mar 17, 2027" not in html_text: raise SystemExit("Set Phasers page is missing the official US shipping window")
+    if "shipping window:</b> not announced" in html_text.lower() or "does not give a shipping window for Set Phasers" in html_text:
+        raise SystemExit("Set Phasers still says shipping is not announced")
     title = html.unescape(re.search(r"<title>(.*?)</title>", html_text).group(1))
     if len(title) > 60: raise SystemExit(f"title too long ({len(title)}): {title}")
     if "context7-site-verification" not in html_text: raise SystemExit("Context7 meta missing")
@@ -941,8 +955,10 @@ def _assert_phasers_hub(path):
     html_text = open(path).read()
     _assert_no_banned(html_text)
     got = dict(_assert_faq_match(html_text, "<h2>Secret Lair FAQ</h2>"))
-    for q in (PHASERS_TIME_Q, "Which Set Phasers drops are worth buying?"):
+    for q in (PHASERS_TIME_Q, "Which Set Phasers drops are worth buying?", "When will Set Phasers to Superdrop ship?"):
         if q not in got: raise SystemExit("hub missing FAQ: " + q)
+    if "not a new sale" not in got["When will Set Phasers to Superdrop ship?"] or "Dec 17, 2026" not in got["When will Set Phasers to Superdrop ship?"]:
+        raise SystemExit("hub shipping FAQ is missing the official window")
     _assert_published_picks(html_text, got["Which Set Phasers drops are worth buying?"])
 def _assert_published_picks(html_text, which):
     for banned in ("Draft — pending owner OK", "Proposed", "pending owner", "awaiting owner", "awaiting-owner"):
@@ -978,6 +994,14 @@ for r in data:
            (f"Should I buy {sn}?", r["note"])]
     if r.get("contents"): faq.append((f"What's in {sn}?", "; ".join(r["contents"]) + "."))
     if r.get("prerelease_verdict"): faq.append((f"Should I buy a {sn} prerelease kit?", r["prerelease_verdict"]))
+    if r["slug"] == "countdown-kit-marvels-history-of-heroes":
+        faq.append(("Is there a cheaper alternative to the Marvel Countdown Kit?",
+                    "Yes. A do-it-yourself calendar from a Marvel Super Heroes Play Booster box (30 packs) uses the same theme: wrap 24 packs and keep six spare. TabletopMeta's advent calendar guide listed that box at about $98 on TCGplayer on Nov 16, 2026, compared with the official kit's $199.99 launch price. The official kit is sold out at MagicSecretLair.com as of Nov 9, 2026; box prices change, so check current listings."))
+    if r["slug"] == "star-trek-commander":
+        faq.append(("May Star Trek Commander decks arrive after Nov 13?",
+                    "Yes, in some regions. Per Wizards' Nov 5, 2026 update, North American Commander decks may ship or arrive after the Nov 13 tabletop release. English decks in Europe may also arrive after Nov 13; French and German decks may arrive after Prerelease. Check your retailer or preorder ship date."))
+    if r["type"] == "Commander Precon":
+        faq.append(("Is Commander also called EDH?", "Yes. Commander is also called EDH."))
     deepen_html = ""
     phasers_ld = []
     if r["slug"] == PHASERS_SLUG:
@@ -994,6 +1018,9 @@ for r in data:
             {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in shown]}] + itemlists
     else:
         faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in faq)
+        if r["type"] == "Commander Precon" or r["slug"] == "countdown-kit-marvels-history-of-heroes":
+            phasers_ld = [{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+                {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in faq]}]
     pre_html = f'<h3>Prerelease kits</h3><p><span class=t>Buy / Wait / Skip</span> {E(r["prerelease_verdict"])}</p>' if r.get("prerelease_verdict") else ""
     # Product snippet markup only (Google: "Product snippets: for product pages where people can't directly purchase the product").
     # MTG Drops sells nothing, so no offer may name us or our page as the place to buy: each Offer is the publisher's
@@ -1045,6 +1072,9 @@ for r in data:
         if r["slug"] == "countdown-kit-marvels-history-of-heroes":
             y27 += (f'<p><a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html#black-friday-2026">Black Friday 2026: buy now or wait</a>. '
                     "Secret Lair drops are not discounted at MagicSecretLair.com. This kit sold out at the official store as of Nov 9, 2026.</p>")
+            y27 += (f'<p>A cheaper do-it-yourself option is a <a href="{E(tcg("Marvel Super Heroes Play Booster Box"))}" rel="sponsored nofollow">Marvel Super Heroes Play Booster box</a> (30 packs, same Marvel theme): wrap 24 packs as a calendar and keep six spare. '
+                    '<a href="https://www.tabletopmeta.com/blog/magic-the-gathering-advent-calendar">TabletopMeta advent calendar guide</a> '
+                    "listed that box at about $98 on TCGplayer on Nov 16, 2026, versus the kit's $199.99 launch price. Box prices move; check current listings.</p>")
     else:
         y27 = ""
     crumbs = f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › {(f'<a href="{BASE}/secret-lair.html">Secret Lair</a>' if r["type"] == "Secret Lair" else E(r["type"]))} › {E(sn)}</nav>{hubl}'
@@ -1058,6 +1088,30 @@ for r in data:
         _kit_html = open(os.path.join("dist", f"p/{r['slug']}.html")).read()
         if "#black-friday-2026" not in _kit_html or "Black Friday 2026: buy now or wait" not in _kit_html:
             raise SystemExit("Countdown Kit page is missing the Black Friday deep link")
+        if "do-it-yourself" not in _kit_html: raise SystemExit("Countdown Kit page is missing the DIY alternative")
+        if "about $98" not in _kit_html: raise SystemExit("Countdown Kit DIY is missing the sourced Nov 16 price")
+        if "magic-the-gathering-advent-calendar" not in _kit_html: raise SystemExit("Countdown Kit DIY must cite TabletopMeta")
+        _assert_faq_match(_kit_html, "<h2>FAQ</h2>")
+    if r["type"] == "Commander Precon" and not r.get("placeholder"):
+        _cmd_html = open(os.path.join("dist", f"p/{r['slug']}.html")).read()
+        if "also called EDH" not in _cmd_html: raise SystemExit(r["slug"] + " is missing the Commander/EDH note")
+        _cmd_faq = dict(_assert_faq_match(_cmd_html, "<h2>FAQ</h2>"))
+        if "Is Commander also called EDH?" not in _cmd_faq: raise SystemExit(r["slug"] + " FAQ is missing the EDH question")
+        if r["slug"] == "star-trek-commander":
+            if "may ship or arrive after Nov 13" not in _cmd_html:
+                raise SystemExit("Star Trek Commander page is missing the may-ship-late note")
+            if "star-trek-product-delays-in-select-regions" not in _cmd_html:
+                raise SystemExit("Star Trek Commander page must cite the Wizards Nov 5 delays article")
+            if "May Star Trek Commander decks arrive after Nov 13?" not in _cmd_faq:
+                raise SystemExit("Star Trek Commander FAQ is missing the may-ship-late question")
+            avails = set()
+            for o in _page_ld(_cmd_html):
+                if o.get("@type") == "Product":
+                    for off in (o.get("offers") or []):
+                        if isinstance(off, dict) and off.get("availability"):
+                            avails.add(off["availability"])
+            if avails != {"https://schema.org/InStock"}:
+                raise SystemExit("Star Trek Commander Offers must stay InStock, got " + repr(avails))
 # ---- Secret Lair hub (/secret-lair.html): generated from releases.json, so data updates keep it current ----
 SL_SRC = {"about": "https://secretlair.wizards.com/us/en/about-us",
           "faq": "https://secretlair-support.wizards.com/hc/en-us/articles/45369886769300-About-Secret-Lair-FAQ",
@@ -1243,11 +1297,11 @@ nv_rows = [
  ("Nov 6–12", nv_pre_link + " (local game stores)", "Set by each store", ("Buy for the event; Wait if you only want cards; Skip as speculation" if nv_st.get("prerelease_verdict") else "No verdict yet"),
   ("Each Prerelease Pack is 6 Play Boosters, 1 traditional foil rare or mythic rare, a deck box and a spindown; Play Boosters hit stores Nov 13 at $6.99 MSRP." if nv_st.get("prerelease_verdict") else "Prerelease events at local game stores; see the Star Trek guide.")),
  ("Nov 9", plink(nv_ph, nv_ph["name"]), "About $30 non-foil / $40 foil per drop" if nv_ph.get("prices") else "TBA", nv_label(nv_ph, "buy", "Buy if you really like Star Trek; otherwise Skip"),
-  nv_why(nv_ph, "buy", "6 Star Trek drops (5 revealed so far), 9 AM PT / 12 PM ET at MagicSecretLair.com: fan-collectible and theme play, not a speculative pickup.")),
+  nv_why(nv_ph, "buy", "6 Star Trek drops (5 revealed so far), 9 AM PT / 12 PM ET at MagicSecretLair.com: fan-collectible and theme play, not a speculative pickup. Dec 16, 2026 is the US release and ship date, not a new sale; Wizards expects US orders to ship Dec 17, 2026 – Mar 17, 2027.")),
  ("Nov 13", plink(nv_st, nv_st["name"]) + " (Play Boosters, Collector Boosters, Bundle, Beam Me Up Bundle)", nv_st_price, nv_label(nv_st, "buy", "Buy (Play Boosters / Bundle); Collector Boosters only for chase cards"),
   nv_why(nv_st, "buy", "For drafting and Trek fans; skip sealed speculation. Collector Boosters and both Bundles may arrive after Nov 13 in Europe or Asia-Pacific.")),
  ("Nov 13", plink(nv_cmd, "Star Trek Commander Decks"), nv_prices(nv_cmd), nv_label(nv_cmd, "buy", "Buy regular decks; Skip Collector's Editions at markup"),
-  nv_why(nv_cmd, "buy", "Regular decks preorder near MSRP and Collector's Editions well above it (NerdSnack). In North America the decks may arrive after Nov 13 (Wizards, Oct 16): check your preorder's ship date.")),
+  nv_why(nv_cmd, "buy", "Regular decks preorder near MSRP and Collector's Editions well above it (NerdSnack). Per Wizards' Nov 5, 2026 update, North American decks may ship or arrive after Nov 13: check your retailer or preorder ship date.")),
 ]
 nv_left = [(r, t) for r, t in (
  (g_r("secret-lair-chaos-vault-reality-fracture"), "retail release Oct 23, delayed globally per Wizards (Oct 19). Wait for stock at the $89.99 MSRP; pre-release retailer listings ran $159.99–$189.99."),
