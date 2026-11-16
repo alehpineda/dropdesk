@@ -65,6 +65,7 @@ SL_ONSALE_DAYS = 30  # with no known sale_end, a drop counts as "on sale now" fo
 def sl_bucket(r):
     if r.get("delayed"): return "up"  # announced date passed but stock hasn't arrived: still upcoming, never "on sale now"
     if r.get("sold_out") and dated(r) and r["release_date"] <= today: return "past"
+    if r.get("retail") and dated(r) and r["release_date"] <= today: return "past"  # retail-only product (stores, not a MagicSecretLair.com sale): released, not an upcoming drop
     if not dated(r) or r["release_date"] > today: return "up"
     if r.get("sale_end"): return "now" if r["sale_end"] >= today else "past"
     return "now" if (TODAY - datetime.date.fromisoformat(r["release_date"])).days <= SL_ONSALE_DAYS else "past"
@@ -76,6 +77,12 @@ def mon_yyyy(r): return f"{MON[int(r['release_date'][5:7])-1]} {r['release_date'
 def nice_date(r):
     if not dated(r): return "TBA"
     d = datetime.date.fromisoformat(r["release_date"]); return f"{MON[d.month-1]} {d.day}, {d.year}"
+# ---- Date-driven tense: once a release/sale date has passed, copy switches to past tense. A build check
+# (_assert_no_stale_tense, end of build) fails on "goes on sale <past date>", "releases on <past date>" and
+# "preorders open" on pages of released items, so dated copy can't silently go stale. ----
+def is_past(r):  # released (retail) or sale day reached; delayed items are never past
+    return dated(r) and r["release_date"] <= today and not r.get("delayed")
+def tense(r, future, past): return past if is_past(r) else future
 def short_name(r):
     if r.get("short_name"): return r["short_name"]
     n = r["name"].replace("Magic: The Gathering | ", "")
@@ -167,6 +174,7 @@ for r in up: groups.setdefault(mon_yyyy(r) if is_up(r) else "Already released", 
 first27 = next((g for g in groups if g.endswith("2027")), None)
 months = "".join(f"<h2>{E(g)}</h2>" + (f'<p>Planning ahead? See the full <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>.</p>' if g == first27 else "") + "".join(card(r) for r in rs) for g, rs in groups.items())
 ABOUT = "MTG Drops is a free Magic: The Gathering release calendar: every upcoming set, Commander precon, Universes Beyond and Secret Lair drop, with dates, prices, buy/skip verdicts and a weekly newsletter. Not affiliated with Wizards of the Coast, and not a Discord bot or eBay monitor."
+ABOUT_FEED = f'Its free calendar feed, <a href="{BASE}/calendar.ics">calendar.ics</a>, can be subscribed to in Google Calendar, Apple Calendar or Outlook.'
 HOME_DESC = "MTG Drops: free Magic: The Gathering release calendar. Every set, precon, Universes Beyond and Secret Lair drop, with dates, prices and buy/skip verdicts."
 ORG = {"@type": "Organization", "@id": f"{SITE_URL}/#org", "name": "MTG Drops", "url": f"{SITE_URL}/", "logo": OG_IMAGE, "description": ABOUT}
 def fmt(p): return f"${p['usd']:,.2f}"
@@ -324,7 +332,7 @@ home_ld = [{"@context": "https://schema.org", "@type": "WebSite", "@id": f"{SITE
            {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in home_faq]},
            {"@context": "https://schema.org", "@type": "ItemList", "@id": f"{SITE_URL}/#releases", "name": "Upcoming Magic: The Gathering releases", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate([r for r in up if not r.get("placeholder")])]}]
 page("MTG Release Calendar 2026–2027 | MTG Drops", HOME_DESC,
-     f"<h1>MTG Release Calendar 2026–2027</h1><p><b>What's dropping in Magic.</b> Last updated: {tdate()}</p><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p><p>Every upcoming MTG product, with a short buy/skip note. New: <a href=\"{BASE}/guides/mtg-releases-fall-holiday-2026.html\">every MTG product releasing this fall/holiday 2026</a>, with gift picks, the <a href=\"{BASE}/guides/star-trek-mtg-release-guide.html\">MTG Star Trek release guide</a>, and the <a href=\"{BASE}/secret-lair.html\">Secret Lair drop schedule</a>.</p>{FORM}<p class=disc><small>{E(DISCLOSURE)}</small></p><p><b>Calendar feed:</b> {ics_link("calendar.ics")}</p>{CAL_HOWTO}{home_next_sl}<div class=f>{btns}</div>" + months + home_faq_html + js, "index.html", home_ld)
+     f"<h1>MTG Release Calendar 2026–2027</h1><p><b>What's dropping in Magic.</b> Last updated: {tdate()}</p><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)} {ABOUT_FEED}</small></p><p>Every upcoming MTG product, with a short buy/skip note. New: <a href=\"{BASE}/guides/mtg-releases-fall-holiday-2026.html\">every MTG product releasing this fall/holiday 2026</a>, with gift picks, the <a href=\"{BASE}/guides/star-trek-mtg-release-guide.html\">MTG Star Trek release guide</a>, and the <a href=\"{BASE}/secret-lair.html\">Secret Lair drop schedule</a>.</p>{FORM}<p class=disc><small>{E(DISCLOSURE)}</small></p><p><b>Calendar feed:</b> {ics_link("calendar.ics")}</p>{CAL_HOWTO}{home_next_sl}<div class=f>{btns}</div>" + months + home_faq_html + js, "index.html", home_ld)
 _home_html = open(os.path.join("dist", "index.html")).read()
 if "When do MTG Black Friday deals start?" not in _home_html or "#black-friday-2026" not in _home_html:
     raise SystemExit("home is missing the Black Friday FAQ deep link")
@@ -435,6 +443,8 @@ PHASERS_WIZ = "https://magic.wizards.com/en/news/announcements/secret-lair-set-p
 PHASERS_SCRYFALL = "https://scryfall.com/"
 PHASERS_ACCOUNT = "https://myaccounts.wizards.com/registration"
 PHASERS_CHECKED = "2026-11-09"
+PHASERS_OPEN = sl_sale_open(next(x for x in data if x["slug"] == PHASERS_SLUG))  # past tense once the Nov 9 9 AM PT sale has opened
+PHASERS_TIME_Q = "When did the Star Trek Secret Lair go on sale?" if PHASERS_OPEN else "What time does the Star Trek Secret Lair go on sale?"
 PHASERS_PICK_ONE = "Lower Decks if you want the Thrasios and Silas Renn partners; otherwise Beam Me Up for blink and enter-the-battlefield staples."
 PHASERS_PICK_TWO = "Lower Decks and Beam Me Up for playables. There is no approved pick for Assimilation."
 # Same sentences as the comment above. Used only to reject a build that renders them. Not interpolated into HTML.
@@ -509,6 +519,11 @@ def phasers_facts():
                 self_path=f"{BASE}/p/{PHASERS_SLUG}.html", st_path=f"{BASE}/p/star-trek.html", cmd_path=f"{BASE}/p/star-trek-commander.html",
                 guide_path=f"{BASE}/guides/star-trek-mtg-release-guide.html")
 def phasers_time_answer(href):
+    if PHASERS_OPEN:
+        return ("Set Phasers to Superdrop went on sale Nov 9, 2026 at 9 a.m. PT (11 a.m. CT / 12 p.m. ET) at "
+                + phasers_link(SL_STORE, "MagicSecretLair.com")
+                + ", while supplies last. A cart does not reserve the drop. The order is secured only when checkout is completed. Have a Wizards account ready, with shipping and payment saved. Steps: "
+                + phasers_link(href, "how to buy") + ". Last checked Nov 9, 2026.")
     return ("Set Phasers to Superdrop goes on sale Nov 9, 2026 at 9 a.m. PT (11 a.m. CT / 12 p.m. ET) at "
             + phasers_link(SL_STORE, "MagicSecretLair.com")
             + ". The pre-queue opens at 8 a.m. PT. Add any product and proceed to checkout before 9 a.m. PT; shoppers already in the pre-queue get a random spot when the sale opens. "
@@ -548,7 +563,7 @@ def phasers_singles_answer(f):
             + phasers_link("#sealed-vs-singles", "Sealed drop vs singles build") + ". Last checked Nov 9, 2026.")
 def phasers_extra_faqs(f):
     return [
-        ("What time does the Star Trek Secret Lair go on sale?", phasers_time_answer("#sale-day-checklist")),
+        (PHASERS_TIME_Q, phasers_time_answer("#sale-day-checklist")),
         ("Which Set Phasers drops are worth buying?", phasers_which_answer("#one-or-two-drops")),
         ("What is the Transporter Boondoggle bonus card?", phasers_bonus_answer(f)),
         ("Is the Star Trek Secret Lair better than Star Trek Collector Boosters?", phasers_collector_answer(f)),
@@ -558,7 +573,7 @@ def phasers_extra_faqs(f):
 def phasers_hub_faqs():
     page = f"{BASE}/p/{PHASERS_SLUG}.html"
     return [
-        ("What time does the Star Trek Secret Lair go on sale?", phasers_time_answer(page + "#sale-day-checklist")),
+        (PHASERS_TIME_Q, phasers_time_answer(page + "#sale-day-checklist")),
         ("Which Set Phasers drops are worth buying?", phasers_which_answer(page + "#one-or-two-drops")),
     ]
 def _singles_bits(rows):
@@ -575,9 +590,12 @@ def set_phasers_deepen():
     st_abs, cmd_abs = SITE_URL + f["st_path"], SITE_URL + f["cmd_path"]
     self_abs = SITE_URL + f["self_path"]
     answer = (
-        "<p><b>When is the Star Trek Secret Lair and is it worth it?</b> Secret Lair x Star Trek: Set Phasers to Superdrop goes on sale Nov 9, 2026 at 9 a.m. PT (11 a.m. CT / 12 p.m. ET) at "
+        ("<p><b>When did the Star Trek Secret Lair go on sale, and is it worth it?</b> Secret Lair x Star Trek: Set Phasers to Superdrop went on sale Nov 9, 2026 at 9 a.m. PT (11 a.m. CT / 12 p.m. ET) at "
+         if PHASERS_OPEN else
+         "<p><b>When is the Star Trek Secret Lair and is it worth it?</b> Secret Lair x Star Trek: Set Phasers to Superdrop goes on sale Nov 9, 2026 at 9 a.m. PT (11 a.m. CT / 12 p.m. ET) at ")
         + phasers_link(SL_STORE, "MagicSecretLair.com")
-        + f", with a pre-queue from 8 a.m. PT. It's six themed drops at {f['nonfoil']} non-foil / {f['foil']} foil each ("
+        + ("" if PHASERS_OPEN else ", with a pre-queue from 8 a.m. PT")
+        + f". It's six themed drops at {f['nonfoil']} non-foil / {f['foil']} foil each ("
         + phasers_link(PHASERS_WIZ, "Wizards")
         + f"), and spending {f['threshold']}+ adds the Transporter Boondoggle bonus while supplies last. Buy it if you really like Star Trek. Otherwise skip — a "
         + phasers_link(f["st_path"], "Star Trek Bundle")
@@ -644,9 +662,11 @@ def set_phasers_deepen():
         "<h2 id=sale-day-checklist>Sale-day checklist</h2>"
         + checked({"last_checked": PHASERS_CHECKED, "source": PHASERS_WIZ}, with_sources=True)
         + "<ol>"
-        f"<li><b>Sale:</b> Nov 9, 2026, 9 a.m. PT / 11 a.m. CT / 12 p.m. ET, only at {phasers_link(SL_STORE, 'MagicSecretLair.com')}.</li>"
-        "<li><b>Pre-queue:</b> 8 a.m. PT (10 a.m. CT / 11 a.m. ET), one hour before the sale. Add any product and proceed to checkout before 9 a.m. PT. Shoppers already in the pre-queue get a random spot when the sale opens. After 9 a.m. PT, you join in the order you reach checkout.</li>"
-        f"<li><b>Account ready:</b> create a Wizards account and save shipping and payment at {phasers_link(PHASERS_ACCOUNT, 'myaccounts.wizards.com/registration')}. Double-check the shipping address. Wizards lists both on the sale checklist.</li>"
+        + (f"<li><b>Sale:</b> went on sale Nov 9, 2026, 9 a.m. PT / 11 a.m. CT / 12 p.m. ET, only at {phasers_link(SL_STORE, 'MagicSecretLair.com')}, while supplies last.</li>"
+           if PHASERS_OPEN else
+           f"<li><b>Sale:</b> Nov 9, 2026, 9 a.m. PT / 11 a.m. CT / 12 p.m. ET, only at {phasers_link(SL_STORE, 'MagicSecretLair.com')}.</li>"
+           "<li><b>Pre-queue:</b> 8 a.m. PT (10 a.m. CT / 11 a.m. ET), one hour before the sale. Add any product and proceed to checkout before 9 a.m. PT. Shoppers already in the pre-queue get a random spot when the sale opens. After 9 a.m. PT, you join in the order you reach checkout.</li>")
+        + f"<li><b>Account ready:</b> create a Wizards account and save shipping and payment at {phasers_link(PHASERS_ACCOUNT, 'myaccounts.wizards.com/registration')}. Double-check the shipping address. Wizards lists both on the sale checklist.</li>"
         "<li><b>Cart does not reserve.</b> Adding products to your cart does not reserve them. The order is secured only when checkout is completed.</li>"
         f"<li><b>Shipping window:</b> not announced. The {phasers_link(PHASERS_WIZ, 'Wizards')} announcement does not say when these orders ship.</li>"
         f"<li><b>Shipping cost:</b> orders over $99 ship free under Wizards' terms (see {phasers_link(SL_STORE, 'MagicSecretLair.com')} for details). That is not a delivery date.</li>"
@@ -867,7 +887,7 @@ def _assert_phasers_page(path):
         if need not in types: raise SystemExit("Set Phasers JSON-LD missing " + need)
     got = _assert_faq_match(html_text, "<h2>FAQ</h2>")
     questions = [q for q, _ in got]
-    for q in ("What time does the Star Trek Secret Lair go on sale?", "Which Set Phasers drops are worth buying?",
+    for q in (PHASERS_TIME_Q, "Which Set Phasers drops are worth buying?",
               "What is the Transporter Boondoggle bonus card?", "Is the Star Trek Secret Lair better than Star Trek Collector Boosters?",
               "When will Set Phasers to Superdrop ship?", "Is it cheaper to buy Set Phasers singles instead of the sealed drops?",
               "Should I buy Star Trek Superdrop?"):
@@ -921,7 +941,7 @@ def _assert_phasers_hub(path):
     html_text = open(path).read()
     _assert_no_banned(html_text)
     got = dict(_assert_faq_match(html_text, "<h2>Secret Lair FAQ</h2>"))
-    for q in ("What time does the Star Trek Secret Lair go on sale?", "Which Set Phasers drops are worth buying?"):
+    for q in (PHASERS_TIME_Q, "Which Set Phasers drops are worth buying?"):
         if q not in got: raise SystemExit("hub missing FAQ: " + q)
     _assert_published_picks(html_text, got["Which Set Phasers drops are worth buying?"])
 def _assert_published_picks(html_text, which):
@@ -952,7 +972,8 @@ for r in data:
     howto = f"<h2>{HOWTO[0]}</h2><p>{E(HOWTO[1])}</p>" if not r.get("placeholder") and (not dated(r) or r["release_date"] > today or r.get("delayed")) else ""
     rel = related(r)
     relhtml = "<h2>Related releases</h2><ul>" + "".join(f'<li><a href="{BASE}/p/{x["slug"]}.html">{E(x["name"])}</a> — {nice_date(x)}</li>' for x in rel) + "</ul>"
-    faq = [(f"When does {sn} release?", f"{nice_date(r)} ({r['status']})." + (f" {r['window']}." if r.get("window") else "") if dated(r) else f"The release date is TBA ({r['status']})." + (f" {r['window']}." if r.get("window") else "")),
+    _sl_sale = r["type"] == "Secret Lair" and not r.get("retail")  # a Secret Lair date is a sale date, not a release/ship date
+    faq = [(tense(r, f"When does {sn} release?", f"When did {sn} go on sale?" if _sl_sale else f"When did {sn} release?"), tense(r, "", "Went on sale " if _sl_sale else "Released ") + f"{nice_date(r)} ({r['status']})." + (f" {r['window']}." if r.get("window") else "") if dated(r) else f"The release date is TBA ({r['status']})." + (f" {r['window']}." if r.get("window") else "")),
            (f"How much does {sn} cost?", "; ".join(f"{p['label']}: {fmt(p)}" for p in prices) + "." if prices else "Pricing has not been announced yet (TBA)."),
            (f"Should I buy {sn}?", r["note"])]
     if r.get("contents"): faq.append((f"What's in {sn}?", "; ".join(r["contents"]) + "."))
@@ -984,7 +1005,7 @@ for r in data:
     prod = {"@context": "https://schema.org", "@type": "Product", "name": r["name"], "url": pu, "image": r.get("image") or (list(card) if card else OG_IMAGE), "category": r["type"], "brand": {"@type": "Brand", "name": "Wizards of the Coast"}, "description": trim(r["note"], 300)}
     if dated(r): prod["releaseDate"] = r["release_date"]
     offers = [p for p in prices if p.get("offer", True)]
-    sl_direct = r["type"] == "Secret Lair"  # sold by Wizards itself at MagicSecretLair.com for a limited window
+    sl_direct = r["type"] == "Secret Lair" and not r.get("retail")  # sold by Wizards itself at MagicSecretLair.com for a limited window (retail-only products such as the Secret Lair Bundle use the retail MSRP offer)
     if sl_direct:
         b = sl_bucket(r)  # same rule the hub page uses for on sale now / upcoming / ended
         avail = {"now": "https://schema.org/InStock", "past": "https://schema.org/Discontinued"}.get(b, "https://schema.org/OutOfStock")  # not on sale yet: no preorders
@@ -1053,6 +1074,7 @@ def sl_price(r):
 def sl_when(r):
     if not dated(r): return "Date TBA"
     if r.get("delayed"): return f"Delayed: was due {nice_date(r)}; Wizards says stock may arrive shortly after"
+    if r.get("retail"): return f"Retail release {nice_date(r)} (game stores and online retailers, not a MagicSecretLair.com sale)"
     if r.get("sold_out") and sl_bucket(r) == "past": return f"Went on sale {nice_date(r)}; sold out"
     b = sl_bucket(r)
     return ("On sale since " if b == "now" else "Went on sale " if b == "past" else "On sale ") + nice_date(r)
@@ -1228,7 +1250,7 @@ nv_rows = [
   nv_why(nv_cmd, "buy", "Regular decks preorder near MSRP and Collector's Editions well above it (NerdSnack). In North America the decks may arrive after Nov 13 (Wizards, Oct 16): check your preorder's ship date.")),
 ]
 nv_left = [(r, t) for r, t in (
- (g_r("secret-lair-chaos-vault-reality-fracture"), "delayed globally (Wizards, Oct 19). Wait for stock at the $89.99 MSRP; pre-release retailer listings ran $159.99–$189.99."),
+ (g_r("secret-lair-chaos-vault-reality-fracture"), "retail release Oct 23, delayed globally per Wizards (Oct 19). Wait for stock at the $89.99 MSRP; pre-release retailer listings ran $159.99–$189.99."),
  (g_r("secret-lair-atlanta"), "sold out at the official store ($249.99). Wait: don't overpay on resale (eBay listings over $450, per MTG Rocks)."),
  (g_r("mystery-booster-commander-edition"), "only sold inside Festival in a Box: Atlanta 2026, now sold out. Wait: MTG Rocks expects it to return with future MagicCon Festival in a Box releases, so don't pay resale."),
  (g_r("secret-lair-strange-school"), "sold out on launch day (Oct 26). Wait: don't pay resale for the sealed drop; buy the singles you'll actually play."),
@@ -1366,11 +1388,11 @@ bf_rows = [
   "Wait for Black Friday",
   f"This is for Commander precons and beginner or starter products already in stores from earlier in 2026. It is not the Nov 13 Star Trek decks, and it is not {plink(_spm, _spm['short_name'])}, which is still an unconfirmed leak. Wizards removed the Star Trek Beginner Box, so a leftover listing of that box is not a product we are telling you to buy."),
  (plink(_rf, _rf["short_name"]),
-  "Delayed globally (Wizards, Oct 19). Pre-release retailer listings ran $159.99–$189.99 against the $89.99 MSRP.",
+  "Retail release Oct 23; Wizards said on Oct 19 it was delayed globally and may arrive shortly after. Pre-release retailer listings ran $159.99–$189.99 against the $89.99 MSRP.",
   "Wait (settled)",
   "Wait for stock at the $89.99 MSRP. Don't overpay: wait for MSRP stock unless you love the Secret Lair mythic art."),
  (plink(nv_ph, "Secret Lair, including Set Phasers to Superdrop"),
-  "Sold at MagicSecretLair.com at the drop's listed price. Set Phasers to Superdrop goes on sale Nov 9, about $30 non-foil or $40 foil per drop. A sold-out drop is not restocked there for Black Friday.",
+  f"Sold at MagicSecretLair.com at the drop's listed price. Set Phasers to Superdrop {'went' if PHASERS_OPEN else 'goes'} on sale Nov 9, 2026, about $30 non-foil or $40 foil per drop. A sold-out drop is not restocked there for Black Friday.",
   f"Settled: {_ph_settled} Not discounted at MagicSecretLair.",
   f"{_ph_settled} For a drop that has already sold out at the official store: {_sold_settled}"),
 ]
@@ -1439,8 +1461,8 @@ nv_faq = [
   f"{_kit_note}"),
  ("Should I preorder the Star Trek Bundle or Collector Boosters?",
   " ".join(f"{a}: {b}" for a, b in (nv_st.get("buy_guide") or []) if a in ("Bundles / Beam Me Up Bundles", "Collector Boosters")) or nv_st["note"]),
- ("Will Star Trek Commander decks be in stores on Nov 13?",
-  f"Maybe not in North America. {nv_cmd['window'].replace('Preorders open. ', '')}. Check your preorder's ship date; Play Boosters and Prerelease Packs are on track everywhere."),
+ (tense(nv_cmd, "Will Star Trek Commander decks be in stores on Nov 13?", "Were Star Trek Commander decks in stores on Nov 13?"),
+  f"Maybe not in North America. {nv_cmd['window'].replace('Preorders open. ', '').replace('Released Nov 13, 2026. ', '')}. Check your preorder's ship date; Play Boosters and Prerelease Packs are on track everywhere."),
 ]
 g_faq = [((f"What MTG products come out in {g_month_name(m)}?" if m == "2026-11" else f"What MTG products release in {g_month_name(m)}?"),
           (f"{g_names(rs)}." if rs else f"Nothing is on our calendar for {g_month_name(m)} yet.")
@@ -1459,7 +1481,7 @@ g_faq += [
  ("Should I wait for Black Friday to buy MTG Star Trek?",
   f"Buy now on a Star Trek Play Booster box or Bundle at or below today's street prices, rather than waiting for Black Friday. On Nov 9, 2026, MTG Compare showed store preorders already under MSRP ($100 for a Play Booster Display against the {fmt({'usd': _play_box_msrp})} pack-math MSRP, and $39.99 for a Bundle against {fmt({'usd': _bundle_msrp})}). See the {_st_sku_link}. The set-level verdict is unchanged: {_st_settled} Skip a Collector Booster box priced above {fmt({'usd': _coll_box_msrp})} and wait for singles. Commander stays: {_cmd_settled}. Don't pay above MSRP, and expect Black Friday discounts."),
  ("Are Secret Lair drops discounted on Black Friday?",
-  f"No. Secret Lair drops are not discounted for Black Friday at MagicSecretLair.com. Set Phasers to Superdrop goes on sale Nov 9, 2026: {_ph_settled} For a drop that has already sold out at the official store: {_sold_settled}"),
+  f"No. Secret Lair drops are not discounted for Black Friday at MagicSecretLair.com. Set Phasers to Superdrop {'went' if PHASERS_OPEN else 'goes'} on sale Nov 9, 2026: {_ph_settled} For a drop that has already sold out at the official store: {_sold_settled}"),
  ("What MTG products are worth buying on Black Friday?",
   "Older 2026 Commander decks and beginner or starter products already in stores, where GamesRadar expects about $10 off sticker if previous years hold. A Star Trek Bundle or Play Booster box at or below today's street prices is a Buy now rather than a reason to wait for Black Friday. Skip a Collector Booster box above MSRP, skip sealed product bought to speculate, and do not count on a Secret Lair discount at MagicSecretLair.com."),
  ("Is it better to buy MTG Commander decks on Black Friday?",
@@ -1555,7 +1577,9 @@ st_math = [("Bundle", f"9 Play Boosters alone are {fmt({'usd': 9*pb})} at MSRP, 
            ("Draft Night", f"12 Play Boosters plus 1 Collector Booster are {fmt({'usd': 12*pb+cb})} at MSRP; the box is {fmt({'usd': 119.99})} and adds 90 lands and tokens.")]
 st_vs = {"buy": "Buy", "wait": "Wait", "skip": "Skip", "mixed": "Mixed"}
 st_faq = [
- ("When does MTG Star Trek release?", f"The global tabletop release is {nice_date(st_set)}. Prerelease events run Nov 6–12, 2026, and the set arrives on MTG Arena on Nov 10, 2026 (Wizards)."),
+ (tense(st_set, "When does MTG Star Trek release?", "When did MTG Star Trek release?"),
+  tense(st_set, f"The global tabletop release is {nice_date(st_set)}. Prerelease events run Nov 6–12, 2026, and the set arrives on MTG Arena on Nov 10, 2026 (Wizards).",
+        f"The global tabletop release was {nice_date(st_set)}. Prerelease events ran Nov 6–12, 2026, and the set arrived on MTG Arena on Nov 10, 2026 (Wizards).")),
  ("How much does MTG Star Trek cost?", "Wizards' MSRPs: " + "; ".join(f"{n} {fmt({'usd': u})}" for n, u, _ in ST_PRODUCTS) + ". Store prices vary."),
  ("What are the Star Trek Commander decks?", "Four decks: " + "; ".join(f"{n} (led by {c}: {t})" for n, c, t in ST_DECKS) + f". Each is {fmt({'usd': 74.99})}, or {fmt({'usd': 159.99})} for the surge foil Collector's Edition."),
  ("Is MTG Star Trek legal in Standard?", "Yes. The main set (TRK) is legal in all formats. The Commander decks (TRC) and the stardates reprints (SDS) are legal in Commander, Legacy and Vintage, and individual cards are also legal wherever they were already legal (Wizards)."),
@@ -1625,7 +1649,7 @@ st_sku_html = (
 st_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › <a href="{BASE}/guides/">Guides</a> › Star Trek</nav><h1>{E(ST_H1)}</h1>'
   f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
   f'<p><b>Last updated:</b> {tdate()} · release {nice_date(st_set)} ({E(st_set["status"])})</p>'
-  f'<p>Magic: The Gathering | Star Trek is a Universes Beyond set that releases on {nice_date(st_set)}, ahead of Star Trek\'s 60th anniversary. This guide covers every product, Wizards\' MSRPs, the four Commander decks, the key dates and what we think is worth buying. Facts are from Wizards\' {st_a("collect", "Collecting Magic: The Gathering | Star Trek")} article and the {st_a("wpn", "Wizards Play Network product listing")}; full product pages: <a href="{BASE}/p/{st_set["slug"]}.html">{E(st_set["name"])}</a> and <a href="{BASE}/p/{st_cmd["slug"]}.html">Star Trek Commander Decks</a>.</p>'
+  f'<p>Magic: The Gathering | Star Trek is a Universes Beyond set that {tense(st_set, 'releases', 'released')} on {nice_date(st_set)}, ahead of Star Trek\'s 60th anniversary. This guide covers every product, Wizards\' MSRPs, the four Commander decks, the key dates and what we think is worth buying. Facts are from Wizards\' {st_a("collect", "Collecting Magic: The Gathering | Star Trek")} article and the {st_a("wpn", "Wizards Play Network product listing")}; full product pages: <a href="{BASE}/p/{st_set["slug"]}.html">{E(st_set["name"])}</a> and <a href="{BASE}/p/{st_cmd["slug"]}.html">Star Trek Commander Decks</a>.</p>'
   "<h2>Key dates</h2><table><tr><th>Event</th><th>Date</th></tr>" + "".join(f"<tr><td>{E(a)}</td><td>{E(b)}</td></tr>" for a, b in ST_DATES) + f'</table><p><small>Dates per {st_a("collect")}.</small></p>'
   "<h2>Every product and price</h2><table><tr><th>Product</th><th>MSRP (USD)</th><th>What's inside</th></tr>" + "".join(f"<tr><td>{E(n)}</td><td>{fmt({'usd': u})}</td><td>{E(c)}</td></tr>" for n, u, c in ST_PRODUCTS)
   + f'</table><p><small>MSRPs and contents per {st_a("collect")} and the {st_a("wpn", "WPN listing")}. Stores set their own prices.</small></p>'
@@ -1838,8 +1862,9 @@ def ics_events(rs):
             ev.append((r["slug"] + "-prequeue", "20261109T160000Z", "20261109T170000Z", nm + " pre-queue (8 AM PT)", "Pre-queue opens 8 AM PT on MagicSecretLair.com. " + dsc, link, stamp, True))
             continue
         ev.append((r["slug"], d0, d0 + datetime.timedelta(days=1), short_name(r) + flag, f"{r['type']}. {r['note']} Details: {link}", link, stamp, False))
-        if r.get("prerelease") == "Nov 6–12, 2026" and r["slug"] == "star-trek":  # prerelease week as its own multi-day event
-            ev.append((r["slug"] + "-prerelease", datetime.date(2026, 11, 6), datetime.date(2026, 11, 13), short_name(r) + " prerelease (local game stores)", f"Prerelease events at local game stores, the week before the {nice_date(r)} release (Wizards). Details: {link}", link, stamp, False))
+        if r.get("prerelease_dates"):  # [first, last] ISO days of the announced prerelease week, as its own multi-day event
+            p0, p1 = (datetime.date.fromisoformat(x) for x in r["prerelease_dates"])
+            ev.append((r["slug"] + "-prerelease", p0, p1 + datetime.timedelta(days=1), short_name(r) + " prerelease (local game stores)", f"Prerelease events at local game stores, the week before the {nice_date(r)} release (Wizards). Details: {link}", link, stamp, False))
     return ev
 def ics(name, desc, rs):
     L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//MTG Drops//Release calendar//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
@@ -2046,4 +2071,21 @@ open("dist/llms.txt","w").write(f"""# MTG Drops
 ## Releases
 """ + "".join(f"- [{r['name']}]({SITE_URL}/p/{r['slug']}.html): {nice_date(r)}, {r['type']}, {r['status']}" + ("; delayed, stock may arrive after this date" if r.get("delayed") else "") + "\n" for r in up if not r.get("placeholder")))
 open("dist/CNAME","w").write("mtgdrops.com\n")
+def _assert_no_stale_tense():
+    """Fail the build on future-tense copy about a date that has passed (visible text and JSON-LD alike):
+    "goes on sale / releases on / release is <past date>" anywhere, and "preorders open" on the page of a released item."""
+    mon = {m: i + 1 for i, m in enumerate(MON)}
+    pat = re.compile(r"\b(goes on sale|releases on|release is)\s+(" + "|".join(MON) + r")[a-z]*\.?\s+(\d{1,2})(?:,\s*(\d{4}))?")
+    released = {f"p/{r['slug']}.html" for r in public if is_past(r)}
+    for root, _, files in os.walk("dist"):
+        for fn in files:
+            if not fn.endswith(".html"): continue
+            path = os.path.join(root, fn); rel = os.path.relpath(path, "dist")
+            t = " ".join(html.unescape(re.sub(r"<[^>]+>", " ", open(path).read())).split())
+            for m in pat.finditer(t):
+                if datetime.date(int(m.group(4) or TODAY.year), mon[m.group(2)], int(m.group(3))) < TODAY:
+                    raise SystemExit(f"stale future tense in {rel}: {m.group(0)!r}")
+            if rel in released and re.search(r"\bpre-?orders? (are )?open", t, flags=re.I):
+                raise SystemExit(f"'preorders open' on released item page {rel}")
+_assert_no_stale_tense()
 print(f"built {len(data)} products")

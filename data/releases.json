@@ -93,9 +93,9 @@
     "name": "Reality Fracture Secret Lair Bundle",
     "type": "Secret Lair",
     "release_date": "2026-10-23",
-    "window": "Oct 23, 2026 at local game stores, online retailers (TCGplayer, Amazon) and the Secret Lair storefront; on Oct 19 Wizards said it is delayed globally and may arrive shortly after Oct 23, with timing varying locally",
+    "window": "Retail release Oct 23, 2026 at local game stores and online retailers; on Oct 19 Wizards said it was delayed globally and may arrive shortly after Oct 23, with timing varying locally. Not sold on its own at MagicSecretLair.com: Wizards' Secret Lair shipping-status page says to buy the boxed bundle from a retailer (it was only in the Oct 26 Chaos Vault packages there)",
     "source": "https://magic.wizards.com/en/news/feature/collecting-reality-fracture",
-    "note": "The first Secret Lair Bundle: 6 Play Boosters, 2 Collector Boosters, 2 of 10 traditional foil Secret Lair promos, 20 foil tower basics and a Spindown, at an official $89.99 MSRP (Wizards). Release is Oct 23, but Wizards said on Oct 19 that it is delayed globally and may arrive shortly after that date. Pre-release retailer listings ran well above MSRP ($159.99–$189.99), so don't overpay: wait for MSRP stock unless you love the Secret Lair mythic art.",
+    "note": "The first Secret Lair Bundle: 6 Play Boosters, 2 Collector Boosters, 2 of 10 traditional foil Secret Lair promos, 20 foil tower basics and a Spindown, at an official $89.99 MSRP (Wizards). Retail release was Oct 23; Wizards said on Oct 19 that it was delayed globally and may arrive shortly after that date. Pre-release retailer listings ran well above MSRP ($159.99–$189.99), so don't overpay: wait for MSRP stock unless you love the Secret Lair mythic art.",
     "status": "confirmed",
     "prices": [
       {
@@ -129,12 +129,13 @@
     "field_sources": {
       "release_date": "https://magic.wizards.com/en/news/announcements/reality-fracture-secret-lair-bundle-delayed",
       "prices": "https://magic.wizards.com/en/news/feature/collecting-reality-fracture",
-      "contents": "https://magic.wizards.com/en/news/feature/collecting-reality-fracture"
+      "contents": "https://magic.wizards.com/en/news/feature/collecting-reality-fracture",
+      "retail availability": "https://secretlair-support.wizards.com/hc/en-us/articles/5149533669652-Secret-Lair-Production-and-Shipping-Status"
     },
     "amazon_query": "Reality Fracture Secret Lair Bundle",
     "verdict": "wait",
     "last_checked": "2026-10-23",
-    "delayed": true
+    "retail": true
   },
   {
     "slug": "countdown-kit-marvels-history-of-heroes",
@@ -373,7 +374,8 @@
       "storefront Coming Soon": "https://secretlair.wizards.com/us/en/"
     },
     "verdict": "buy",
-    "last_checked": "2026-11-09"
+    "last_checked": "2026-11-09",
+    "store_offer": "PreOrder"
   },
   {
     "slug": "secret-lair-marvel-doomsdrop",
@@ -397,7 +399,7 @@
     "name": "Magic: The Gathering | Star Trek",
     "type": "Universes Beyond",
     "release_date": "2026-11-13",
-    "window": "Prerelease Nov 6–12, 2026; Arena Nov 10; preorders open. Play Boosters and Prerelease Packs are on track everywhere (Wizards). North America: Scene Boxes and Bundles arrive after Prerelease; Draft Night, Beam Me Up Bundles and Commander decks may arrive after Nov 13. Europe/EMEA, Japan, APAC and Latin America also have select product delays (Wizards editor's note Nov 5, 2026)",
+    "window": "Prerelease Nov 6–12, 2026; Arena Nov 10; released Nov 13, 2026. Play Boosters and Prerelease Packs are on track everywhere (Wizards). North America: Scene Boxes and Bundles arrive after Prerelease; Draft Night, Beam Me Up Bundles and Commander decks may arrive after Nov 13. Europe/EMEA, Japan, APAC and Latin America also have select product delays (Wizards editor's note Nov 5, 2026)",
     "source": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
     "note": "Standard-legal UB set. Play Booster $6.99, Collector $37.99, Bundle $69.99 (MSRP). Buy for drafting/Trek fans; skip sealed speculation. Heads-up: outside Play Boosters/Prerelease Packs, many SKUs are delayed by region (Wizards, Nov 5)—check your preorder's ship date.",
     "status": "confirmed",
@@ -480,7 +482,7 @@
     "last_checked": "2026-11-06",
     "prerelease": "Nov 6–12, 2026",
     "prerelease_verdict": "Buy the prerelease kit if you want the in-store event experience and the guaranteed traditional foil promo rare for the weekend (prerelease Nov 6–12, 2026 at local game stores). Each Prerelease Pack is 6 Play Boosters, 1 traditional foil rare or mythic rare, a deck box and a spindown. Wait on sealed product if you only want the cards: Play Boosters hit stores Nov 13, 2026 at $6.99 MSRP, and Play Boosters and Prerelease Packs are on track everywhere. Skip prerelease kits as speculation.",
-    "buy_guide_intro": "Release is Nov 13, 2026, with prereleases at local stores Nov 6–12, and preorders are open now.",
+    "buy_guide_intro": "Released Nov 13, 2026, after prereleases at local stores Nov 6–12.",
     "buy_guide": [
       [
         "Play Boosters",
@@ -498,6 +500,10 @@
         "Commander decks",
         "$74.99 MSRP each for four ready-to-play decks; buy regular decks and skip marked-up $159.99 Collector's Editions, and in North America check your preorder's ship date, since Wizards says they may arrive after Nov 13."
       ]
+    ],
+    "prerelease_dates": [
+      "2026-11-06",
+      "2026-11-12"
     ]
   },
   {
@@ -505,7 +511,7 @@
     "name": "Star Trek Commander Decks (Federation Fleet, Landing Party, Klingon Fury, We Are the Borg)",
     "type": "Commander Precon",
     "release_date": "2026-11-13",
-    "window": "Preorders open. Wizards (Nov 5): Commander decks delayed in North America and may arrive after the Nov 13 release; English decks in Europe may also arrive after Nov 13; French/German decks may arrive after Prerelease",
+    "window": "Released Nov 13, 2026. Wizards (Nov 5): Commander decks delayed in North America and may arrive after the Nov 13 release; English decks in Europe may also arrive after Nov 13; French/German decks may arrive after Prerelease",
     "source": "https://magic.wizards.com/en/news/feature/collecting-star-trek",
     "note": "Four decks at $74.99, Collector's Editions $159.99 MSRP. NerdSnack reports regular decks preordering near MSRP and Collector's Editions well above it — buy regular, skip CE at markup. Heads-up: in North America the decks may not be on shelves on Nov 13 (Wizards, Nov 5), so check your preorder's ship date.",
     "status": "confirmed",
@@ -602,7 +608,7 @@
     "name": "Nauctis: The Sunken Realm",
     "type": "Main Set",
     "release_date": "2027-02-05",
-    "window": "Prerelease late Jan 2027 (TBA)",
+    "window": "Prerelease Jan 29–Feb 4, 2027 at local game stores (WPN)",
     "source": "https://magic.wizards.com/en/news/announcements/everything-announced-for-the-magic-multiverse-in-2027",
     "note": "Undersea in-universe set. Cards unrevealed (first look at MagicCon Atlanta). Hold until previews.",
     "status": "confirmed",
@@ -618,6 +624,14 @@
       ],
       "checked": "2026-11-16",
       "match_reason": "Pre-order for the Feb 5, 2027 release, matching our release_date. The listing is the Bundle: 9 Booster Packs, 1 Traditional Foil alt-art promo card, 10 foil + 20 nonfoil lands including 5 full-art, a die, and a box. This entry has no Bundle MSRP or contents list; those details are from the Amazon listing. The Bundle stands in as the set's single Amazon link, same approach as the Star Trek and Marvel: Darkhold Destiny Bundles."
+    },
+    "prerelease": "Jan 29–Feb 4, 2027",
+    "prerelease_dates": [
+      "2027-01-29",
+      "2027-02-04"
+    ],
+    "field_sources": {
+      "prerelease": "https://wpn.wizards.com/en/news/nauctis-the-sunken-realm-dates-and-details"
     }
   },
   {
