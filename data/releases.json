@@ -607,7 +607,18 @@
     "note": "Undersea in-universe set. Cards unrevealed (first look at MagicCon Atlanta). Hold until previews.",
     "status": "confirmed",
     "amazon_query": "Nauctis The Sunken Realm MTG",
-    "last_checked": "2026-10-16"
+    "last_checked": "2026-10-16",
+    "amazon_asin": "B0HNRHT397",
+    "amazon_evidence": {
+      "asin": "B0HNRHT397",
+      "amazon_title": "Magic: The Gathering Nauctis: The Sunken Realm Bundle | 9 Booster Packs, 30 Lands, 1 Foil Alt-Art Promo Card + Exclusive Accessories",
+      "seller": "Ships from and sold by Amazon.com (checked 2026-11-16), pre-order at $57.99.",
+      "price_seen_usd": [
+        57.99
+      ],
+      "checked": "2026-11-16",
+      "match_reason": "Pre-order for the Feb 5, 2027 release, matching our release_date. The listing is the Bundle: 9 Booster Packs, 1 Traditional Foil alt-art promo card, 10 foil + 20 nonfoil lands including 5 full-art, a die, and a box. This entry has no Bundle MSRP or contents list; those details are from the Amazon listing. The Bundle stands in as the set's single Amazon link, same approach as the Star Trek and Marvel: Darkhold Destiny Bundles."
+    }
   },
   {
     "slug": "nauctis-commander",
@@ -621,7 +632,18 @@
     "amazon_query": "Nauctis Commander Deck MTG",
     "last_checked": "2026-10-16",
     "preorder_call": "This is a preorder-stage page: Wizards has confirmed four decks, but no decklists, commanders or prices yet, so there is no verdict and preordering means buying blind. We'll make the call once the lists and prices are out.",
-    "meta_desc": "Nauctis Commander Decks release date: Feb 5, 2027. Wizards confirmed four decks; names, colors and prices are TBA. Wait for decklists before you preorder."
+    "meta_desc": "Nauctis Commander Decks release date: Feb 5, 2027. Wizards confirmed four decks; names, colors and prices are TBA. Wait for decklists before you preorder.",
+    "amazon_asin": "B0HNV3M7YV",
+    "amazon_evidence": {
+      "asin": "B0HNV3M7YV",
+      "amazon_title": "Magic: The Gathering Nauctis: The Sunken Realm Commander Deck Bundle | Includes All 4 Decks (Merfolk Regiment, Terrors of the Abyss, Blood in the Water, Seal the Deal)",
+      "seller": "Ships from and sold by Amazon.com (checked 2026-11-16), pre-order at $199.96 (4 x $49.99).",
+      "price_seen_usd": [
+        199.96
+      ],
+      "checked": "2026-11-16",
+      "match_reason": "Pre-order for the Feb 5, 2027 release, matching our release_date. Amazon title reads Includes All 4 Decks (Merfolk Regiment, Terrors of the Abyss, Blood in the Water, Seal the Deal). This entry still lists deck names and prices as TBA, so those names are from the Amazon title, not from a deck list stored here. Regular 4-deck bundle at the observed pre-order of $199.96 (4 x $49.99), not the Premium Edition (ASIN B0HNTSD5DQ). It stands in as the single Amazon link for this four-deck release, same approach as the Star Trek and Darkhold Destiny Commander Deck Bundles."
+    }
   },
   {
     "slug": "marvel-darkhold-destiny",
