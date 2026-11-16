@@ -332,9 +332,9 @@
     "type": "Secret Lair",
     "release_date": "2026-11-16",
     "status": "confirmed",
-    "window": "Nov 16–Nov 30, 2026, 1 a.m. PT (sale ends), only at MagicSecretLair.com; also limited quantities at MagicCon: Atlanta Extra Life / merch booth Nov 13–15, 2026",
+    "window": "On sale now through Nov 30, 2026, 1 a.m. PT (sale ends), only at MagicSecretLair.com (opened Nov 16); also limited quantities at MagicCon: Atlanta Extra Life / merch booth Nov 13–15, 2026",
     "source": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
-    "note": "Extra Life 2026 charity drop: 4 reprints plus an Elemental token in low-poly art (Balefire Dragon, Big Score, Young Pyromancer, Sword of Truth and Justice). Non-foil $39.99 / foil $49.99 (Wizards); 50% of the sales price (less third-party fees) supports Extra Life / Children's Miracle Network for Seattle Children's Hospital. Online window Nov 16–Nov 30 1 a.m. PT; limited early copies at MagicCon Atlanta Nov 13–15. Buy if you want to support Extra Life or like the art; skip as sealed speculation.",
+    "note": "Extra Life 2026 charity drop: 4 reprints plus an Elemental token in low-poly art (Balefire Dragon, Big Score, Young Pyromancer, Sword of Truth and Justice). Non-foil $39.99 / foil $49.99 (Wizards); 50% of the sales price (less third-party fees) supports Extra Life / Children's Miracle Network for Seattle Children's Hospital. On sale now through Nov 30, 2026 at 1 a.m. PT; limited early copies were at MagicCon Atlanta Nov 13–15. Buy if you want to support Extra Life or like the art; skip as sealed speculation.",
     "prices": [
       {
         "label": "Non-foil",
@@ -372,11 +372,12 @@
       "contents": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
       "window": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
       "charity split": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
-      "storefront Coming Soon": "https://secretlair.wizards.com/us/en/"
+      "store status": "https://secretlair.wizards.com/us/en/product/1256026/rise-of-the-polygons-extra-life-2026"
     },
     "verdict": "buy",
-    "last_checked": "2026-11-09",
-    "store_offer": "PreOrder"
+    "last_checked": "2026-11-16",
+    "store_offer": "PreOrder",
+    "sale_end": "2026-11-30"
   },
   {
     "slug": "secret-lair-marvel-doomsdrop",

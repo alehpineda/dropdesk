@@ -695,7 +695,9 @@ def set_phasers_deepen():
 EL_SLUG = "secret-lair-extra-life-rise-of-the-polygons"
 EL_WIZ = "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026"
 EL_SETTLED = "Buy if you want to support Extra Life or like the art; skip as sealed speculation."
-EL_CHECKED = "2026-11-09"
+EL_CHECKED = "2026-11-09"  # MagicCon, singles, and charity details
+EL_SALE_CHECKED = "2026-11-16"  # live store CTA / sale-open check
+EL_SALE_Q = "Is the Extra Life Secret Lair on sale now?"
 EL_SCRYFALL = "https://scryfall.com/"
 # Cheapest listed non-foil printings on Scryfall, Nov 9, 2026, in cents USD.
 EL_SINGLES = [
@@ -706,10 +708,13 @@ EL_SINGLES = [
 ]
 def extra_life_facts():
     r = next(x for x in data if x["slug"] == EL_SLUG)
-    if r.get("last_checked") != EL_CHECKED: raise SystemExit("Extra Life last_checked must be " + EL_CHECKED)
+    if r.get("last_checked") != EL_SALE_CHECKED: raise SystemExit("Extra Life last_checked must be " + EL_SALE_CHECKED)
+    if r.get("sale_end") != "2026-11-30": raise SystemExit("Extra Life sale_end must be 2026-11-30")
+    if r.get("store_offer") != "PreOrder": raise SystemExit("Extra Life store_offer must stay PreOrder (store ships later)")
     if EL_SETTLED not in r["note"]: raise SystemExit("Extra Life settled verdict missing")
     win = r.get("window") or ""
-    if "Nov 16–Nov 30" not in win or "1 a.m. PT" not in win: raise SystemExit("Extra Life window missing official sale dates")
+    if "On sale now through Nov 30" not in win or "1 a.m. PT" not in win: raise SystemExit("Extra Life window must say on sale now through Nov 30")
+    if "opened Nov 16" not in win: raise SystemExit("Extra Life window missing opened Nov 16")
     if "Nov 13–15" not in win: raise SystemExit("Extra Life window missing MagicCon early dates")
     if re.search(r"9\s*a\.?m\.?\s*PT", win, flags=re.I): raise SystemExit("Extra Life window invents a 9 AM PT start")
     nonfoil, foil = _usd_cents(r, "Non-foil"), _usd_cents(r, "Foil")
@@ -722,10 +727,11 @@ def extra_life_facts():
     return dict(r=r, nonfoil=money_c(nonfoil), foil=money_c(foil), singles=money_c(singles),
                 self_path=f"{BASE}/p/{EL_SLUG}.html", hub_path=f"{BASE}/secret-lair.html")
 def extra_life_sale_answer():
-    return ("Secret Lair: Rise of the Polygons | Extra Life 2026 is at " + phasers_link(SL_STORE, "MagicSecretLair.com")
-            + " from Nov 16 through Nov 30, 2026 at 1 a.m. PT (3 a.m. CT). The "
+    return ("Yes. Secret Lair: Rise of the Polygons | Extra Life 2026 is on sale now through Nov 30, 2026 at 1 a.m. PT (3 a.m. CT) at "
+            + phasers_link(SL_STORE, "MagicSecretLair.com")
+            + ". The "
             + phasers_link(EL_WIZ, "Wizards")
-            + " announcement does not state a start hour on Nov 16. Limited early copies are also at the MagicCon: Atlanta Extra Life / merch booth Nov 13–15, while supplies last. Last checked Nov 9, 2026.")
+            + " announcement does not state a start hour on Nov 16. Limited early copies were also at the MagicCon: Atlanta Extra Life / merch booth Nov 13–15, while supplies last. Last checked Nov 16, 2026.")
 def extra_life_magiccon_answer():
     return ("Yes, in limited quantities at the Extra Life / merch booth at MagicCon: Atlanta, Nov 13–15, 2026, while supplies last ("
             + phasers_link(EL_WIZ, "Wizards")
@@ -742,7 +748,7 @@ def extra_life_ship_answer():
             + " announcement does not give a shipping window for Rise of the Polygons. Treat holiday delivery as unknown, and don't count on it as a Christmas gift. Last checked Nov 9, 2026.")
 def extra_life_extra_faqs(f):
     return [
-        ("When does the Extra Life Secret Lair go on sale?", extra_life_sale_answer()),
+        (EL_SALE_Q, extra_life_sale_answer()),
         ("Can I buy Rise of the Polygons at MagicCon Atlanta?", extra_life_magiccon_answer()),
         ("Is the Extra Life Secret Lair worth it compared to singles?", extra_life_singles_answer(f)),
         ("How much of Extra Life Secret Lair sales go to charity?", extra_life_charity_answer()),
@@ -751,19 +757,19 @@ def extra_life_extra_faqs(f):
 def extra_life_hub_faqs():
     page = f"{BASE}/p/{EL_SLUG}.html"
     return [
-        ("When does the Extra Life Secret Lair go on sale?", extra_life_sale_answer()),
+        (EL_SALE_Q, extra_life_sale_answer()),
         ("Can I buy Rise of the Polygons at MagicCon Atlanta?", extra_life_magiccon_answer()),
     ]
 def extra_life_deepen():
     f = extra_life_facts()
     self_abs = SITE_URL + f["self_path"]
     answer = (
-        "<p><b>When is the Extra Life Secret Lair and is it worth it?</b> Secret Lair: Rise of the Polygons | Extra Life 2026 is at "
+        "<p><b>When is the Extra Life Secret Lair and is it worth it?</b> Secret Lair: Rise of the Polygons | Extra Life 2026 is on sale now through Nov 30, 2026 at 1 a.m. PT (3 a.m. CT) at "
         + phasers_link(SL_STORE, "MagicSecretLair.com")
-        + " from Nov 16 through Nov 30, 2026 at 1 a.m. PT (3 a.m. CT), and in limited quantities at the MagicCon: Atlanta Extra Life / merch booth Nov 13–15. It's four reprints plus an Elemental token (Balefire Dragon, Big Score, Young Pyromancer, Sword of Truth and Justice) at "
+        + ", and limited early copies were at the MagicCon: Atlanta Extra Life / merch booth Nov 13–15. It's four reprints plus an Elemental token (Balefire Dragon, Big Score, Young Pyromancer, Sword of Truth and Justice) at "
         + f"{f['nonfoil']} non-foil / {f['foil']} foil ("
         + phasers_link(EL_WIZ, "Wizards")
-        + "). Online, 50% of the sales price (less third-party fees) supports Extra Life / Children's Miracle Network for Seattle Children's Hospital; Wizards says 100% of booth proceeds for this drop and Extra Life merch (minus fees) go to Extra Life. Buy it if you want to support Extra Life or like the art. Skip it as sealed speculation — price the singles if you only want one or two of the playable cards. <i>Last checked: Nov 9, 2026.</i></p>")
+        + "). Online, 50% of the sales price (less third-party fees) supports Extra Life / Children's Miracle Network for Seattle Children's Hospital; Wizards says 100% of booth proceeds for this drop and Extra Life merch (minus fees) go to Extra Life. Buy it if you want to support Extra Life or like the art. Skip it as sealed speculation — price the singles if you only want one or two of the playable cards. <i>Last checked: Nov 16, 2026 (sale status); contents, singles and charity details last checked Nov 9, 2026.</i></p>")
     magiccon = (
         "<h2 id=magiccon-early>MagicCon: Atlanta early window (Nov 13–15)</h2>"
         + checked({"last_checked": EL_CHECKED, "source": EL_WIZ}, with_sources=True)
@@ -783,13 +789,13 @@ def extra_life_deepen():
         + E(EL_SETTLED) + "</p>")
     sale = (
         "<h2 id=sale-checklist>Online sale checklist</h2>"
-        + checked({"last_checked": EL_CHECKED, "source": EL_WIZ}, with_sources=True)
+        + checked({"last_checked": EL_SALE_CHECKED, "source": EL_WIZ}, with_sources=True)
         + "<ol>"
-        + "<li><b>Online window:</b> Nov 16 through Nov 30, 2026 at 1 a.m. PT (3 a.m. CT), only at "
+        + "<li><b>Online window:</b> on sale now through Nov 30, 2026 at 1 a.m. PT (3 a.m. CT), only at "
         + phasers_link(SL_STORE, "MagicSecretLair.com")
-        + ". The " + phasers_link(EL_WIZ, "Wizards") + " announcement does not state a start hour on Nov 16.</li>"
+        + ". The sale opened Nov 16. The " + phasers_link(EL_WIZ, "Wizards") + " announcement does not state a start hour on Nov 16.</li>"
         + f"<li><b>Price:</b> {f['nonfoil']} non-foil / {f['foil']} foil (Wizards).</li>"
-        + "<li><b>Account:</b> have a Wizards account ready, with shipping and payment saved, before the window. Recent Secret Lair sales say a cart does not reserve a drop; the order is secured only when checkout is completed.</li>"
+        + "<li><b>Account:</b> have a Wizards account ready, with shipping and payment saved. Recent Secret Lair sales say a cart does not reserve a drop; the order is secured only when checkout is completed.</li>"
         + "<li><b>Shipping window:</b> not announced. The " + phasers_link(EL_WIZ, "Wizards") + " announcement does not say when these orders ship. Treat holiday delivery as unknown.</li>"
         + "<li><b>Charity split (online):</b> 50% of the sales price, less third-party transaction fees, supports Extra Life / Children's Miracle Network for Seattle Children's Hospital.</li>"
         + "</ol>")
@@ -813,13 +819,25 @@ def _assert_extra_life_page(path):
         if need not in types: raise SystemExit("Extra Life JSON-LD missing " + need)
     got = _assert_faq_match(html_text, "<h2>FAQ</h2>")
     questions = [q for q, _ in got]
-    for q in ("When does the Extra Life Secret Lair go on sale?", "Can I buy Rise of the Polygons at MagicCon Atlanta?",
+    for q in (EL_SALE_Q, "Can I buy Rise of the Polygons at MagicCon Atlanta?",
               "Is the Extra Life Secret Lair worth it compared to singles?", "How much of Extra Life Secret Lair sales go to charity?",
               "Will Rise of the Polygons arrive before Christmas?"):
         if q not in questions: raise SystemExit("missing FAQ: " + q)
+    if "on sale now through nov 30" not in html_text.lower(): raise SystemExit("Extra Life page must say on sale now through Nov 30")
     if EL_SETTLED not in html_text: raise SystemExit("Extra Life settled verdict missing from the page")
     if re.search(r"9\s*a\.?m\.?\s*PT", html_text, flags=re.I): raise SystemExit("Extra Life page invents a 9 AM PT start")
     if "not announced" not in html_text.lower(): raise SystemExit("Extra Life shipping window must stay not announced")
+    avails = set()
+    for obj in _page_ld(html_text):
+        def _walk(o):
+            if isinstance(o, dict):
+                if o.get("@type") == "Offer" and o.get("availability"): avails.add(o["availability"])
+                for v in o.values(): _walk(v)
+            elif isinstance(o, list):
+                for v in o: _walk(v)
+        _walk(obj)
+    if avails != {"https://schema.org/PreOrder"}:
+        raise SystemExit("Extra Life Offers must stay PreOrder (store pre-order, ships later), got " + repr(avails))
     for banned in ("Draft — pending owner OK", "Proposed", "pending owner", "awaiting owner"):
         if banned in html_text: raise SystemExit("draft label still public: " + banned)
     title = html.unescape(re.search(r"<title>(.*?)</title>", html_text).group(1))
@@ -841,9 +859,11 @@ def _assert_extra_life_hub(path):
     html_text = open(path).read()
     _assert_no_banned(html_text)
     got = dict(_assert_faq_match(html_text, "<h2>Secret Lair FAQ</h2>"))
-    for q in ("When does the Extra Life Secret Lair go on sale?", "Can I buy Rise of the Polygons at MagicCon Atlanta?"):
+    for q in (EL_SALE_Q, "Can I buy Rise of the Polygons at MagicCon Atlanta?"):
         if q not in got: raise SystemExit("hub missing Extra Life FAQ: " + q)
-    if re.search(r"9\s*a\.?m\.?\s*PT", got["When does the Extra Life Secret Lair go on sale?"], flags=re.I):
+    if "on sale now through nov 30" not in got[EL_SALE_Q].lower():
+        raise SystemExit("hub Extra Life FAQ must say on sale now through Nov 30")
+    if re.search(r"9\s*a\.?m\.?\s*PT", got[EL_SALE_Q], flags=re.I):
         raise SystemExit("hub Extra Life FAQ invents a 9 AM PT start")
     if "Proposed" in html_text: raise SystemExit("Proposed copy on the hub")
     title = html.unescape(re.search(r"<title>(.*?)</title>", html_text).group(1))
