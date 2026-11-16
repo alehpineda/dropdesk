@@ -983,6 +983,8 @@ for r in data:
         hubl += (f'<p>A dated per-SKU Wait/Skip table of US street prices (checked Nov 9, 2026) is on the '
                  f'<a href="{BASE}/guides/star-trek-mtg-release-guide.html#per-sku-wait-skip">Star Trek release guide</a>. '
                  'The set and Commander verdicts on this page are unchanged.</p>')
+    if r["slug"] in ("nauctis-the-sunken-realm", "nauctis-commander"):
+        hubl += f'<p>Deciding what to preorder? Read the <a href="{BASE}/guides/nauctis-the-sunken-realm-release-guide.html">Nauctis: The Sunken Realm release guide</a>: key dates, every MSRP, the Commander decks and our early preorder call.</p>'
     facts = ("<h2>Key facts</h2><ul>" + "".join(f"<li>{E(f)}</li>" for f in r["facts"]) + "</ul>") if r.get("facts") else ""
     ti = TYPE_INFO.get(r["type"]); tinfo = f"<h2>{E(ti[0])}</h2><p>{E(ti[1])}</p>" if ti else ""
     howto = f"<h2>{HOWTO[0]}</h2><p>{E(HOWTO[1])}</p>" if not r.get("placeholder") and (not dated(r) or r["release_date"] > today or r.get("delayed")) else ""
@@ -1789,10 +1791,10 @@ y_faq.append(("How many MagicCons are there in 2027?", "Wizards says there will 
 y_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › <a href="{BASE}/guides/">Guides</a> › 2027 release schedule</nav><h1>{E(Y_H1)}</h1>'
   f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
   f'<p><b>Last updated:</b> {tdate()} · {len(y_items)} products dated in 2027</p>'
-  f'<p>Every Magic: The Gathering product on our calendar for 2027: premier sets, Universes Beyond sets and Commander decks, with release dates, known MSRPs, preorder status and sources. Wizards says 2027 will have <a href="{Y_SRC}">three Magic Multiverse sets and three Universes Beyond sets</a>, alternating between the two, and four MagicCons, including the first one in Japan. Each product page lists its sources, and dates that are not confirmed yet are tagged. For what\'s releasing before then, see <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a> and the <a href="{BASE}/guides/star-trek-mtg-release-guide.html">Star Trek release guide</a>.</p>'
+  f'<p>Every Magic: The Gathering product on our calendar for 2027: premier sets, Universes Beyond sets and Commander decks, with release dates, known MSRPs, preorder status and sources. Wizards says 2027 will have <a href="{Y_SRC}">three Magic Multiverse sets and three Universes Beyond sets</a>, alternating between the two, and four MagicCons, including the first one in Japan. Each product page lists its sources, and dates that are not confirmed yet are tagged. For what\'s releasing before then, see <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a> and the <a href="{BASE}/guides/star-trek-mtg-release-guide.html">Star Trek release guide</a>. The first 2027 set has its own <a href="{BASE}/guides/nauctis-the-sunken-realm-release-guide.html">Nauctis: The Sunken Realm release guide</a>.</p>'
   "<h2>2027 at a glance</h2><table><tr><th>Date</th><th>Product</th><th>Type</th></tr>" + "".join(f"<tr><td>{nice_date(r)}</td><td>{y_link(r)}</td><td>{E(r['type'])}{'' if r['status'] == 'confirmed' else ' (' + E(r['status']) + ')'}</td></tr>" for r in y_items) + "</table>"
   + "".join(f"<h2>{g_month_name(m)}</h2>" + "".join(y_item(r) for r in y_items if r["release_date"][:7] == m) for m in y_months)
-  + "<h2>Should you preorder 2027 sets now?</h2><p>None of the 2027 products has a buy, wait or skip verdict from us yet: card previews, decklists or prices are still missing for each of them. We add a verdict once there's enough to judge, and the weekly email flags it when we do.</p>"
+  + "<h2>Should you preorder 2027 sets now?</h2><p>None of the 2027 products has a buy, wait or skip verdict from us yet: card previews, decklists or prices are still missing for each of them. We add a verdict once there's enough to judge, and the weekly email flags it when we do. For Nauctis: The Sunken Realm, our <a href=\"/guides/nauctis-the-sunken-realm-release-guide.html#should-you-preorder\">early preorder timing call</a> (mostly Wait, checked Nov 16, 2026) is on its release guide.</p>"
   + f'<p class=disc><small>{E(DISCLOSURE)}</small></p>'
   + "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in y_faq)
   + f'<p>More releases: the <a href="{BASE}/secret-lair.html">Secret Lair drop schedule</a> and the full <a href="{BASE}/">release calendar</a>.</p>'
@@ -1813,8 +1815,159 @@ y_ld = [
  {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in y_faq]},
 ]
 page(Y_TITLE, Y_DESC, y_body, Y_SLUG, y_ld)
+# ---- Guide 4: Nauctis: The Sunken Realm release guide (facts from Wizards' "Collecting Nauctis: The Sunken Realm | A First Look",
+# Nov 13, 2026; MSRPs/contents/dates stored on the releases.json entries). Early preorder calls are timing calls, not final verdicts:
+# the entries keep no "verdict" field, so product pages and the 2027 schedule still say "No verdict yet". ----
+NAU_SRC = "https://magic.wizards.com/en/news/feature/collecting-nauctis-the-sunken-realm"
+NAU_GALLERY = "https://magic.wizards.com/en/products/nauctis-the-sunken-realm/card-image-gallery"
+NAU_PWG = "https://magic.wizards.com/en/news/magic-story/planeswalkers-guide-to-nauctis-the-sunken-realm"
+NAU_CHECKED = "2026-11-16"
+NAU_PWG_T = "Planeswalker's Guide to Nauctis"
+nau_set = g_r("nauctis-the-sunken-realm"); nau_cmd = g_r("nauctis-commander"); nau_dd = g_r("marvel-darkhold-destiny")
+NAU_SLUG = "guides/nauctis-the-sunken-realm-release-guide.html"; nau_url = url(NAU_SLUG)
+NAU_TITLE = "Nauctis: The Sunken Realm Release Date & Prices | MTG Drops"
+NAU_H1 = f"Nauctis: The Sunken Realm Release Guide ({nice_date(nau_set)})"
+NAU_PUBLISHED = "2026-11-16"
+if len(NAU_TITLE) > 60: raise SystemExit(f"Nauctis guide title is {len(NAU_TITLE)} chars (max 60)")
+for _e in (nau_set, nau_cmd):
+    if _e["source"] != NAU_SRC: raise SystemExit("Nauctis entry must cite the Wizards first-look article: " + _e["slug"])
+def nau_a(t="Wizards", href=NAU_SRC): return f'<a href="{href}">{E(t)}</a>'
+def nau_p(r, label):
+    for p in r.get("prices") or []:
+        if p["label"] == label: return p["usd"]
+    raise SystemExit(f"missing Nauctis MSRP in releases.json: {r['slug']} {label}")
+_n_bp, _n_cb, _n_bun = nau_p(nau_set, "Booster Pack"), nau_p(nau_set, "Collector Booster"), nau_p(nau_set, "Bundle")
+_n_slb, _n_dn = nau_p(nau_set, "Secret Lair Bundle"), nau_p(nau_set, "Draft Night")
+_n_cmd, _n_pe = nau_p(nau_cmd, "Commander Deck (each)"), nau_p(nau_cmd, "Premium Edition Commander Deck (each)")
+_n_inside = json.dumps(nau_set["inside"])
+if "30 per box" not in _n_inside or "12 per box" not in _n_inside:
+    raise SystemExit("Nauctis box pack counts missing from releases.json; not printing box math")
+_n_bbox, _n_cbox = round(30 * _n_bp, 2), round(12 * _n_cb, 2)
+_n_decks = [x for x in nau_cmd["contents"]]
+if len(_n_decks) != 4: raise SystemExit("expected 4 Nauctis Commander deck names in releases.json")
+NAU_DATES = [("Story begins", "Jan 4, 2027"), ("Standard rotation", "Jan 29, 2027"), ("Prerelease events (local game stores)", nau_set["prerelease"]),
+             ("Magic Presents: Black History Month Celebration", "Feb 1–28, 2027"), ("MTG Arena release", "Feb 2, 2027"),
+             ("Tabletop release", nice_date(nau_set)), ("Commander Party, Part 1", "Feb 12–18, 2027"), ("Store Championship", "Feb 19 – Mar 18, 2027"),
+             ("MagicCon: Detroit and Pro Tour Nauctis", "Feb 26–28, 2027"), ("Magic Presents: Sunken Trove", "Mar 5 – Apr 1, 2027"),
+             ("Commander Party, Part 2", "Mar 19–25, 2027")]
+NAU_PRODUCTS = [
+ ("Booster Pack", fmt({"usd": _n_bp}), "14 cards, including 1 rare or mythic rare, plus a token. 30 per box; each box has a Box Topper. About 1 in 1,000 is a Booster God Pack."),
+ ("Collector Booster", fmt({"usd": _n_cb}), "12 cards, mostly foils and Booster Fun, including 1 rare or mythic rare from the Commander decks. 12 per box; each box has a Box Topper. Only place to find the Abyssal Lotus headliner. About 1 in 300 is a Collector God Pack."),
+ ("Bundle", fmt({"usd": _n_bun}), "9 Booster Packs, 30 basic lands (10 traditional foil, 5 full-art), 1 traditional foil promo card, spindown die, card-storage box."),
+ ("Secret Lair Bundle", fmt({"usd": _n_slb}), "6 Booster Packs, 2 Collector Boosters, 2 of 10 traditional foil Secret Lair Bundle promo cards, 20 traditional foil full-art basic lands, spindown die, storage box."),
+ ("Draft Night", fmt({"usd": _n_dn}), "12 Booster Packs, 1 Collector Booster, 90 basic lands, 10 tokens and a draft insert."),
+ ("Commander Deck (each)", fmt({"usd": _n_cmd}), "Four decks. Ready-to-play 100 cards: 2 traditional foil new-to-Magic commanders (face and featured), 98 non-foil cards including 10 new-to-Magic cards, 10 tokens, deck box."),
+ ("Premium Edition Commander Deck (each)", fmt({"usd": _n_pe}), "The same four decks with all 100 cards in traditional foil (borderless commanders) and foil-front tokens."),
+]
+_n_math = [("Booster Pack box", f"30 × {fmt({'usd': _n_bp})} = {fmt({'usd': _n_bbox})} at pack MSRP. Wizards lists no box MSRP; this is arithmetic."),
+           ("Collector Booster box", f"12 × {fmt({'usd': _n_cb})} = {fmt({'usd': _n_cbox})} at pack MSRP. Wizards lists no box MSRP; this is arithmetic."),
+           ("Bundle", f"9 Booster Packs are {fmt({'usd': 9*_n_bp})} at MSRP, so the {fmt({'usd': _n_bun})} Bundle adds the lands, foil promo, die and box for about {fmt({'usd': _n_bun - 9*_n_bp})}."),
+           ("Draft Night", f"12 Booster Packs plus 1 Collector Booster are {fmt({'usd': 12*_n_bp + _n_cb})} at MSRP; Draft Night is {fmt({'usd': _n_dn})} and adds 90 lands and tokens."),
+           ("Secret Lair Bundle", f"6 Booster Packs plus 2 Collector Boosters are {fmt({'usd': 6*_n_bp + 2*_n_cb})} at MSRP; the {fmt({'usd': _n_slb})} box adds 2 promo cards and 20 foil full-art lands.")]
+# Early timing calls (new Nov 16, 2026). Conservative: Wait while cards and decklists are mostly unrevealed; Skip only above pack-math MSRP.
+NAU_CALLS = [
+ ("Booster Packs and Booster Pack box", f"{fmt({'usd': _n_bp})} per pack ({fmt({'usd': _n_bbox})} for 30)", "Wait",
+  "Only a few cards are revealed, and store prices often fall after release. Preorder only if you want packs on day one."),
+ ("Bundle", fmt({"usd": _n_bun}), "Wait",
+  f"Amazon listed it for preorder at {fmt({'usd': nau_set['amazon_evidence']['price_seen_usd'][0]})} on {nice_iso(nau_set['amazon_evidence']['checked'])}, the same as MSRP, so there is no discount yet. No reason to lock in before previews."),
+ ("Draft Night", fmt({"usd": _n_dn}), "Wait", "A group-draft box; wait until the set is fully previewed."),
+ ("Collector Booster box", f"{fmt({'usd': _n_cbox})} pack math (12 × {fmt({'usd': _n_cb})})", f"Skip above {fmt({'usd': _n_cbox})}; Wait otherwise",
+  "The Abyssal Lotus headliner is about 500 copies total, so a single box is very unlikely to have one. Don't pay a preorder premium for it."),
+ ("Secret Lair Bundle", fmt({"usd": _n_slb}), "Wait", "Wizards has shown only some of the 10 promo cards so far."),
+ ("Commander decks (regular and Premium Edition)", f"{fmt({'usd': _n_cmd})} / {fmt({'usd': _n_pe})} each", "Wait",
+  "The deck names are out, but commanders and decklists aren't, so preordering means buying blind."),
+]
+_n_faq = [
+ (tense(nau_set, "When does Nauctis: The Sunken Realm come out?", "When did Nauctis: The Sunken Realm come out?"),
+  tense(nau_set, f"The tabletop release is {nice_date(nau_set)}. Prerelease events run Jan 29–Feb 4, 2027, and the set arrives on MTG Arena on Feb 2, 2027 (Wizards).",
+        f"The tabletop release was {nice_date(nau_set)}. Prerelease events ran Jan 29–Feb 4, 2027, and the set arrived on MTG Arena on Feb 2, 2027 (Wizards).")),
+ ("When is the Nauctis prerelease?", tense(nau_set, "Prerelease events run Jan 29–Feb 4, 2027 at local game stores. ", "Prerelease events ran Jan 29–Feb 4, 2027 at local game stores. ")
+  + "Each Prerelease Pack has 6 Booster Packs, 1 traditional foil rare or mythic rare, a deck box and a spindown die (Wizards). Stores set their own event prices."),
+ ("How much is a Nauctis Collector Booster box?", f"Wizards lists the Collector Booster at {fmt({'usd': _n_cb})} MSRP and puts 12 in a box, which is {fmt({'usd': _n_cbox})} at pack MSRP. Wizards does not list a separate box MSRP, and store prices vary."),
+ ("How much does Nauctis cost?", "Wizards' MSRPs: " + "; ".join(f"{n} {m}" for n, m, _ in NAU_PRODUCTS) + ". Store prices vary."),
+ ("Should I preorder Nauctis?", "Our early call, checked Nov 16, 2026: Wait on most sealed product until the full set is previewed, and Skip Collector Booster boxes priced above the "
+  + f"{fmt({'usd': _n_cbox})} pack-math MSRP. Preorder now only if you want a product on day one. This is a timing call, not a final buy/skip verdict."),
+ ("What is Abyssal Lotus and how rare is it?", "Abyssal Lotus is a card in Nauctis: The Sunken Realm. Its textless raised foil headliner version appears only in Collector Boosters, in English only (in Collector Boosters of any language), and Wizards says about 500 will be printed."),
+ ("What are the Nauctis Commander decks and how much do they cost?", "Four decks: " + ", ".join(_n_decks[:-1]) + f" and {_n_decks[-1]}. Each is {fmt({'usd': _n_cmd})} MSRP, or {fmt({'usd': _n_pe})} for the all-foil Premium Edition. Commanders and decklists are not revealed yet."),
+ ("Is Nauctis on MTG Arena, and when?", tense(nau_set, "Yes. Wizards lists the MTG Arena release on Feb 2, 2027, three days before the Feb 5 tabletop release.", "Yes. Nauctis arrived on MTG Arena on Feb 2, 2027, three days before the Feb 5 tabletop release.")),
+ ("Does Standard rotate with Nauctis?", "Yes. Wizards lists Standard rotation on Jan 29, 2027, the first day of Nauctis prerelease events. Check Wizards' announcements for which sets leave Standard."),
+]
+_n_retail = [("Booster Pack box", "Magic The Gathering Nauctis The Sunken Realm Booster Box", None),
+             ("Collector Booster box", "Magic The Gathering Nauctis The Sunken Realm Collector Booster Box", None),
+             ("Bundle", "Magic The Gathering Nauctis The Sunken Realm Bundle", amazon(nau_set)),
+             ("Commander decks", "Magic The Gathering Nauctis Commander Deck", amazon(nau_cmd))]
+_n_set_link = f'<a href="{BASE}/p/{nau_set["slug"]}.html">{E(nau_set["name"])}</a>'
+_n_cmd_link = f'<a href="{BASE}/p/{nau_cmd["slug"]}.html">Nauctis Commander Decks</a>'
+nau_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › <a href="{BASE}/guides/">Guides</a> › Nauctis</nav><h1>{E(NAU_H1)}</h1>'
+  f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
+  f'<p><b>Last updated:</b> {tdate()} · release {nice_date(nau_set)} ({E(nau_set["status"])})</p>'
+  f'<div class=card><p><b>{E(_n_faq[0][0])}</b> Nauctis: The Sunken Realm {tense(nau_set, "releases", "released")} on tabletop on {nice_date(nau_set)}, with prerelease events Jan 29–Feb 4 and MTG Arena on Feb 2. '
+  f'MSRPs are {fmt({"usd": _n_bp})} per Booster Pack, {fmt({"usd": _n_cb})} per Collector Booster, {fmt({"usd": _n_bun})} for the Bundle, {fmt({"usd": _n_dn})} for Draft Night, '
+  f'and {fmt({"usd": _n_cmd})} per Commander deck ({fmt({"usd": _n_pe})} Premium Edition). '
+  + tense(nau_set, "Wizards says preorders are open now at local game stores, TCGplayer and Amazon. ", "")
+  + f'<small>(Source: {nau_a("Wizards of the Coast")}. Last checked: {nice_iso(NAU_CHECKED)}.)</small></p></div>'
+  f'<p>Nauctis: The Sunken Realm is a Magic Multiverse set on a brand-new underwater plane, and the first Magic set of 2027. This guide covers the key dates, every product and MSRP, the four Commander decks, the Booster Fun chase cards and our early preorder call. Facts are from Wizards\' {nau_a("Collecting Nauctis: The Sunken Realm | A First Look")} article (Nov 13, 2026); full product pages: {_n_set_link} and {_n_cmd_link}. Revealed cards are in Wizards\' {nau_a("card image gallery", NAU_GALLERY)}, and the setting is in the {nau_a(NAU_PWG_T, NAU_PWG)}.</p>'
+  "<h2>Key dates</h2><table><tr><th>Event</th><th>Date</th></tr>" + "".join(f"<tr><td>{E(a)}</td><td>{E(b)}</td></tr>" for a, b in NAU_DATES)
+  + f'</table><p><small>Dates per {nau_a()}. Standard rotation is Jan 29, 2027, the same day prerelease events start.</small></p>'
+  "<h2>Every product and price</h2><table><tr><th>Product</th><th>MSRP (USD)</th><th>What's inside</th><th>Source</th></tr>"
+  + "".join(f"<tr><td>{E(n)}</td><td>{E(m)}</td><td>{E(c)}</td><td>{nau_a()}</td></tr>" for n, m, c in NAU_PRODUCTS)
+  + f'</table><p><small>MSRPs and contents per {nau_a()}; Wizards calls the base pack a "Booster Pack". Stores set their own prices. Last checked {nice_iso(NAU_CHECKED)}.</small></p>'
+  "<h3>Value at MSRP</h3><p>Simple arithmetic from Wizards' MSRPs, so you can compare the boxes:</p><ul>" + "".join(f"<li><b>{E(a)}:</b> {E(b)}</li>" for a, b in _n_math) + "</ul>"
+  "<h2>Commander decks</h2>"
+  f'<p>Wizards confirmed four Nauctis: The Sunken Realm Commander decks: ' + ", ".join(f"<b>{E(x)}</b>" for x in _n_decks[:-1]) + f' and <b>{E(_n_decks[-1])}</b>. '
+  f'The regular deck is {fmt({"usd": _n_cmd})} MSRP: a ready-to-play 100-card deck with traditional foil new-to-Magic face and featured commanders, 98 non-foil cards (10 new to Magic), 10 tokens and a deck box. '
+  f'The Premium Edition is {fmt({"usd": _n_pe})}: the same deck with borderless foil commanders and all 98 other cards in traditional foil. '
+  f'Commanders, colors and decklists are not revealed yet (TBA). Commander is also called EDH. Details: {_n_cmd_link}.</p>'
+  "<h2>Booster Fun and chase: Abyssal Lotus and Sunken Treasures</h2><ul>"
+  "<li><b>Abyssal Lotus headliner:</b> a textless raised foil version, only in Collector Boosters. Wizards says about 500 will be printed. It is English only, in Collector Boosters of any language.</li>"
+  "<li><b>Sunken treasures box toppers:</b> reprints of famous Magic artifacts (Wizards' example: Crucible of Worlds). There are 15 classic reprints and 5 new-to-Magic cards. Every Booster Pack box and Collector Booster box has a Box Topper with 1 pearlescent sunken treasures card, a version found only in box toppers. Undersea foil versions are only in Collector Boosters.</li>"
+  "<li><b>God Packs:</b> about 1 in 1,000 Booster Packs and 1 in 300 Collector Boosters, where every nonbasic card is rare or mythic rare.</li>"
+  "<li><b>Other treatments:</b> 24 ocean panorama (triptych) cards, 38 coral frame cards, 7 borderless rare lands and 10 Japan Showcase cards. Wizards says more Booster Fun is still to come.</li>"
+  f'</ul><p><small>Per {nau_a()}.</small></p>'
+  "<p><b>Who should care:</b> collectors chasing the headliner, box toppers and foil treatments, which live mostly in Collector Boosters and boxes. <b>Who shouldn't:</b> drafters and players who want the cards to play, since Booster Packs, the Bundle or Draft Night are the cheaper way in, and singles usually cost less than opening for one card.</p>"
+  f'<h2 id="should-you-preorder">Should you preorder Nauctis now?</h2>'
+  + checked({"last_checked": NAU_CHECKED, "source": NAU_SRC})
+  + "<p>Our early call, as of Nov 16, 2026: hold most sealed product until the set is fully previewed. Only a few cards are revealed so far (the story starts Jan 4, 2027), and store prices often fall after release. "
+  "These are timing calls on Wizards' MSRPs, not final buy/skip verdicts; we'll add those to the product pages once the cards and decklists are out. We have not checked store preorder prices for this guide except the Amazon Bundle listing noted below.</p>"
+  "<table><tr><th>Product</th><th>MSRP</th><th>Call</th><th>Why</th></tr>"
+  + "".join(f"<tr><td>{E(a)}</td><td>{E(b)}</td><td><b>{E(c)}</b></td><td>{E(d)}</td></tr>" for a, b, c, d in NAU_CALLS) + "</table>"
+  "<h2>Standard rotation on Jan 29, 2027</h2>"
+  f'<p>Wizards lists Standard rotation on Jan 29, 2027, the day Nauctis prerelease events begin, so Standard players should expect the format to change with this set. Nauctis: The Sunken Realm (NAU) is legal in all formats; the Commander decks (NAC) and Special Guests (SPG) cards are legal in Commander, Legacy and Vintage ({nau_a()}). We don\'t list which sets rotate here; check Wizards\' announcements.</p>'
+  f'<h2>Add the dates to your calendar</h2><p>Prerelease and release dates for Nauctis are in our calendar feed: {ics_link("calendar.ics")}.</p>'
+  "<h2>Where to check prices</h2><ul>" + "".join(f"<li>{E(n)}: {retail_links(q, a)}</li>" for n, q, a in _n_retail) + "</ul>"
+  f'<div class=card><h3>{_n_set_link}</h3><p>{vtag(nau_set)}{E(nau_set["note"])}</p>{amz_btn(nau_set)}</div>'
+  f'<div class=card><h3>{_n_cmd_link}</h3><p>{vtag(nau_cmd)}{E(nau_cmd["note"])}</p>{amz_btn(nau_cmd)}</div>'
+  f'<p class=disc><small>{E(DISCLOSURE)}</small></p>'
+  "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in _n_faq)
+  + f'<p>Related: the <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>, {_n_set_link}, {_n_cmd_link}, the next set on our calendar, <a href="{BASE}/p/{nau_dd["slug"]}.html">{E(nau_dd["name"])}</a> ({nice_date(nau_dd)}), and the full <a href="{BASE}/">release calendar</a>.</p>'
+  + f"<h2>Get the weekly release email</h2><p>What's Dropping covers what's releasing next, date and price changes, and a buy-or-skip verdict for each product.</p>{FORM}<p><small>Last updated: {tdate()}</small></p>")
+NAU_DESC = "Nauctis: The Sunken Realm release guide: Feb 5, 2027 release, Jan 29–Feb 4 prerelease, every MSRP, the four Commander decks, Abyssal Lotus and what to preorder."
+nau_ld = [
+ {"@context": "https://schema.org", "@type": "Article", "headline": NAU_H1, "url": nau_url, "mainEntityOfPage": nau_url, "image": OG_IMAGE, "datePublished": NAU_PUBLISHED, "dateModified": PD,
+  "author": {"@id": f"{SITE_URL}/#org"}, "publisher": {"@id": f"{SITE_URL}/#org"}, "isPartOf": {"@id": f"{SITE_URL}/#website"},
+  "about": {"@type": "Thing", "name": nau_set["name"]}, "description": NAU_DESC, "citation": [NAU_SRC]},
+ {"@context": "https://schema.org", **ORG},
+ {"@context": "https://schema.org", "@type": "ItemList", "name": "Nauctis: The Sunken Realm products", "numberOfItems": 2,
+  "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate([nau_set, nau_cmd])]},
+ {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+   {"@type": "ListItem", "position": 1, "name": "MTG Drops", "item": f"{SITE_URL}/"},
+   {"@type": "ListItem", "position": 2, "name": "Guides", "item": f"{SITE_URL}/guides/"},
+   {"@type": "ListItem", "position": 3, "name": "Nauctis release guide", "item": nau_url}]},
+ {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in _n_faq]},
+]
+page(NAU_TITLE, NAU_DESC, nau_body, NAU_SLUG, nau_ld)
+_nau_html = open(os.path.join("dist", NAU_SLUG)).read()
+_assert_no_banned(_nau_html)
+_assert_faq_match(_nau_html, "<h2>FAQ</h2>")
+if "Proposed" in _nau_html: raise SystemExit("Proposed copy on the Nauctis guide")
+if "mtgdrops-20" not in _nau_html or TCG_IMPACT_BASE not in _nau_html: raise SystemExit("Nauctis guide is missing affiliate links")
+for _slug in ("nauctis-the-sunken-realm", "nauctis-commander"):
+    _phtml = open(os.path.join("dist", f"p/{_slug}.html")).read()
+    if NAU_SLUG not in _phtml: raise SystemExit("/p/" + _slug + ".html is missing the Nauctis guide link")
+    if "Price: TBA" in _phtml or "Cards unrevealed" in _phtml: raise SystemExit("/p/" + _slug + ".html still says TBA/unrevealed")
 GUIDES = [(G_SLUG, G_H1, "Every Magic product from October to December 2026, grouped by month, with prices, buy/skip verdicts, a dated Star Trek preorder price table, Black Friday buy-now-or-wait calls with dated retailer early-sale windows, holiday gift picks and a week-by-week table of what to buy or preorder in November 2026."),
           (ST_SLUG, ST_H1, "Everything in the Nov 13, 2026 Star Trek set: every product and MSRP, the four Commander decks, key dates, signed cards and what to buy."),
+          (NAU_SLUG, NAU_H1, "The first MTG set of 2027: Feb 5 release, Jan 29–Feb 4 prerelease, every MSRP, the four Commander decks, Abyssal Lotus and Sunken Treasures, and whether to preorder now."),
           (Y_SLUG, Y_H1, "Every 2027 MTG set and Commander deck on our calendar: Nauctis, Darkhold Destiny, Titanbreach and Zhalfir, with dates, MSRPs and preorder status.")]
 gi_url = url("guides/index.html")
 page("MTG Guides: Release Roundups & Gift Picks | MTG Drops", "MTG Drops guides: Magic: The Gathering release roundups, buying guides and gift picks, generated from our release calendar.",

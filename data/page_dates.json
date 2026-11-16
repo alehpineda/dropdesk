@@ -1,15 +1,19 @@
 {
  "guides/index.html": {
-  "date": "2026-11-05",
-  "hash": "c4b6214b4a556f05"
+  "date": "2026-11-16",
+  "hash": "a20181fe474fa9a1"
  },
  "guides/mtg-2027-release-schedule.html": {
   "date": "2026-11-16",
-  "hash": "df73b817298f5e93"
+  "hash": "72ccf6975fe5e458"
  },
  "guides/mtg-releases-fall-holiday-2026.html": {
   "date": "2026-11-16",
   "hash": "545beddfffd3288d"
+ },
+ "guides/nauctis-the-sunken-realm-release-guide.html": {
+  "date": "2026-11-16",
+  "hash": "8f46fe8a02ffbd2f"
  },
  "guides/star-trek-mtg-release-guide.html": {
   "date": "2026-11-16",
@@ -17,7 +21,7 @@
  },
  "index.html": {
   "date": "2026-11-16",
-  "hash": "0c99137c646c97a6"
+  "hash": "530fd4c4cd24e3d3"
  },
  "newsletter.html": {
   "date": "2026-10-23",
@@ -49,11 +53,11 @@
  },
  "p/nauctis-commander.html": {
   "date": "2026-11-16",
-  "hash": "6d079592841de7c7"
+  "hash": "5d4ea16652d83e64"
  },
  "p/nauctis-the-sunken-realm.html": {
   "date": "2026-11-16",
-  "hash": "3c0bec89a259adef"
+  "hash": "b11a4035b363ee22"
  },
  "p/secret-lair-atlanta.html": {
   "date": "2026-11-16",

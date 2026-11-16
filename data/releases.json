@@ -609,12 +609,12 @@
     "name": "Nauctis: The Sunken Realm",
     "type": "Main Set",
     "release_date": "2027-02-05",
-    "window": "Prerelease Jan 29–Feb 4, 2027 at local game stores (WPN)",
-    "source": "https://magic.wizards.com/en/news/announcements/everything-announced-for-the-magic-multiverse-in-2027",
-    "note": "Undersea in-universe set. Cards unrevealed (first look at MagicCon Atlanta). Hold until previews.",
+    "window": "Prerelease Jan 29–Feb 4, 2027 at local game stores; MTG Arena Feb 2, 2027. Wizards listed preorders at local game stores, TCGplayer and Amazon on Nov 13, 2026",
+    "source": "https://magic.wizards.com/en/news/feature/collecting-nauctis-the-sunken-realm",
+    "note": "Undersea Magic Multiverse set, legal in all formats. Booster Pack $5.49, Collector Booster $26.99, Bundle $57.99 (MSRP). Only a few cards are revealed so far, so hold most preorders until full previews.",
     "status": "confirmed",
     "amazon_query": "Nauctis The Sunken Realm MTG",
-    "last_checked": "2026-10-16",
+    "last_checked": "2026-11-16",
     "amazon_asin": "B0HNRHT397",
     "amazon_evidence": {
       "asin": "B0HNRHT397",
@@ -632,23 +632,92 @@
       "2027-02-04"
     ],
     "field_sources": {
-      "prerelease": "https://wpn.wizards.com/en/news/nauctis-the-sunken-realm-dates-and-details"
-    }
+      "prerelease": "https://wpn.wizards.com/en/news/nauctis-the-sunken-realm-dates-and-details",
+      "2027 announcement": "https://magic.wizards.com/en/news/announcements/everything-announced-for-the-magic-multiverse-in-2027"
+    },
+    "prices": [
+      {
+        "label": "Booster Pack",
+        "usd": 5.49
+      },
+      {
+        "label": "Collector Booster",
+        "usd": 26.99
+      },
+      {
+        "label": "Bundle",
+        "usd": 57.99
+      },
+      {
+        "label": "Secret Lair Bundle",
+        "usd": 89.99
+      },
+      {
+        "label": "Draft Night",
+        "usd": 89.99
+      }
+    ],
+    "inside_source": "https://magic.wizards.com/en/news/feature/collecting-nauctis-the-sunken-realm",
+    "inside": [
+      [
+        "Booster Pack ($5.49 MSRP; 30 per box)",
+        [
+          "14 cards: 6 commons, 1 common or Special Guests card, 3 uncommons, 1 rare or mythic rare, 1 uncommon/rare/mythic rare, 1 non-foil common or traditional foil rare/mythic rare, 1 basic land",
+          "1 non-foil double-sided token",
+          "About 1 in 1,000 Booster Packs is a Booster God Pack (every nonbasic card is rare or mythic rare)"
+        ]
+      ],
+      [
+        "Collector Booster ($26.99 MSRP; 12 per box)",
+        [
+          "12 cards: 3 traditional foil commons, 3 foil uncommons, 1 non-foil or traditional foil basic land, 1 traditional foil rare or mythic rare, 1 non-foil rare or mythic rare from Nauctis: The Sunken Realm Commander, 2 non-foil rare or mythic rare Booster Fun cards, 1 foil rare or mythic rare Booster Fun card",
+          "1 art card or traditional foil double-sided token",
+          "About 1 in 300 Collector Boosters is a Collector God Pack",
+          "Only place to find the textless raised foil Abyssal Lotus headliner (about 500 printed, English only)"
+        ]
+      ],
+      [
+        "Bundle ($57.99 MSRP)",
+        [
+          "9 Booster Packs",
+          "30 basic lands: 15 non-foil default frame, 10 traditional foil default frame, 5 non-foil full-art",
+          "1 traditional foil promo card, 2 reference cards, 1 spindown die, 1 card-storage box"
+        ]
+      ],
+      [
+        "Other Nauctis products (MSRP)",
+        [
+          "Secret Lair Bundle $89.99: 6 Booster Packs, 2 Collector Boosters, 2 of 10 traditional foil Secret Lair Bundle promo cards, 20 traditional foil full-art basic lands, spindown die, card-storage box (1 in 5 has a different-color variant)",
+          "Draft Night $89.99: 12 Booster Packs, 1 Collector Booster, 90 non-foil basic lands, 10 non-foil double-sided tokens, draft insert",
+          "Every Booster Pack box and Collector Booster box includes 1 Box Topper with 1 pearlescent sunken treasures card",
+          "Prerelease Pack: 6 Booster Packs, 1 traditional foil rare or mythic rare, deck box, spindown die"
+        ]
+      ]
+    ],
+    "facts": [
+      "Set code NAU; legal in all formats. The Commander decks (NAC) and Special Guests (SPG) cards are legal in Commander, Legacy and Vintage.",
+      "Key dates (Wizards): story begins Jan 4, 2027; Standard rotation Jan 29; prerelease Jan 29–Feb 4; MTG Arena Feb 2; tabletop release Feb 5, 2027.",
+      "Booster Fun (Wizards first look): Abyssal Lotus headliner, sunken treasures (15 classic artifact reprints and 5 new-to-Magic cards), 24 ocean panorama cards, 38 coral frame cards, 7 borderless rare lands, 10 Japan Showcase cards. More Booster Fun is still to be revealed."
+    ]
   },
   {
     "slug": "nauctis-commander",
     "name": "Nauctis Commander Decks (4)",
     "type": "Commander Precon",
     "release_date": "2027-02-05",
-    "window": null,
-    "source": "https://www.thepopverse.com/gaming-magic-the-gathering-2027-sets-commander-decks-magiccon-amsterdam",
-    "note": "Four decks confirmed: Merfolk Regiment, Terrors of the Abyss, Blood in the Water, and Seal the Deal, at $49.99 MSRP each. Wait for lists.",
+    "window": "Wizards listed preorders on Nov 13, 2026; each deck also has a $79.99 Premium Edition",
+    "source": "https://magic.wizards.com/en/news/feature/collecting-nauctis-the-sunken-realm",
+    "note": "Four decks confirmed: Merfolk Regiment, Terrors of the Abyss, Blood in the Water, and Seal the Deal, at $49.99 MSRP each ($79.99 for the all-foil Premium Edition). Wait for lists.",
     "status": "confirmed",
     "amazon_query": "Nauctis Commander Deck MTG",
     "prices": [
       {
         "label": "Commander Deck (each)",
         "usd": 49.99
+      },
+      {
+        "label": "Premium Edition Commander Deck (each)",
+        "usd": 79.99
       }
     ],
     "contents": [
@@ -658,8 +727,8 @@
       "Seal the Deal"
     ],
     "last_checked": "2026-11-16",
-    "preorder_call": "This is a preorder-stage page: the four regular decks are Merfolk Regiment, Terrors of the Abyss, Blood in the Water, and Seal the Deal, at $49.99 MSRP each, but no decklists or commanders yet, so there is no verdict and preordering means buying blind. We'll make the call once the lists are out.",
-    "meta_desc": "Nauctis Commander Decks (Feb 5, 2027): Merfolk Regiment, Terrors of the Abyss, Blood in the Water, Seal the Deal. $49.99 MSRP each. Wait for decklists.",
+    "preorder_call": "This is a preorder-stage page: the four decks are Merfolk Regiment, Terrors of the Abyss, Blood in the Water, and Seal the Deal, at $49.99 MSRP each or $79.99 for the Premium Edition, but no decklists or commanders yet, so there is no verdict and preordering means buying blind. We'll make the call once the lists are out.",
+    "meta_desc": "Nauctis Commander Decks (Feb 5, 2027): Merfolk Regiment, Terrors of the Abyss, Blood in the Water, Seal the Deal. $49.99 each, $79.99 Premium Edition.",
     "amazon_asin": "B0HNV3M7YV",
     "amazon_evidence": {
       "asin": "B0HNV3M7YV",
@@ -670,6 +739,39 @@
       ],
       "checked": "2026-11-16",
       "match_reason": "Pre-order for the Feb 5, 2027 release, matching our release_date. Amazon title reads Includes All 4 Decks (Merfolk Regiment, Terrors of the Abyss, Blood in the Water, Seal the Deal), which are the four regular deck names stored on this entry, at $49.99 MSRP each. Regular 4-deck bundle at the observed pre-order of $199.96 (4 x $49.99), not the Premium Edition (ASIN B0HNTSD5DQ). It stands in as the single Amazon link for this four-deck release, same approach as the Star Trek and Darkhold Destiny Commander Deck Bundles."
+    },
+    "inside_source": "https://magic.wizards.com/en/news/feature/collecting-nauctis-the-sunken-realm",
+    "inside": [
+      [
+        "The four decks",
+        [
+          "Merfolk Regiment",
+          "Terrors of the Abyss",
+          "Blood in the Water",
+          "Seal the Deal",
+          "Commanders, colors and decklists: not revealed yet (TBA)"
+        ]
+      ],
+      [
+        "Commander Deck ($49.99 MSRP each)",
+        [
+          "Ready-to-play 100-card Commander deck",
+          "1 traditional foil new-to-Magic face commander and 1 traditional foil new-to-Magic featured commander",
+          "98 non-foil cards, including 10 new-to-Magic cards",
+          "10 non-foil double-sided tokens, 1 reference card, 1 deck box"
+        ]
+      ],
+      [
+        "Premium Edition Commander Deck ($79.99 MSRP each)",
+        [
+          "The same deck with traditional foil borderless face and featured commanders",
+          "98 traditional foil cards, including 10 new-to-Magic cards",
+          "10 double-sided tokens (foil on one side), 1 reference card, 1 deck box"
+        ]
+      ]
+    ],
+    "field_sources": {
+      "first report": "https://www.thepopverse.com/gaming-magic-the-gathering-2027-sets-commander-decks-magiccon-amsterdam"
     }
   },
   {
