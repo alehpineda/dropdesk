@@ -8,8 +8,8 @@
   "hash": "72ccf6975fe5e458"
  },
  "guides/mtg-releases-fall-holiday-2026.html": {
-  "date": "2026-11-16",
-  "hash": "c69142be85c074f2"
+  "date": "2026-11-18",
+  "hash": "ef0168938e32eb0e"
  },
  "guides/nauctis-the-sunken-realm-release-guide.html": {
   "date": "2026-11-16",
@@ -20,8 +20,8 @@
   "hash": "d608c36be872f9c1"
  },
  "index.html": {
-  "date": "2026-11-16",
-  "hash": "5c6c181a2c0c2785"
+  "date": "2026-11-18",
+  "hash": "0beda19ed427b19e"
  },
  "newsletter.html": {
   "date": "2026-10-23",
@@ -87,6 +87,10 @@
   "date": "2026-11-16",
   "hash": "9418c67bf0205823"
  },
+ "p/secret-lair-my-arrakis-my-superdrop.html": {
+  "date": "2026-11-18",
+  "hash": "ee6df1920fbb7bc5"
+ },
  "p/secret-lair-perfectly-normal-superdrop.html": {
   "date": "2026-11-16",
   "hash": "0047c8bfed9cc643"
@@ -124,16 +128,16 @@
   "hash": "3f145dee1ad91a85"
  },
  "p/zeta-set-rerelease.html": {
-  "date": "2026-11-06",
-  "hash": "8d0d0289a88a739b"
+  "date": "2026-11-18",
+  "hash": "4228219f36e1fd94"
  },
  "p/zhalfir.html": {
   "date": "2026-10-31",
   "hash": "9cfaf16374e7b9e9"
  },
  "secret-lair.html": {
-  "date": "2026-11-16",
-  "hash": "cde316f6f52dd0d6"
+  "date": "2026-11-18",
+  "hash": "ef19b1e91e701d18"
  },
  "sponsor.html": {
   "date": "2026-10-31",

@@ -1553,7 +1553,8 @@ g_faq += [
   "Black Friday is Nov 27, 2026, and Cyber Monday is Nov 30, 2026. GamesRadar (updated Nov 2, 2026) says the official Magic deals start on Nov 27, with price cuts often appearing from mid-November, and that discounts usually continue through Cyber Monday. "
   "Retailer windows, last checked Nov 5, 2026: Target's early Black Friday sale is Thu Nov 5 – Sat Nov 7, 2026, with a daily Deal of the Day from Nov 1 through Dec 24 and new weekend offers afterward. "
   "Walmart Early Black Friday Deals are Nov 12–15. Walmart Black Friday Deals are Nov 23–29 (online at 12:01 a.m. ET; in stores Nov 12 and Nov 27 at 6 a.m. local; Walmart+ early access on Nov 12 and Nov 23). Walmart's Cyber Monday is Nov 30 – Dec 2. "
-  "Amazon has not announced US Black Friday dates yet."),
+  "Amazon has not announced US Black Friday dates yet. "
+  + f'{plink(g_r("secret-lair-my-arrakis-my-superdrop"))} goes on sale Nov 30, 2026, which is Cyber Monday. Sale time and price are TBA.'),
  ("Should I wait for Black Friday to buy MTG Star Trek?",
   f"Buy now on a Star Trek Play Booster box or Bundle at or below today's street prices, rather than waiting for Black Friday. On Nov 9, 2026, MTG Compare showed store preorders already under MSRP ($100 for a Play Booster Display against the {fmt({'usd': _play_box_msrp})} pack-math MSRP, and $39.99 for a Bundle against {fmt({'usd': _bundle_msrp})}). See the {_st_sku_link}. The set-level verdict is unchanged: {_st_settled} Skip a Collector Booster box priced above {fmt({'usd': _coll_box_msrp})} and wait for singles. Commander stays: {_cmd_settled}. Don't pay above MSRP, and expect Black Friday discounts."),
  ("Are Secret Lair drops discounted on Black Friday?",

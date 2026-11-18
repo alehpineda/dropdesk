@@ -380,6 +380,22 @@
     "sale_end": "2026-11-30"
   },
   {
+    "slug": "secret-lair-my-arrakis-my-superdrop",
+    "name": "Secret Lair: My Arrakis, My Superdrop",
+    "type": "Secret Lair",
+    "release_date": "2026-11-30",
+    "window": "Sale time TBA",
+    "source": "https://x.com/MTGSecretLair/status/2122736525460787350",
+    "note": "No verdict yet. @MTGSecretLair announced on Nov 17, 2026 that My Arrakis, My Superdrop goes on sale November 30. Sale time, price, and the official card list have not been published. There is no listing yet on MagicSecretLair.com.",
+    "status": "confirmed",
+    "prices": null,
+    "short_name": "My Arrakis, My Superdrop",
+    "field_sources": {
+      "release_date": "https://x.com/MTGSecretLair/status/2122736525460787350"
+    },
+    "last_checked": "2026-11-18"
+  },
+  {
     "slug": "secret-lair-marvel-doomsdrop",
     "name": "Secret Lair Drop Series: Marvel: Doomsdrop",
     "type": "Secret Lair",
