@@ -30,6 +30,21 @@ def tcg(name):  # callers pass a release's optional tcg_query (explicit TCGplaye
     return TCG_IMPACT_BASE + "?u=" + urllib.parse.quote(dest, safe="")
 AMAZON_TAG = "mtgdrops-20"  # Amazon Associates tag
 DISCLOSURE = "As an Amazon Associate, MTG Drops earns from qualifying purchases. MTG Drops also earns a commission on qualifying purchases through TCGplayer affiliate links. Some links on this site are affiliate links."
+MEASUREMENT_ID = "G-HVRLND3PY6"
+GA_POLICY_URL = "https://policies.google.com/technologies/partner-sites"
+GA_DISCLOSURE = "This site uses Google Analytics to count visits and clicks."
+DISCLOSURE_HTML = E(DISCLOSURE) + " " + E(GA_DISCLOSURE) + f' See <a href="{GA_POLICY_URL}">how Google uses data from sites that use its services</a>.'
+DISCLOSURE_MD = DISCLOSURE + " " + GA_DISCLOSURE + f" See [how Google uses data from sites that use its services]({GA_POLICY_URL})."
+# Standard gtag.js snippet plus a tiny outbound affiliate_click listener.
+GA_HEAD = (
+    f'<script async src="https://www.googletagmanager.com/gtag/js?id={MEASUREMENT_ID}"></script>'
+    "<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}"
+    f"gtag('js',new Date());gtag('config','{MEASUREMENT_ID}');"
+    "document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');if(!a||!a.href)return;"
+    "var u=a.href,host='';try{host=new URL(u,location.href).hostname;}catch(err){return;}"
+    r"if(!/partner\.tcgplayer\.com|amazon\.|tcgplayer\.com|gamestop|secretlair/i.test(u))return;"
+    "gtag('event','affiliate_click',{link_domain:host,link_url:u});});</script>"
+)
 def amazon(r):
     # Direct /dp/ link only when an owner-approved ASIN with recorded evidence (amazon_evidence) is present;
     # otherwise a search URL, which never goes dead. Only purchasable retail products carry amazon_query.
@@ -100,13 +115,13 @@ def page(title, desc, body, path, jsonld=(), noindex=False, og=None):
     p = f"""<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">
 <title>{E(title)}</title><meta name=description content="{E(desc)}">{robots}<link rel=canonical href="{u}">
 <meta property=og:title content="{E(title)}"><meta property=og:description content="{E(desc)}"><meta property=og:type content=website><meta property=og:url content="{u}"><meta property=og:image content="{og_img}"><meta property=og:image:width content={og_w}><meta property=og:image:height content={og_h}><meta name=twitter:card content=summary_large_image>
-<link rel=alternate type=application/rss+xml href="{BASE}/feed.xml" title="MTG Drops"><link rel="alternate" type="text/plain" href="{BASE}/llms.txt" title="llms.txt"><link rel="sitemap" type="application/xml" href="{BASE}/sitemap.xml"><meta name='impact-site-verification' value='78f2b2fa-0831-48d2-a460-e2e3fa5a4eab'><meta name='impact-site-verification' value='c76059e5-ec5e-42d1-84a8-d9b58d1e5b68'><link rel=icon href="{BASE}/favicon.ico" sizes=any><link rel=icon type=image/png sizes=192x192 href="{BASE}/icon-192.png"><link rel=apple-touch-icon href="{BASE}/icon-192.png"><link rel=stylesheet href="{BASE}/style.css"><meta name="context7-site-verification" content="{CONTEXT7_SITE_KEY}">{lds}</head><body>
+<link rel=alternate type=application/rss+xml href="{BASE}/feed.xml" title="MTG Drops"><link rel="alternate" type="text/plain" href="{BASE}/llms.txt" title="llms.txt"><link rel="sitemap" type="application/xml" href="{BASE}/sitemap.xml"><meta name='impact-site-verification' value='78f2b2fa-0831-48d2-a460-e2e3fa5a4eab'><meta name='impact-site-verification' value='c76059e5-ec5e-42d1-84a8-d9b58d1e5b68'><link rel=icon href="{BASE}/favicon.ico" sizes=any><link rel=icon type=image/png sizes=192x192 href="{BASE}/icon-192.png"><link rel=apple-touch-icon href="{BASE}/icon-192.png"><link rel=stylesheet href="{BASE}/style.css"><meta name="context7-site-verification" content="{CONTEXT7_SITE_KEY}">{GA_HEAD}{lds}</head><body>
 <blockquote data-context7-ask="true" aria-hidden="true" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">
   <h2>Search</h2>
   <p>{E(CONTEXT7_NOTE, quote=False)}</p>
 </blockquote>
 <header><a href="{BASE}/"><b>MTG Drops</b></a><a href="{BASE}/secret-lair.html">Secret Lair</a><a href="{BASE}/guides/">Guides</a><a href="{BASE}/newsletter.html">Newsletter</a><a href="{BASE}/sponsor.html">Sponsor</a><a href="{BASE}/feed.xml">RSS</a></header>
-<main>{body}</main><footer><p><small><a href="{BASE}/">Release calendar</a> · <a href="{BASE}/secret-lair.html">Secret Lair drops</a> · <a href="{BASE}/guides/">Guides</a> · <a href="{BASE}/newsletter.html">Newsletter</a> · <a href="{BASE}/sponsor.html">Sponsor</a> · <a href="{BASE}/feed.xml">RSS</a> · Contact: <a href="mailto:contact@mtgdrops.com">contact@mtgdrops.com</a></small></p><small>Dates from official/community sources; verify before buying. {E(DISCLOSURE)} Not affiliated with Wizards of the Coast.</small></footer></body></html>"""
+<main>{body}</main><footer><p><small><a href="{BASE}/">Release calendar</a> · <a href="{BASE}/secret-lair.html">Secret Lair drops</a> · <a href="{BASE}/guides/">Guides</a> · <a href="{BASE}/newsletter.html">Newsletter</a> · <a href="{BASE}/sponsor.html">Sponsor</a> · <a href="{BASE}/feed.xml">RSS</a> · Contact: <a href="mailto:contact@mtgdrops.com">contact@mtgdrops.com</a></small></p><small>Dates from official/community sources; verify before buying. {DISCLOSURE_HTML} Not affiliated with Wizards of the Coast.</small></footer></body></html>"""
     p = p.replace(PD, page_date(path, hashlib.sha256("\x1f".join([title, desc, lds, body]).encode()).hexdigest()[:16]))
     out = os.path.join("dist", path); os.makedirs(os.path.dirname(out), exist_ok=True); open(out, "w").write(p)
 def badges(r):
@@ -332,7 +347,7 @@ home_ld = [{"@context": "https://schema.org", "@type": "WebSite", "@id": f"{SITE
            {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in home_faq]},
            {"@context": "https://schema.org", "@type": "ItemList", "@id": f"{SITE_URL}/#releases", "name": "Upcoming Magic: The Gathering releases", "itemListElement": [{"@type": "ListItem", "position": i+1, "url": f"{SITE_URL}/p/{r['slug']}.html", "name": r["name"]} for i, r in enumerate([r for r in up if not r.get("placeholder")])]}]
 page("MTG Release Calendar 2026–2027 | MTG Drops", HOME_DESC,
-     f"<h1>MTG Release Calendar 2026–2027</h1><p><b>What's dropping in Magic.</b> Last updated: {tdate()}</p><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)} {ABOUT_FEED}</small></p><p>Every upcoming MTG product, with a short buy/skip note. New: <a href=\"{BASE}/guides/mtg-releases-fall-holiday-2026.html\">every MTG product releasing this fall/holiday 2026</a>, with gift picks, the <a href=\"{BASE}/guides/star-trek-mtg-release-guide.html\">MTG Star Trek release guide</a>, and the <a href=\"{BASE}/secret-lair.html\">Secret Lair drop schedule</a>.</p>{FORM}<p class=disc><small>{E(DISCLOSURE)}</small></p><p><b>Calendar feed:</b> {ics_link("calendar.ics")}</p>{CAL_HOWTO}{home_next_sl}<div class=f>{btns}</div>" + months + home_faq_html + js, "index.html", home_ld)
+     f"<h1>MTG Release Calendar 2026–2027</h1><p><b>What's dropping in Magic.</b> Last updated: {tdate()}</p><p class=about><small><b>About MTG Drops:</b> {E(ABOUT)} {ABOUT_FEED}</small></p><p>Every upcoming MTG product, with a short buy/skip note. New: <a href=\"{BASE}/guides/mtg-releases-fall-holiday-2026.html\">every MTG product releasing this fall/holiday 2026</a>, with gift picks, the <a href=\"{BASE}/guides/star-trek-mtg-release-guide.html\">MTG Star Trek release guide</a>, and the <a href=\"{BASE}/secret-lair.html\">Secret Lair drop schedule</a>.</p>{FORM}<p class=disc><small>{DISCLOSURE_HTML}</small></p><p><b>Calendar feed:</b> {ics_link("calendar.ics")}</p>{CAL_HOWTO}{home_next_sl}<div class=f>{btns}</div>" + months + home_faq_html + js, "index.html", home_ld)
 _home_html = open(os.path.join("dist", "index.html")).read()
 if "When do MTG Black Friday deals start?" not in _home_html or "#black-friday-2026" not in _home_html:
     raise SystemExit("home is missing the Black Friday FAQ deep link")
@@ -855,6 +870,7 @@ def _assert_extra_life_page(path):
         if p < pos or p > tcg_at: raise SystemExit("section out of order: " + h)
         pos = p
     if "buttondown.com" not in html_text or "As an Amazon Associate" not in html_text: raise SystemExit("disclosure or newsletter CTA missing")
+    if MEASUREMENT_ID not in html_text: raise SystemExit("Google Analytics measurement ID missing")
 def _assert_extra_life_hub(path):
     html_text = open(path).read()
     _assert_no_banned(html_text)
@@ -963,6 +979,7 @@ def _assert_phasers_page(path):
     want_picks = ["One drop: " + PHASERS_PICK_ONE, "Two drops: " + PHASERS_PICK_TWO]
     if got_picks != want_picks: raise SystemExit("one-or-two ItemList drifted: " + repr(got_picks))
     if "buttondown.com" not in html_text or "As an Amazon Associate" not in html_text: raise SystemExit("disclosure or newsletter CTA missing")
+    if MEASUREMENT_ID not in html_text: raise SystemExit("Google Analytics measurement ID missing")
     avails = set()
     for o in _page_ld(html_text):
         if o.get("@type") == "Product":
@@ -1102,7 +1119,7 @@ for r in data:
     crumbs = f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › {(f'<a href="{BASE}/secret-lair.html">Secret Lair</a>' if r["type"] == "Secret Lair" else E(r["type"]))} › {E(sn)}</nav>{hubl}'
     desc = r.get("meta_desc") or f"{sn} release date: {nice_date(r)}. " + r["note"]
     page(title_for(r), desc,
-         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])}){f" · <b>Prerelease:</b> {E(r['prerelease'])}" if r.get("prerelease") else ""}{" · <b>Sold out</b> at the official store" if r.get("sold_out") else ""}{" · <b>Delayed</b>: stock may arrive after this date" if r.get("delayed") else ""}</p>{win}<h2>Price</h2>{ptab}{contents}{facts}<h2>Buy or skip?</h2><p>{E(r["note"])}{(" " + E(r["buy_guide_intro"])) if r.get("buy_guide_intro") else ""}</p>{("<ul>" + "".join(f"<li><b>{E(k)}:</b> {E(v)}</li>" for k, v in r["buy_guide"]) + "</ul>") if r.get("buy_guide") else ""}{pre_html}{f"<p><i>{E(r['preorder_call'])}</i></p>" if r.get("preorder_call") else ""}{("<p>Other Commander decks coming in 2027: " + ", ".join(plink(x, x["name"]) + f" ({nice_date(x)})" for x in h_cmd27 if x is not r) + ".</p>") if r.get("preorder_call") and r in h_cmd27 else ""}{deepen_html}<p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}<p class=disc><small>{E(DISCLOSURE)}</small></p>{tinfo}{howto}{relhtml}{y27}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}{checked(r, with_sources=False)}<p><small>Last updated: {tdate()}</small></p>{FORM}',
+         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])}){f" · <b>Prerelease:</b> {E(r['prerelease'])}" if r.get("prerelease") else ""}{" · <b>Sold out</b> at the official store" if r.get("sold_out") else ""}{" · <b>Delayed</b>: stock may arrive after this date" if r.get("delayed") else ""}</p>{win}<h2>Price</h2>{ptab}{contents}{facts}<h2>Buy or skip?</h2><p>{E(r["note"])}{(" " + E(r["buy_guide_intro"])) if r.get("buy_guide_intro") else ""}</p>{("<ul>" + "".join(f"<li><b>{E(k)}:</b> {E(v)}</li>" for k, v in r["buy_guide"]) + "</ul>") if r.get("buy_guide") else ""}{pre_html}{f"<p><i>{E(r['preorder_call'])}</i></p>" if r.get("preorder_call") else ""}{("<p>Other Commander decks coming in 2027: " + ", ".join(plink(x, x["name"]) + f" ({nice_date(x)})" for x in h_cmd27 if x is not r) + ".</p>") if r.get("preorder_call") and r in h_cmd27 else ""}{deepen_html}<p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}<p class=disc><small>{DISCLOSURE_HTML}</small></p>{tinfo}{howto}{relhtml}{y27}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}{checked(r, with_sources=False)}<p><small>Last updated: {tdate()}</small></p>{FORM}',
          f"p/{r['slug']}.html", main_ld + phasers_ld + [bc], noindex=bool(r.get("placeholder")), og=(card[1], 1200, 630) if card else None)
     if r["slug"] == PHASERS_SLUG: _assert_phasers_page(os.path.join("dist", f"p/{r['slug']}.html"))
     if r["slug"] == EL_SLUG: _assert_extra_life_page(os.path.join("dist", f"p/{r['slug']}.html"))
@@ -1269,7 +1286,7 @@ page(SL_TITLE, SL_DESC,
      + '<p><small>Drops opened more than ' + str(SL_ONSALE_DAYS) + ' days ago are listed as recent / ended unless an end date is known; limited print runs may sell out sooner or stay in stock longer, so check MagicSecretLair.com.</small></p>'
      + "<h2>Secret Lair FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{faq_visible(a)}</p>" for q, a in sl_faq)
      + f'<h2>Get new Secret Lair drops by email</h2><p>What\'s Dropping is our free weekly email: new Secret Lair announcements, sale dates and a buy-or-skip verdict for each drop.</p>{FORM}'
-     + f'<p class=disc><small>{E(DISCLOSURE)}</small></p><p><small>Last updated: {tdate()}</small></p>',
+     + f'<p class=disc><small>{DISCLOSURE_HTML}</small></p><p><small>Last updated: {tdate()}</small></p>',
      "secret-lair.html", sl_ld)
 _assert_phasers_hub("dist/secret-lair.html")
 _assert_extra_life_hub("dist/secret-lair.html")
@@ -1573,7 +1590,7 @@ g_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> 
   + "<h2>Best picks for gifts</h2>" + (f'<p>Only products we already rate as a buy, and who each one suits. For whether to buy one now or wait until Black Friday, see <a href="#{G_BF_ID}">Black Friday 2026: buy now or wait</a>.</p><ul>' + "".join(f'<li><a href="{BASE}/p/{r["slug"]}.html">{E(short_name(r))}</a> ({nice_date(r)}): for {E(r["gift_for"])}.</li>' for r in g_gifts) + "</ul>" if g_gifts else "<p>No buy-rated products this season yet.</p>")
   + "".join(f"<h2>{g_month_name(m)}</h2>" + ("".join(guide_item(r) for r in rs) if rs else "<p>Nothing scheduled yet.</p>") for m, rs in g_by.items())
   + ("<h2>Announced, no date yet</h2><p>Announced but not yet scheduled, so these may or may not land before the end of 2026.</p>" + "".join(guide_item(r) for r in g_tba) if g_tba else "")
-  + f'<p class=disc><small>{E(DISCLOSURE)}</small></p>'
+  + f'<p class=disc><small>{DISCLOSURE_HTML}</small></p>'
   + "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{a}</p>" for q, a in g_faq)
   + f"<h2>Get the weekly release email</h2><p>What's Dropping covers what's releasing next, date and price changes, and a buy-or-skip verdict for each product.</p>{FORM}<p><small>Last updated: {tdate()}</small></p>")
 g_list = g_items + g_tba
@@ -1749,7 +1766,7 @@ st_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a>
   "<h3>Value at MSRP</h3><p>Simple arithmetic from Wizards' MSRPs, so you can compare the boxes:</p><ul>" + "".join(f"<li><b>{E(a)}:</b> {E(b)}</li>" for a, b in st_math) + "</ul>"
   "<p>If you want to collect the signed cards or the surge foil Booster Fun, that is Collector Booster territory; for drafting or a first taste of the set, Play Boosters, a Bundle or Draft Night are the cheaper way in. Prices in stores often fall after release, so preordering mainly makes sense if you want the product on day one.</p>"
   + st_sku_html +
-  f'<p class=disc><small>{E(DISCLOSURE)}</small></p>'
+  f'<p class=disc><small>{DISCLOSURE_HTML}</small></p>'
   "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in st_faq)
   + f'<p>More releases: <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a>, the <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>, the <a href="{BASE}/secret-lair.html">Secret Lair drop schedule</a> and the full <a href="{BASE}/">release calendar</a>.</p>'
   + f"<h2>Get the weekly release email</h2><p>What's Dropping covers what's releasing next, date and price changes, and a buy-or-skip verdict for each product.</p>{FORM}<p><small>Last updated: {tdate()}</small></p>")
@@ -1816,7 +1833,7 @@ y_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> 
   "<h2>2027 at a glance</h2><table><tr><th>Date</th><th>Product</th><th>Type</th></tr>" + "".join(f"<tr><td>{nice_date(r)}</td><td>{y_link(r)}</td><td>{E(r['type'])}{'' if r['status'] == 'confirmed' else ' (' + E(r['status']) + ')'}</td></tr>" for r in y_items) + "</table>"
   + "".join(f"<h2>{g_month_name(m)}</h2>" + "".join(y_item(r) for r in y_items if r["release_date"][:7] == m) for m in y_months)
   + "<h2>Should you preorder 2027 sets now?</h2><p>None of the 2027 products has a buy, wait or skip verdict from us yet: card previews, decklists or prices are still missing for each of them. We add a verdict once there's enough to judge, and the weekly email flags it when we do. For Nauctis: The Sunken Realm, our <a href=\"/guides/nauctis-the-sunken-realm-release-guide.html#should-you-preorder\">early preorder timing call</a> (mostly Wait, checked Nov 16, 2026) is on its release guide.</p>"
-  + f'<p class=disc><small>{E(DISCLOSURE)}</small></p>'
+  + f'<p class=disc><small>{DISCLOSURE_HTML}</small></p>'
   + "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in y_faq)
   + f'<p>More releases: the <a href="{BASE}/secret-lair.html">Secret Lair drop schedule</a> and the full <a href="{BASE}/">release calendar</a>.</p>'
   + f"<h2>Get the weekly release email</h2><p>What's Dropping covers what's releasing next, date and price changes, and a buy-or-skip verdict for each product.</p>{FORM}<p><small>Last updated: {tdate()}</small></p>")
@@ -1958,7 +1975,7 @@ nau_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a
   "<h2>Where to check prices</h2><ul>" + "".join(f"<li>{E(n)}: {retail_links(q, a)}</li>" for n, q, a in _n_retail) + "</ul>"
   f'<div class=card><h3>{_n_set_link}</h3><p>{vtag(nau_set)}{E(nau_set["note"])}</p>{amz_btn(nau_set)}</div>'
   f'<div class=card><h3>{_n_cmd_link}</h3><p>{vtag(nau_cmd)}{E(nau_cmd["note"])}</p>{amz_btn(nau_cmd)}</div>'
-  f'<p class=disc><small>{E(DISCLOSURE)}</small></p>'
+  f'<p class=disc><small>{DISCLOSURE_HTML}</small></p>'
   "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in _n_faq)
   + f'<p>Related: the <a href="{BASE}/guides/mtg-2027-release-schedule.html">MTG 2027 release schedule</a>, {_n_set_link}, {_n_cmd_link}, the next set on our calendar, <a href="{BASE}/p/{nau_dd["slug"]}.html">{E(nau_dd["name"])}</a> ({nice_date(nau_dd)}), and the full <a href="{BASE}/">release calendar</a>.</p>'
   + f"<h2>Get the weekly release email</h2><p>What's Dropping covers what's releasing next, date and price changes, and a buy-or-skip verdict for each product.</p>{FORM}<p><small>Last updated: {tdate()}</small></p>")
@@ -2046,7 +2063,7 @@ sp_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a>
   f'<p><b>Audience numbers:</b> current traffic and newsletter stats are available on request at <a href="mailto:{SPONSOR_EMAIL}">{SPONSOR_EMAIL}</a>. We don\'t publish estimates.</p>'
   "<h2>Placements</h2>" + "".join(f"<div class=card><h3>{E(t)}</h3><p>{E(d)}</p><p><b>Rate:</b> contact us</p></div>" for t, d in SP_PLACEMENTS)
   + "<h2>Rates</h2><p>We quote each sponsorship based on placement, dates and length. There's no public rate card yet: contact us and we'll reply with availability and pricing.</p>"
-  "<h2>Sponsorship and disclosure policy</h2><ul>" + "".join(f"<li>{E(x)}</li>" for x in SP_POLICY) + "</ul>"
+  "<h2>Sponsorship and disclosure policy</h2><ul>" + "".join(f"<li>{E(x)}</li>" for x in SP_POLICY) + f"<li>{E(GA_DISCLOSURE)} See <a href=\"{GA_POLICY_URL}\">how Google uses data from sites that use its services</a>.</li></ul>"
   f'<h2>How to book</h2><p>Email <a href="mailto:{SPONSOR_EMAIL}">{SPONSOR_EMAIL}</a> with:</p><ul>' + "".join(f"<li>{E(x)}</li>" for x in SP_ASK) + "</ul>"
   "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in sp_faq)
   + f'<p><small>MTG Drops is independent and not affiliated with Wizards of the Coast. Last updated: {tdate()}</small></p>')
@@ -2187,7 +2204,7 @@ data/releases.json is build input. It is not served. There is no JSON releases A
 
 ## Affiliate disclosure
 
-Every page states: "{DISCLOSURE}"
+Every page states: "{DISCLOSURE_MD}"
 
 Dates come from official and community sources. Verify before buying. Contact: contact@mtgdrops.com.
 """
@@ -2255,7 +2272,7 @@ There is no JSON API of drops. data/releases.json is build input and is not serv
 
 ## Affiliate disclosure
 
-Every page states: "{DISCLOSURE}"
+Every page states: "{DISCLOSURE_MD}"
 
 Dates come from official and community sources. Verify before buying. Not affiliated with Wizards of the Coast. Contact: contact@mtgdrops.com.
 """
@@ -2315,5 +2332,13 @@ def _assert_no_stale_tense():
                     raise SystemExit(f"stale future tense in {rel}: {m.group(0)!r}")
             if rel in released and re.search(r"\bpre-?orders? (are )?open", t, flags=re.I):
                 raise SystemExit(f"'preorders open' on released item page {rel}")
+def _assert_ga_tag():
+    for root, _, files in os.walk("dist"):
+        for fn in files:
+            if not fn.endswith(".html"): continue
+            path = os.path.join(root, fn); rel = os.path.relpath(path, "dist")
+            if MEASUREMENT_ID not in open(path).read():
+                raise SystemExit(f"Google Analytics measurement ID missing from {rel}")
 _assert_no_stale_tense()
+_assert_ga_tag()
 print(f"built {len(data)} products")
