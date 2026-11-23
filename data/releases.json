@@ -211,7 +211,7 @@
     "type": "Secret Lair",
     "release_date": "2026-11-09",
     "status": "confirmed",
-    "window": "On sale since Nov 9, 2026, 9 AM PT / 12 PM ET (pre-queue from 8 AM PT), only at MagicSecretLair.com · while supplies last · one foil Return of the Wildspeaker as \"Transporter Boondoggle\" promo for every $199.99 spent, while supplies last. Dec 16, 2026 is the US release and ship date, not a new sale. US store release Dec 16, 2026; expected shipping Dec 17, 2026 – Mar 17, 2027 (EU/UK release Jan 25, 2027; shipping Jan 26, 2027 – Apr 26, 2027), per the Secret Lair shipping-status page",
+    "window": "On sale since Nov 9, 2026, 9 AM PT / 12 PM ET, only at MagicSecretLair.com · while supplies last · one foil Return of the Wildspeaker as \"Transporter Boondoggle\" promo for every $199.99 spent, while supplies last. Dec 16, 2026 is the US release and ship date, not a new sale. US store release Dec 16, 2026; expected shipping Dec 17, 2026 – Mar 17, 2027 (EU/UK release Jan 25, 2027; shipping Jan 26, 2027 – Apr 26, 2027), per the Secret Lair shipping-status page",
     "source": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop",
     "note": "6 Star Trek drops at $29.99 non-foil / $39.99 foil each (Wizards), on sale Nov 9: Beam Me Up (4 reversible blink cards incl. Momentary Blink), KHAAAAAAAAN (6 Wrath of Khan cards incl. Buried Alive, Genesis Wave), Lower Decks (Thrasios and Silas Renn's Secret Lair debut, Weatherlight), tlhIngan maH (5 reversible English/Klingon red cards incl. Seething Song), New Worlds (10 basic lands by Alayna Danner), and Assimilation (5 Borg-themed cards incl. Hive Mind, Gix, and K'rrik). Buy only if you really like Star Trek; otherwise skip. Fan-collectible and theme play, not a speculative pickup.",
     "prices": [
@@ -414,7 +414,12 @@
       "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-my-arrakis-my-superdrop"
     },
     "last_checked": "2026-11-23",
-    "inside_source": "https://magic.wizards.com/en/news/announcements/secret-lair-my-arrakis-my-superdrop"
+    "inside_source": "https://magic.wizards.com/en/news/announcements/secret-lair-my-arrakis-my-superdrop",
+    "seo_name": "Secret Lair x Dune: My Arrakis, My Superdrop",
+    "meta_desc": "Secret Lair x Dune: My Arrakis, My Superdrop goes on sale Nov 30, 2026 at 9 AM PT at MagicSecretLair.com: three Dune drops, $39.99–$174.99. No verdict yet.",
+    "facts": [
+      "Secret Lair x Dune: Wizards announced the My Arrakis, My Superdrop crossover on Nov 18, 2026 (Dune: Balance of Power, Dune: Deserts of Arrakis, Dune: Spice)."
+    ]
   },
   {
     "slug": "secret-lair-marvel-doomsdrop",

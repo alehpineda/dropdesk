@@ -260,7 +260,7 @@ def sl_short_drop_name(r, budget):
     'Secret Lair:' / 'Secret Lair x …:' and before a pipe) — e.g. Rise of the Polygons,
     not the pipe suffix Extra Life 2026. The H1 and description keep the full short_name.
     """
-    full = short_name(r)
+    full = re.sub(r"\s*\|\s*MTG Drops\s*$", "", short_name(r))
     if budget < 1:
         return full
     if len(full) <= budget:
@@ -278,7 +278,12 @@ def sl_short_drop_name(r, budget):
     label = next((c for c in cands if c and len(c) <= budget), None)
     if not label:
         src = cands[0] if cands else full
-        label = (src[: budget - 1].rstrip(" ,") + "…") if budget > 1 else src
+        src = re.sub(r"\s*\|\s*MTG Drops\s*$", "", src)
+        if len(src) <= budget: label = src
+        else:
+            cut = src[: budget - 1]
+            if src[budget - 1] != " " and " " in cut: cut = cut.rsplit(" ", 1)[0]
+            label = cut.rstrip(" ,:;—-") + "…"
     return label
 def sl_title_head(r):
     """'Name, Mon D' for the hub <title> only."""
@@ -288,6 +293,15 @@ def sl_title_head(r):
 def sl_display_head(r):
     """Full short name + date for the hub H1 and description (not capped at 60)."""
     return f"{short_name(r)}, {sl_date_label(r)}"
+def sl_dated_line(r):
+    """'Next drop: Name, Nov 30, 9:00 AM PT (12:00 PM ET)' from the window's PT time; date/time come only from releases.json."""
+    m = re.search(r"\b(\d{1,2})(?::(\d{2}))? AM PT", r.get("window") or "")
+    t = ""
+    if m:
+        h, mi = int(m.group(1)), int(m.group(2) or 0)
+        eh = h + 3
+        t = f", {h}:{mi:02d} AM PT ({(eh - 1) % 12 + 1}:{mi:02d} {'PM' if eh >= 12 else 'AM'} ET)"
+    return f'<p><b>Next drop:</b> <a href="{BASE}/p/{r["slug"]}.html">{E(short_name(r))}</a>, {sl_date_label(r)}{t}</p>'
 def sl_next_copy(linked):
     if not h_sl: return SL_TBA
     nm = lambda r: sl_drop_link(r) if linked else r["name"]
@@ -302,7 +316,7 @@ def sl_next_copy(linked):
     return s.strip()
 if h_sl:
     _hc = sl_cost(h_sl, home=True)
-    home_next_sl = (f'<p><b>Next Secret Lair drop:</b> {sl_drop_link(h_sl)} goes on sale {nice_date(h_sl)}{sl_time(h_sl, home=True)} '
+    home_next_sl = (sl_dated_line(h_sl) + f'<p><b>Next Secret Lair drop:</b> {sl_drop_link(h_sl)} goes on sale {nice_date(h_sl)}{sl_time(h_sl, home=True)} '
                     f'({_hc + ", " if _hc else ""}MagicSecretLair.com). <a href="{BASE}/secret-lair.html">Secret Lair schedule</a>.</p>'
                     + checked({"last_checked": sl_checked_date([h_sl]), "source": h_sl["source"]}, with_sources=False))
 else:
@@ -353,7 +367,7 @@ if "When do MTG Black Friday deals start?" not in _home_html or "#black-friday-2
     raise SystemExit("home is missing the Black Friday FAQ deep link")
 
 def title_for(r):
-    sn = short_name(r); m = mon_yyyy(r).replace("Date TBA", "TBA")
+    sn = r.get("seo_name") or short_name(r); m = mon_yyyy(r).replace("Date TBA", "TBA")
     for t in (f"{sn} Release Date ({m}), Price & Preorder | MTG Drops", f"{sn} Release Date ({m}) | MTG Drops", f"{sn} Release Date, {m} | MTG Drops", f"{sn} Release Date | MTG Drops", f"{sn} ({m}) | MTG Drops", f"{sn} | MTG Drops"):
         if len(t) <= 60: return t
     return t
@@ -1028,7 +1042,7 @@ for r in data:
     rel = related(r)
     relhtml = "<h2>Related releases</h2><ul>" + "".join(f'<li><a href="{BASE}/p/{x["slug"]}.html">{E(x["name"])}</a> — {nice_date(x)}</li>' for x in rel) + "</ul>"
     _sl_sale = r["type"] == "Secret Lair" and not r.get("retail")  # a Secret Lair date is a sale date, not a release/ship date
-    faq = [(tense(r, f"When does {sn} release?", f"When did {sn} go on sale?" if _sl_sale else f"When did {sn} release?"), tense(r, "", "Went on sale " if _sl_sale else "Released ") + f"{nice_date(r)} ({r['status']})." + (f" {r['window']}." if r.get("window") else "") if dated(r) else f"The release date is TBA ({r['status']})." + (f" {r['window']}." if r.get("window") else "")),
+    faq = [(tense(r, f"When does {sn} release?", f"When did {sn} go on sale?" if _sl_sale else f"When did {sn} release?"), (f"{r['window']} ({r['status']})." if r.get("window") and nice_date(r) in r["window"] else tense(r, "", "Went on sale " if _sl_sale else "Released ") + f"{nice_date(r)} ({r['status']})." + (f" {r['window']}." if r.get("window") else "")) if dated(r) else f"The release date is TBA ({r['status']})." + (f" {r['window']}." if r.get("window") else "")),
            (f"How much does {sn} cost?", "; ".join(f"{p['label']}: {fmt(p)}" for p in prices) + "." if prices else "Pricing has not been announced yet (TBA)."),
            (f"Should I buy {sn}?", r["note"])]
     if r.get("contents"): faq.append((f"What's in {sn}?", "; ".join(r["contents"]) + "."))
@@ -1171,12 +1185,20 @@ def sl_when(r):
     if r.get("sold_out") and sl_bucket(r) == "past": return f"Went on sale {nice_date(r)}; sold out"
     b = sl_bucket(r)
     return ("On sale since " if b == "now" else "Went on sale " if b == "past" else "On sale ") + nice_date(r)
+def sl_hub_note(r, n=240):
+    """Short hub version of a drop note: keep the sentences that carry the verdict (Wait/Skip/Buy/verdict), else the first sentence. Long notes stay on /p/."""
+    note = " ".join(r["note"].split())
+    if len(note) <= n: return note
+    sents = re.split(r"(?<=[.!?])\s+", note)
+    keep = [x for x in sents if re.search(r"\b(wait|skip|buy|verdict|pass)\b", x, re.I)][:2] or sents[:1]
+    out = " ".join(keep)
+    return trim(out, n)
 def sl_card(r):
-    cont = trim("; ".join(r["contents"]), 220) if r.get("contents") else "Contents TBA"
+    cont = trim("; ".join(r["contents"]), 110) if r.get("contents") else "Contents TBA"
     st = badges(r)
     return (f'<div class=card data-type="Secret Lair"><h3><a href="{BASE}/p/{r["slug"]}.html">{E(r["name"])}</a>{st}</h3>'
-            f'<p><b>Date:</b> {E(sl_when(r))}</p>' + (f'<p><b>Sale details:</b> {E(r["window"])}</p>' if r.get("window") else "") +
-            f'<p><b>Price:</b> {E(sl_price(r))}</p><p><b>Contents:</b> {E(cont)}</p><p><b>Our verdict:</b> {E(r["note"])}</p>'
+            f'<p><b>Date:</b> {E(sl_when(r))}</p>' + (f'<p><b>Sale details:</b> {E(trim(r["window"], 170))}</p>' if r.get("window") else "") +
+            f'<p><b>Price:</b> {E(sl_price(r))}</p><p><b>Contents:</b> {E(cont)}</p><p><b>Our verdict:</b> {E(sl_hub_note(r))}</p>'
             f'<p><a href="{BASE}/p/{r["slug"]}.html">Full details, card list and sources →</a></p>{checked(r)}</div>')
 def sl_section(h, rs, empty):
     return f"<h2>{E(h)}</h2>" + ("".join(sl_card(r) for r in rs) if rs else f"<p>{E(empty)}</p>")
@@ -1184,6 +1206,22 @@ def names(rs): return "; ".join(f"{short_name(r)} (" + ("delayed, was due " if r
 sl_shown = [r for r in (h_sl, sl_after) if r]
 sl_next_others = [r for r in sl_up if r not in sl_shown]
 _sl_fs = {short_name(sl_after).lower(): sl_after["source"]} if sl_after else {}
+def sl_history_table():
+    rows = sorted([r for r in sl if dated(r) and r["release_date"][:4] == "2026"], key=lambda r: r["release_date"], reverse=True)
+    def pr(r):
+        ps = r.get("prices") or []
+        if not ps: return "TBA"
+        lo, hi = min(p["usd"] for p in ps), max(p["usd"] for p in ps)
+        return f"${lo:,.2f}" if lo == hi else f"${lo:,.2f}–${hi:,.2f}"
+    def st(r):
+        if r.get("retail"): return "Retail release"
+        if r.get("delayed"): return "Delayed"
+        if r.get("sold_out"): return "Sold out"
+        return {"now": "On sale", "up": "Upcoming", "past": "Ended"}[sl_bucket(r)]
+    body = "".join(f'<tr><td>{E(sl_date_label(r))}</td><td><a href="{BASE}/p/{r["slug"]}.html">{E(short_name(r))}</a></td><td>{E(pr(r))}</td><td>{E(st(r))}</td></tr>' for r in rows)
+    return ('<h2 id="sale-history-2026">2026 Secret Lair sale history</h2>'
+            '<p>Every dated Secret Lair sale on our calendar in 2026, newest first. Prices are the official Wizards launch prices from our data (lowest to highest option); status is as of the last check, and our verdicts are on each drop\'s page.</p>'
+            f'<table><thead><tr><th>Date</th><th>Drop</th><th>Price</th><th>Status</th></tr></thead><tbody>{body}</tbody></table>')
 sl_next_block = (f'<h2>Next Secret Lair drop</h2><div class=card><p>{sl_next_copy(True)}</p>'
                  + (checked({"last_checked": sl_checked_date(sl_shown), "source": h_sl["source"], "field_sources": _sl_fs}) if h_sl else "")
                  + "</div>")
@@ -1215,7 +1253,7 @@ sl_list = sl_now + sl_up + sl_past
 sl_url = f"{SITE_URL}/secret-lair.html"
 # Title and H1 lead with the next drop so "next Secret Lair" answers name the sale. The schedule framing stays in the subtitle.
 if h_sl:
-    SL_TITLE = f"Next Secret Lair: {sl_title_head(h_sl)} | MTG Drops"
+    SL_TITLE = "Next Secret Lair Drop & 2026 Schedule | MTG Drops"
     SL_H1 = f"Next Secret Lair: {sl_display_head(h_sl)}"
     SL_DESC = f"Next Secret Lair: {sl_display_head(h_sl)}. Schedule of drops on sale now, upcoming and recent, with dates, prices and buy/skip verdicts."
     if len(SL_TITLE) > 60:
@@ -1223,7 +1261,7 @@ if h_sl:
     if short_name(h_sl) not in SL_H1 or short_name(h_sl) not in SL_DESC:
         raise SystemExit("hub H1 and description must keep the full short name")
 else:
-    SL_TITLE = "Secret Lair Drops: Schedule, Prices & Verdicts | MTG Drops"
+    SL_TITLE = "Next Secret Lair Drop & 2026 Schedule | MTG Drops"
     SL_H1 = "Secret Lair Drops: Schedule, Prices & Verdicts"
     SL_DESC = "Secret Lair release schedule: drops on sale now, upcoming Secret Lair drops and recent sales, with dates, prices, card lists and buy/skip verdicts."
 # Fair description of Secret Lair GG from its homepage (fetched 2026-11-09): drop and card database, calendar, BUY/TOSS-UP/SKIP vs sale price. No dig at their copy.
@@ -1275,7 +1313,9 @@ page(SL_TITLE, SL_DESC,
      f'<p>Secret Lair drops: schedule, prices and verdicts. The heading is the next dated sale. The lists below are what is on sale now, what is coming up, and what has ended.</p>'
      f'<p class=about><small><b>About MTG Drops:</b> {E(ABOUT)}</small></p>'
      f'<p><b>Last updated:</b> {tdate()} · {len(sl_now)} on sale now · {len(sl_up)} upcoming · {len(sl_past)} recent / ended</p>'
+     + (sl_dated_line(h_sl) if h_sl else "")
      + sl_next_block
+     + sl_history_table()
      + f'<p><b>Secret Lair calendar feed:</b> {ics_link("secret-lair.ics")} Includes a timed sale (Nov 9, 9 AM PT) and a separate pre-queue (Nov 9, 8 AM PT) for Set Phasers to Superdrop; other drops stay all-day dates.</p>'
      + sl_intro + f'<p>Planning holiday buys? See <a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a>, sets and Commander decks included.</p>'
      + sl_vs
@@ -1498,12 +1538,13 @@ g_bf_dates = (
  f'<h3 id="retailer-early-sales">Retailer early-sale dates</h3>'
  + checked({"last_checked": BF_DATES_CHECKED, "source": TARGET_BF_USA, "field_sources": {"al.com": TARGET_BF_AL, "walmart": WALMART_BF_SRC}})
  + "<p>These are announced store calendars, not a list of Magic discounts. A window can open without any given MTG box being reduced. "
- "Black Friday is Nov 27, 2026. Cyber Monday is Nov 30, 2026. Last checked Nov 5, 2026.</p><ul>"
+ "Black Friday is Nov 27, 2026. Cyber Monday is Nov 30, 2026. Last checked Nov 5, 2026 (TCGplayer Cyber Weekend added Nov 23, 2026).</p><ul>"
  + f'<li><b>Target early Black Friday sale:</b> Thu Nov 5 – Sat Nov 7, 2026. Target also runs a daily Deal of the Day from Nov 1 through Dec 24, and new weekend offers afterward. '
  f'Sources: <a href="{TARGET_BF_USA}" rel=nofollow>USA Today</a>, <a href="{TARGET_BF_AL}" rel=nofollow>al.com</a>.</li>'
  + f'<li><b>Walmart Early Black Friday Deals:</b> Nov 12–15, 2026. <b>Walmart Black Friday Deals:</b> Nov 23–29, 2026 '
  "(online at 12:01 a.m. ET; in stores Nov 12 and Nov 27 at 6 a.m. local; Walmart+ early access on Nov 12 and Nov 23). "
  f'<b>Walmart Cyber Monday:</b> Nov 30 – Dec 2, 2026. Source: <a href="{WALMART_BF_SRC}" rel=nofollow>Walmart</a>.</li>'
+ + f'<li><b>TCGplayer Cyber Weekend:</b> Nov 28, 2026 at 9 a.m. ET through Dec 1, 2026 at 11 p.m. ET. Buyers earn 10% store credit on all products, and TCGplayer subscribers can earn 13% or more (store credit back on a purchase, not a price cut). Source: TCGplayer\'s Cyber Weekend announcement to its affiliates, Nov 16, 2026. <a href="{E(tcg("Magic The Gathering"))}" rel="sponsored nofollow">Shop Magic on TCGplayer</a>.</li>'
  + "<li><b>Amazon US:</b> Amazon has not announced US Black Friday dates yet. Black Friday is Nov 27 and Cyber Monday is Nov 30.</li>"
  + "</ul>")
 g_bf_frame = (
@@ -1571,7 +1612,7 @@ g_faq += [
   "Retailer windows, last checked Nov 5, 2026: Target's early Black Friday sale is Thu Nov 5 – Sat Nov 7, 2026, with a daily Deal of the Day from Nov 1 through Dec 24 and new weekend offers afterward. "
   "Walmart Early Black Friday Deals are Nov 12–15. Walmart Black Friday Deals are Nov 23–29 (online at 12:01 a.m. ET; in stores Nov 12 and Nov 27 at 6 a.m. local; Walmart+ early access on Nov 12 and Nov 23). Walmart's Cyber Monday is Nov 30 – Dec 2. "
   "Amazon has not announced US Black Friday dates yet. "
-  + f'{plink(g_r("secret-lair-my-arrakis-my-superdrop"))} goes on sale Nov 30, 2026, which is Cyber Monday. Sale time and price are TBA.'),
+  + f'{plink(g_r("secret-lair-my-arrakis-my-superdrop"))} goes on sale Nov 30, 2026{sl_time(g_r("secret-lair-my-arrakis-my-superdrop"))}{sl_cost(g_r("secret-lair-my-arrakis-my-superdrop"))}, which is Cyber Monday.'),
  ("Should I wait for Black Friday to buy MTG Star Trek?",
   f"Buy now on a Star Trek Play Booster box or Bundle at or below today's street prices, rather than waiting for Black Friday. On Nov 9, 2026, MTG Compare showed store preorders already under MSRP ($100 for a Play Booster Display against the {fmt({'usd': _play_box_msrp})} pack-math MSRP, and $39.99 for a Bundle against {fmt({'usd': _bundle_msrp})}). See the {_st_sku_link}. The set-level verdict is unchanged: {_st_settled} Skip a Collector Booster box priced above {fmt({'usd': _coll_box_msrp})} and wait for singles. Commander stays: {_cmd_settled}. Don't pay above MSRP, and expect Black Friday discounts."),
  ("Are Secret Lair drops discounted on Black Friday?",
@@ -2111,10 +2152,14 @@ def ics_events(rs):
             p0, p1 = (datetime.date.fromisoformat(x) for x in r["prerelease_dates"])
             ev.append((r["slug"] + "-prerelease", p0, p1 + datetime.timedelta(days=1), short_name(r) + " prerelease (local game stores)", f"Prerelease events at local game stores, the week before the {nice_date(r)} release (Wizards). Details: {link}", link, stamp, False))
     return ev
-def ics(name, desc, rs):
+CYBER_LINK = tcg("Magic The Gathering")
+CYBER_EVENT = ("tcgplayer-cyber-weekend-2026", "20261128T140000Z", "20261202T040000Z", "TCGplayer Cyber Weekend (10% store credit)",
+               "TCGplayer Cyber Weekend: Nov 28, 2026 9 AM ET through Dec 1, 2026 11 PM ET. Buyers earn 10% store credit on all products (subscribers 13%+). Source: TCGplayer announcement to affiliates, Nov 16, 2026. Shop: " + CYBER_LINK,
+               CYBER_LINK, "20261123T000000Z", True)
+def ics(name, desc, rs, extra=()):
     L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//MTG Drops//Release calendar//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
          "X-WR-CALNAME:" + ics_esc(name), "X-WR-CALDESC:" + ics_esc(desc), "REFRESH-INTERVAL;VALUE=DURATION:P1D", "X-PUBLISHED-TTL:P1D"]
-    for uid, a, b, summ, dsc, link, stamp, timed in ics_events(rs):
+    for uid, a, b, summ, dsc, link, stamp, timed in list(ics_events(rs)) + list(extra):
         if timed:
             L += ["BEGIN:VEVENT", f"UID:{uid}@mtgdrops.com", f"DTSTAMP:{stamp}", f"DTSTART:{a}", f"DTEND:{b}",
                   "SUMMARY:" + ics_esc(summ), "DESCRIPTION:" + ics_esc(dsc), f"URL:{link}", "END:VEVENT"]
@@ -2123,7 +2168,7 @@ def ics(name, desc, rs):
                   "SUMMARY:" + ics_esc(summ), "DESCRIPTION:" + ics_esc(dsc), f"URL:{link}", "TRANSP:TRANSPARENT", "END:VEVENT"]
     L.append("END:VCALENDAR")
     return b"".join(ics_fold(l) + b"\r\n" for l in L)
-open("dist/calendar.ics", "wb").write(ics("MTG Drops: MTG release calendar", "Every upcoming Magic: The Gathering release from mtgdrops.com", data))
+open("dist/calendar.ics", "wb").write(ics("MTG Drops: MTG release calendar", "Every upcoming Magic: The Gathering release from mtgdrops.com", data, [CYBER_EVENT]))
 open("dist/secret-lair.ics", "wb").write(ics("MTG Drops: Secret Lair drops", "Secret Lair drop dates from mtgdrops.com/secret-lair.html", [r for r in data if r["type"] == "Secret Lair"]))
 # Persist page dates (committed). Only pages built this run are kept.
 _pd_new = json.dumps(dict(sorted(new_dates.items())), indent=1, sort_keys=True) + "\n"
