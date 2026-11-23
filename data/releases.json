@@ -384,16 +384,37 @@
     "name": "Secret Lair: My Arrakis, My Superdrop",
     "type": "Secret Lair",
     "release_date": "2026-11-30",
-    "window": "Sale time TBA",
-    "source": "https://x.com/MTGSecretLair/status/2122736525460787350",
-    "note": "No verdict yet. @MTGSecretLair announced on Nov 17, 2026 that My Arrakis, My Superdrop goes on sale November 30. Sale time, price, and the official card list have not been published. There is no listing yet on MagicSecretLair.com.",
+    "window": "On sale Nov 30, 2026, 9 AM PT / 11 AM CT (pre-queue from 8 AM PT), only at MagicSecretLair.com · while supplies last · one foil Reliquary Tower as \"Emperor's Hutment\" promo per $149.99 spent · orders over $99 ship free",
+    "source": "https://magic.wizards.com/en/news/announcements/secret-lair-my-arrakis-my-superdrop",
+    "note": "No verdict yet. Wizards announced Nov 18, 2026: three drops, Dune: Balance of Power (8 new legendary creatures), Dune: Deserts of Arrakis (new Shai-Hulud) and Dune: Spice (all halo foil). Balance and Deserts are $39.99 non-foil / $49.99 foil; Spice is $59.99; Desert Power Everything Bundle (Balance + Deserts, foil and non-foil) is $174.99. Non-foil Balance and Deserts reach WPN stores later.",
     "status": "confirmed",
-    "prices": null,
+    "prices": [
+      {
+        "label": "Balance of Power / Deserts of Arrakis, non-foil (each)",
+        "usd": 39.99
+      },
+      {
+        "label": "Balance of Power / Deserts of Arrakis, foil (each)",
+        "usd": 49.99
+      },
+      {
+        "label": "Spice (halo foil)",
+        "usd": 59.99
+      },
+      {
+        "label": "Desert Power Everything Bundle (4 editions)",
+        "usd": 174.99
+      }
+    ],
     "short_name": "My Arrakis, My Superdrop",
     "field_sources": {
-      "release_date": "https://x.com/MTGSecretLair/status/2122736525460787350"
+      "release_date": "https://magic.wizards.com/en/news/announcements/secret-lair-my-arrakis-my-superdrop",
+      "window": "https://magic.wizards.com/en/news/announcements/secret-lair-my-arrakis-my-superdrop",
+      "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-my-arrakis-my-superdrop",
+      "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-my-arrakis-my-superdrop"
     },
-    "last_checked": "2026-11-18"
+    "last_checked": "2026-11-23",
+    "inside_source": "https://magic.wizards.com/en/news/announcements/secret-lair-my-arrakis-my-superdrop"
   },
   {
     "slug": "secret-lair-marvel-doomsdrop",
