@@ -1183,6 +1183,120 @@ def nauctis_precons_deepen():
     ]
     return intro, glance + "".join(sections) + which + vs + where, extra_faqs
 
+# ---- Zeta Set re-release and Spider-Mania expansions (draft, Nov 24, 2026).
+# Official facts only from Wizards / Secret Lair sources. Spider-Mania leak details
+# are labeled as leaks and name their press sources. No new Buy/Skip verdicts.
+ZETA_ANN = "https://magic.wizards.com/en/news/announcements/chaos-vault-the-zeta-set-puts-the-playtest-in-your-hands"
+ZETA_UPDATE = "https://magic.wizards.com/en/news/announcements/an-update-on-the-zeta-set-sale"
+ZETA_PAUPER = "https://magic.wizards.com/en/news/announcements/on-the-zeta-set-in-pauper"
+SPM_WIKI = "https://mtg.wiki/page/Template:Upcoming_events"
+SPM_POLYGON = "https://www.polygon.com/magic-mtg-spider-man-commander-deck-christmas/"
+SPM_GAMER = "https://www.thegamer.com/magic-the-gathering-spider-man-commander-deck-leak/"
+ZETA_SPM_CHECKED = "Nov 24, 2026"
+
+def zeta_expand(r):
+    ann, upd, pau = phasers_link(ZETA_ANN, "Sep 1, 2026 announcement"), phasers_link(ZETA_UPDATE, "Oct 1, 2026 update"), phasers_link(ZETA_PAUPER, "On The Zeta Set in Pauper")
+    store = phasers_link(SL_STORE, "MagicSecretLair.com")
+    lead = (
+        f"<p><b>Quick answer (checked {ZETA_SPM_CHECKED}):</b> Secret Lair x MSCHF: The Zeta Set goes on sale again "
+        f"on Dec 9, 2026, for a single 24-hour order window at $19.92 on {store}. Wizards says everyone who orders "
+        f"during that window will have the order fulfilled. Estimated shipping is the second half of 2027. "
+        f"Sources: {ann} and {upd}.</p>")
+    mid = (
+        f"<h2>How the Dec 9 order window works</h2>"
+        f"<p>Per Wizards' {upd}, the re-release is a single 24-hour limited order window on Dec 9, 2026, at {store}. "
+        "Every order placed during that window will be fulfilled, so it is not a race for a fixed pile of leftover stock.</p>"
+        "<p>Wizards has not published a start time for the window, and has not announced a purchase limit. "
+        "Unofficial write-ups sometimes mention 9 AM PT; that hour is not in the Wizards articles, so it is not listed here as a fact. "
+        "Check the official store on Dec 9, or add the date to your calendar below.</p>"
+        f"<h2>When will it ship?</h2>"
+        f"<p>Wizards estimates these Dec 9 orders will begin shipping in the second half of 2027, and says more timing "
+        f"details will come closer to the sale ({upd}). That is not a Christmas 2026 gift.</p>")
+    deepen = (
+        f"<h2>Is the Zeta Set legal, and what about Pauper?</h2>"
+        f"<p>These are reprints with playtest-inspired treatments. The {ann} notes that common cards from this release "
+        f"will affect Pauper legality. In the {pau} article (Sep 4, 2026), Gavin Verhey wrote for the Pauper Format Panel "
+        "that the twelve cards printed at common for the first time in this set are legal in tabletop Pauper as of Sep 7, 2026 "
+        "(Magic Online followed on Sep 23, 2026). Narcomoeba and Price of Progress were banned from Pauper when that took effect.</p>"
+        f"<h2>Add Dec 9 to your calendar</h2>"
+        f"<p>The re-release is already on our calendar as an all-day event on Dec 9, 2026, because Wizards has not published a start hour. "
+        f"{ics_link('calendar.ics')} for every release, or {ics_link('secret-lair.ics')} for Secret Lair dates only.</p>")
+    faqs = [
+        ("When does the Zeta Set go on sale again?",
+         f"On Dec 9, 2026, for a single 24-hour limited order window at {store}. Wizards says everyone who orders during that window will have it fulfilled. Source: {upd}."),
+        ("How much is the Zeta Set?",
+         f"$19.92 at {store}, per Wizards' {ann}."),
+        ("What time does the Zeta Set window open?",
+         "Wizards has confirmed a 24-hour window on Dec 9, 2026, but has not published a start time. We are not treating unofficial 9 AM PT mentions as official."),
+        ("When will Zeta Set orders ship?",
+         f"Wizards estimates Dec 9 orders will begin shipping in the second half of 2027, with more timing details closer to the sale. Source: {upd}."),
+        ("Is there a purchase limit?",
+         "Wizards has not announced a purchase limit for the Dec 9 window."),
+        ("Will the Zeta Set arrive by Christmas?",
+         "No. Wizards estimates these orders will begin shipping in the second half of 2027, so this is not a Christmas 2026 gift."),
+        (f"Should I buy {short_name(r)}?", E(r["note"])),
+        ("What's in the Zeta Set?",
+         "Each copy is one Zeta Booster with 7 randomized cards: 3 commons, 2 uncommons, 1 wildcard of any rarity, and 1 rare or mythic rare. There are 121 different cards in the set. Most use a black-and-white photocopy treatment; 10% are photocopy negative and 5% have the color banding treatment. Source: Wizards' Sep 1, 2026 announcement."),
+    ]
+    return lead, mid, deepen, faqs
+
+def spider_mania_expand(r):
+    poly, gamer, wiki = phasers_link(SPM_POLYGON, "Polygon (Sep 25, 2026)"), phasers_link(SPM_GAMER, "TheGamer (Sep 28, 2026)"), phasers_link(SPM_WIKI, "mtg.wiki")
+    lead = (
+        f"<p><b>Quick answer (checked {ZETA_SPM_CHECKED}):</b> Wizards of the Coast has not officially announced a Spider-Mania Commander deck. "
+        f"A leak, first posted by @MTGOSalseo on X and reported by {poly} and {gamer}, gives a date of Dec 4, 2026. "
+        f"{wiki}'s upcoming-events list marks that date as tentative. Treat every detail below as unconfirmed until Wizards publishes it.</p>")
+    mid = (
+        "<h2>Is Spider-Mania real? What Wizards has (and hasn't) confirmed</h2>"
+        "<table><tr><th>Detail</th><th>Status</th><th>Source</th></tr>"
+        f"<tr><td>Official announcement of a Spider-Mania Commander deck</td><td>None found</td><td>No match on magic.wizards.com as of {ZETA_SPM_CHECKED}</td></tr>"
+        f"<tr><td>Product name “Spider-Mania”</td><td>Leak / rumor</td><td>@MTGOSalseo on X, reported by {poly} and {gamer}</td></tr>"
+        f"<tr><td>Release date Dec 4, 2026</td><td>Leak; listed as tentative</td><td>Same leak; {wiki} upcoming events (tentative)</td></tr>"
+        f"<tr><td>Commanders, colors, card counts, Collector’s Edition</td><td>Leak / rumor</td><td>Same press reports of the leak</td></tr>"
+        f"<tr><td>MSRP</td><td>Not in the leak; not announced</td><td>{gamer}: no price is listed in the leak</td></tr>"
+        "<tr><td>Preorder or retailer ship date</td><td>None published</td><td>—</td></tr>"
+        "</table>"
+        "<h2>Leaked contents and commanders</h2>"
+        f"<p>The following details are from the leak reported by {poly} and {gamer}. They are not official.</p>"
+        "<ul>"
+        "<li><b>Name:</b> Spider-Mania (leak)</li>"
+        f"<li><b>Colors:</b> Jeskai (white, blue, and red), per {poly}</li>"
+        f"<li><b>Face commander:</b> Spider-Man / Peter Parker (leak; {poly}, {gamer})</li>"
+        f"<li><b>Backup commanders:</b> Miles Morales and Spider-Gwen / Gwen Stacy (leak; same)</li>"
+        "<li><b>Cards with new art:</b> 50, of which 30 are new cards and 20 are reprints from Marvel’s Spider-Man and Marvel Super Heroes (leak; same)</li>"
+        "</ul>"
+        "<h2>Leaked price: regular vs collector edition</h2>"
+        f"<p>No price appears in the leak itself, per {gamer}. Until Wizards lists an MSRP, the price table on this page stays TBA.</p>"
+        f"<p>{gamer} noted that Universes Beyond precons typically have an MSRP of about $74.99 for the regular deck and $159.99 for the Collector’s Edition. "
+        "That is a comparison to other products, not a leaked or official Spider-Mania price.</p>"
+        f"<p>{poly} reported that the leak also describes a Collector’s Edition in which all cards use the surge foil treatment. That edition is also unconfirmed.</p>")
+    darkhold = next((x for x in data if x["slug"] == "marvel-darkhold-destiny-commander"), None)
+    kit = next((x for x in data if x["slug"] == "countdown-kit-marvels-history-of-heroes"), None)
+    rel_bits = []
+    if darkhold: rel_bits.append(f'{plink(darkhold)} (2027)')
+    if kit: rel_bits.append(plink(kit))
+    rel_bits.append(f'<a href="{BASE}/guides/mtg-releases-fall-holiday-2026.html">every MTG product releasing this fall/holiday 2026</a>')
+    deepen = (
+        "<h2>Will it arrive by Christmas?</h2>"
+        "<p>Unknown. Wizards has not announced the product, and no retailer has published a ship date that we can cite. Do not count on it as a Christmas gift.</p>"
+        "<p>Related: " + ", ".join(rel_bits) + ".</p>")
+    faqs = [
+        ("Is the Spider-Mania Commander deck real?",
+         f"It is unconfirmed. Wizards has not announced it. A leak first posted by @MTGOSalseo on X, and reported by {poly} and {gamer}, describes the deck; {wiki} lists a tentative Dec 4, 2026 date. Last checked {ZETA_SPM_CHECKED}."),
+        ("When does the Spider-Man Commander deck come out?",
+         f"The leaked date is Dec 4, 2026. Wizards has not confirmed a release date. Sources: {poly}, {gamer}; {wiki} marks the date as tentative."),
+        ("How much will Spider-Mania cost?",
+         f"Wizards has not listed an MSRP, and {gamer} says no price appears in the leak. TheGamer noted that Universes Beyond precons typically cost about $74.99 regular / $159.99 Collector’s Edition; that is not a Spider-Mania price. This page keeps the price as TBA."),
+        ("Who are the Spider-Mania commanders?",
+         f"Only according to the leak: Peter Parker / Spider-Man as the face commander, with Miles Morales and Spider-Gwen / Gwen Stacy as backups, in Jeskai (white, blue, and red). Sources: {poly}, {gamer}. Not confirmed by Wizards."),
+        ("Is there a collector / foil edition?",
+         f"The leak, as reported by {poly}, describes a Collector’s Edition in which all cards are surge foil. Wizards has not confirmed it."),
+        ("Can I preorder Spider-Mania?",
+         "No official preorder is up. Wizards has not announced the product, so there is nothing official to preorder yet."),
+        (f"Should I buy {short_name(r)}?", E(r["note"])),
+        ("Is Commander also called EDH?", "Yes. Commander is also called EDH."),
+    ]
+    return lead, mid, deepen, faqs
 for r in data:
     sn = short_name(r); pu = f"{SITE_URL}/p/{r['slug']}.html"
     win = f"<p><b>Window:</b> {E(r['window'])}</p>" if r.get("window") else ""
@@ -1223,6 +1337,7 @@ for r in data:
                     "Yes, in some regions. Per Wizards' Nov 5, 2026 update, North American Commander decks may ship or arrive after the Nov 13 tabletop release. English decks in Europe may also arrive after Nov 13; French and German decks may arrive after Prerelease. Check your retailer or preorder ship date."))
     if r["type"] == "Commander Precon":
         faq.append(("Is Commander also called EDH?", "Yes. Commander is also called EDH."))
+    lead_html = mid_html = ""
     deepen_html = ""
     if r["slug"] == "nauctis-commander":
         nau_intro, nau_body, nau_faqs = nauctis_precons_deepen()
@@ -1241,6 +1356,16 @@ for r in data:
         faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{a}</p>" for q, a in shown)
         phasers_ld = [{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
             {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in shown]}] + itemlists
+    elif r["slug"] == "zeta-set-rerelease":
+        lead_html, mid_html, deepen_html, shown = zeta_expand(r)
+        faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{a}</p>" for q, a in shown)
+        phasers_ld = [{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in shown]}]
+    elif r["slug"] == "spider-mania-commander":
+        lead_html, mid_html, deepen_html, shown = spider_mania_expand(r)
+        faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{a}</p>" for q, a in shown)
+        phasers_ld = [{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in shown]}]
     else:
         faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in faq)
         if r["type"] == "Commander Precon" or r["slug"] == "countdown-kit-marvels-history-of-heroes":
@@ -1305,7 +1430,7 @@ for r in data:
     crumbs = f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › {(f'<a href="{BASE}/secret-lair.html">Secret Lair</a>' if r["type"] == "Secret Lair" else E(r["type"]))} › {E(sn)}</nav>{hubl}'
     desc = r.get("meta_desc") or f"{sn} release date: {nice_date(r)}. " + r["note"]
     page(title_for(r), desc,
-         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])}){f" · <b>Prerelease:</b> {E(r['prerelease'])}" if r.get("prerelease") else ""}{" · <b>Sold out</b> at the official store" if r.get("sold_out") else ""}{" · <b>Delayed</b>: stock may arrive after this date" if r.get("delayed") else ""}</p>{win}{nau_intro}<h2>Price</h2>{ptab}{sv_html}{contents}{facts}{nau_body}<h2>Buy or skip?</h2><p>{E(r["note"])}{(" " + E(r["buy_guide_intro"])) if r.get("buy_guide_intro") else ""}</p>{("<ul>" + "".join(f"<li><b>{E(k)}:</b> {E(v)}</li>" for k, v in r["buy_guide"]) + "</ul>") if r.get("buy_guide") else ""}{pre_html}{f"<p><i>{E(r['preorder_call'])}</i></p>" if r.get("preorder_call") else ""}{("<p>Other Commander decks coming in 2027: " + ", ".join(plink(x, x["name"]) + f" ({nice_date(x)})" for x in h_cmd27 if x is not r) + ".</p>") if r.get("preorder_call") and r in h_cmd27 else ""}{deepen_html}<p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}<p class=disc><small>{DISCLOSURE_HTML}</small></p>{tinfo}{howto}{relhtml}{y27}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}{checked(r, with_sources=False)}<p><small>Last updated: {tdate()}</small></p>{FORM}',
+         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])}){f" · <b>Prerelease:</b> {E(r['prerelease'])}" if r.get("prerelease") else ""}{" · <b>Sold out</b> at the official store" if r.get("sold_out") else ""}{" · <b>Delayed</b>: stock may arrive after this date" if r.get("delayed") else ""}</p>{win}{nau_intro}{lead_html}<h2>Price</h2>{ptab}{sv_html}{contents}{facts}{nau_body}{mid_html}<h2>Buy or skip?</h2><p>{E(r["note"])}{(" " + E(r["buy_guide_intro"])) if r.get("buy_guide_intro") else ""}</p>{("<ul>" + "".join(f"<li><b>{E(k)}:</b> {E(v)}</li>" for k, v in r["buy_guide"]) + "</ul>") if r.get("buy_guide") else ""}{pre_html}{f"<p><i>{E(r['preorder_call'])}</i></p>" if r.get("preorder_call") else ""}{("<p>Other Commander decks coming in 2027: " + ", ".join(plink(x, x["name"]) + f" ({nice_date(x)})" for x in h_cmd27 if x is not r) + ".</p>") if r.get("preorder_call") and r in h_cmd27 else ""}{deepen_html}<p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}<p class=disc><small>{DISCLOSURE_HTML}</small></p>{tinfo}{howto}{relhtml}{y27}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}{checked(r, with_sources=False)}<p><small>Last updated: {tdate()}</small></p>{FORM}',
          f"p/{r['slug']}.html", main_ld + phasers_ld + [bc], noindex=bool(r.get("placeholder")), og=(card[1], 1200, 630) if card else None)
     if r["slug"] == PHASERS_SLUG: _assert_phasers_page(os.path.join("dist", f"p/{r['slug']}.html"))
     if r["slug"] == EL_SLUG: _assert_extra_life_page(os.path.join("dist", f"p/{r['slug']}.html"))
@@ -1816,7 +1941,9 @@ g_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> 
   + g_nov_html
   + g_bf_html
   + "<h2>Best picks for gifts</h2>" + (f'<p>Only products we already rate as a buy, and who each one suits. For whether to buy one now or wait until Black Friday, see <a href="#{G_BF_ID}">Black Friday 2026: buy now or wait</a>.</p><ul>' + "".join(f'<li><a href="{BASE}/p/{r["slug"]}.html">{E(short_name(r))}</a> ({nice_date(r)}): for {E(r["gift_for"])}.</li>' for r in g_gifts) + "</ul>" if g_gifts else "<p>No buy-rated products this season yet.</p>")
-  + "".join(f"<h2>{g_month_name(m)}</h2>" + ("".join(guide_item(r) for r in rs) if rs else "<p>Nothing scheduled yet.</p>") for m, rs in g_by.items())
+  + "".join(f"<h2>{g_month_name(m)}</h2>"
+  + (f'<p>The {plink(_spm)} is listed here for Dec 4, 2026 as an <b>unconfirmed leak</b>, not an official Wizards announcement. See that page for what press reports of the leak say, and what still has no official source.</p>' if m == "2026-12" and _spm.get("status") != "confirmed" else "")
+  + ("".join(guide_item(r) for r in rs) if rs else "<p>Nothing scheduled yet.</p>") for m, rs in g_by.items())
   + ("<h2>Announced, no date yet</h2><p>Announced but not yet scheduled, so these may or may not land before the end of 2026.</p>" + "".join(guide_item(r) for r in g_tba) if g_tba else "")
   + f'<p class=disc><small>{DISCLOSURE_HTML}</small></p>'
   + "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{a}</p>" for q, a in g_faq)

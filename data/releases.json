@@ -633,26 +633,65 @@
     "type": "Commander Precon",
     "universe": "Marvel",
     "release_date": "2026-12-04",
-    "window": null,
+    "window": "Leaked for Dec 4, 2026; Wizards has not confirmed a date or the product",
     "source": "https://mtg.wiki/page/Template:Upcoming_events",
-    "note": "Listed by mtg.wiki. Decklist not yet reviewed here; wait for the list. Still only a leak (@MTGOSalseo); Wizards hasn't confirmed it. Wait.",
+    "note": "Wizards has not announced this product. A Dec 4, 2026 date and other details come from a leak first posted by @MTGOSalseo on X and reported by Polygon and TheGamer; mtg.wiki lists the date as tentative. Wait for an official reveal.",
     "status": "unconfirmed",
     "amazon_query": "Spider-Mania Commander Deck MTG",
     "short_name": "Spider-Mania Commander Deck",
     "verdict": "wait",
-    "last_checked": "2026-10-17",
+    "meta_desc": "Spider-Mania Commander deck: not officially announced. A leak reported for Dec 4, 2026. Wait for an official Wizards reveal.",
+    "field_sources": {
+      "wiki listing (tentative)": "https://mtg.wiki/page/Template:Upcoming_events",
+      "leak coverage (Polygon, Sep 25, 2026)": "https://www.polygon.com/magic-mtg-spider-man-commander-deck-christmas/",
+      "leak coverage (TheGamer, Sep 28, 2026)": "https://www.thegamer.com/magic-the-gathering-spider-man-commander-deck-leak/"
+    },
+    "last_checked": "2026-11-24",
     "singles_value": "No official decklist or MSRP yet — the product is still only a leak — so we can't compare singles value to a box price."
   },
   {
     "slug": "zeta-set-rerelease",
-    "name": "The Zeta Set re-release",
-    "type": "Special",
+    "name": "Secret Lair x MSCHF: The Zeta Set (re-release)",
+    "type": "Secret Lair",
     "release_date": "2026-12-09",
     "window": "Dec 9, 2026: single 24-hour order window; every order filled; shipping estimated 2H 2027",
     "source": "https://magic.wizards.com/en/news/announcements/an-update-on-the-zeta-set-sale",
     "note": "Wizards confirmed a 24-hour print-to-demand window, so there's no need to rush or pay scalper prices. Orders are estimated to ship in the second half of 2027.",
     "status": "confirmed",
-    "last_checked": "2026-10-16"
+    "prices": [
+      {
+        "label": "Secret Lair x MSCHF: The Zeta Set",
+        "usd": 19.92
+      }
+    ],
+    "contents": [
+      "1 Zeta Booster with 7 randomized Magic cards",
+      "3 commons, 2 uncommons, 1 wildcard of any rarity, and 1 rare or mythic rare",
+      "121 different cards in the set, with photocopy, photocopy-negative, and color-banding treatments"
+    ],
+    "inside_source": "https://magic.wizards.com/en/news/announcements/chaos-vault-the-zeta-set-puts-the-playtest-in-your-hands",
+    "inside": [
+      [
+        "Each copy ($19.92 at MagicSecretLair.com)",
+        [
+          "1 Zeta Booster containing 7 randomized Magic cards, styled after 1990s playtest photocopies",
+          "3 Common cards, from among 52 common cards",
+          "2 Uncommon cards, from among 39 uncommon cards",
+          "1 Wildcard of any rarity, from among 52 common (60%), 39 uncommon (30%), 20 rare (7.5%), and 10 mythic rare (2.5%) cards",
+          "1 Rare or mythic rare card, from among 20 rare (75%) and 10 mythic rare (25%) cards",
+          "121 different cards in the set",
+          "Most cards use a black-and-white photocopy treatment; 10% are photocopy negative; 5% have the color banding treatment"
+        ]
+      ]
+    ],
+    "short_name": "The Zeta Set re-release",
+    "meta_desc": "The Zeta Set re-release is Dec 9, 2026: $19.92 at MagicSecretLair.com for a 24-hour window. Every order is filled; shipping is estimated for 2H 2027.",
+    "field_sources": {
+      "price, contents, Dec 9 window": "https://magic.wizards.com/en/news/announcements/chaos-vault-the-zeta-set-puts-the-playtest-in-your-hands",
+      "fulfillment and 2H 2027 shipping": "https://magic.wizards.com/en/news/announcements/an-update-on-the-zeta-set-sale",
+      "Pauper legality": "https://magic.wizards.com/en/news/announcements/on-the-zeta-set-in-pauper"
+    },
+    "last_checked": "2026-11-24"
   },
   {
     "slug": "nauctis-the-sunken-realm",
