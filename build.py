@@ -49,9 +49,13 @@ def amazon(r):
     # Direct /dp/ link only when an owner-approved ASIN with recorded evidence (amazon_evidence) is present;
     # otherwise a search URL, which never goes dead. Only purchasable retail products carry amazon_query.
     if r.get("amazon_asin") and r.get("amazon_evidence"):
-        return "https://www.amazon.com/dp/" + urllib.parse.quote(r["amazon_asin"]) + "?tag=" + AMAZON_TAG
+        return amazon_dp(r["amazon_asin"])
     if r.get("amazon_query"):
         return "https://www.amazon.com/s?k=" + urllib.parse.quote_plus(r["amazon_query"]) + "&tag=" + AMAZON_TAG
+def amazon_dp(asin):
+    return "https://www.amazon.com/dp/" + urllib.parse.quote(asin) + "?tag=" + AMAZON_TAG
+def amz_a(asin, label):
+    return f'<a href="{E(amazon_dp(asin))}" rel="sponsored nofollow noopener" target="_blank">{E(label)}</a>'
 def amz_btn(r):
     u = amazon(r)
     if not u: return ""
@@ -368,6 +372,31 @@ if "When do MTG Black Friday deals start?" not in _home_html or "#black-friday-2
 
 def title_for(r):
     sn = r.get("seo_name") or short_name(r); m = mon_yyyy(r).replace("Date TBA", "TBA")
+    if r.get("type") == "Commander Precon":
+        # Owner-approved pattern (Nov 24, 2026): "Decklist, Value, and Verdict".
+        # Prefer "Precons"/"Precon" over "Commander Decks" so the phrase fits in 60 characters.
+        stems = []
+        for s in (
+            r.get("seo_name"),
+            re.sub(r" Commander Decks$", " Precons", short_name(r)),
+            re.sub(r" Commander Deck$", " Precon", short_name(r)),
+            re.sub(r" \S+ Commander Decks$", " Precons", short_name(r)),
+            short_name(r).split()[0] + " Precons",
+            short_name(r).split()[0],
+            short_name(r),
+        ):
+            if s and s not in stems:
+                stems.append(s)
+        for stem in stems:
+            for phr in (
+                ": Decklist, Value, and Verdict | MTG Drops",
+                ": Decklist, Value & Verdict | MTG Drops",
+                ": Decklist, Value, Verdict | MTG Drops",
+            ):
+                t = stem + phr
+                if len(t) <= 60:
+                    return t
+        return stems[0] + " | MTG Drops"
     for t in (f"{sn} Release Date ({m}), Price & Preorder | MTG Drops", f"{sn} Release Date ({m}) | MTG Drops", f"{sn} Release Date, {m} | MTG Drops", f"{sn} Release Date | MTG Drops", f"{sn} ({m}) | MTG Drops", f"{sn} | MTG Drops"):
         if len(t) <= 60: return t
     return t
@@ -1018,9 +1047,148 @@ def _assert_published_picks(html_text, which):
     if "One drop:" not in which or "Two drops:" not in which: raise SystemExit("which-drops FAQ is missing the one/two labels")
     for line in PHASERS_UNPUBLISHED:
         if line in html_text or line in which: raise SystemExit("unpublished opinion rendered: " + line)
+
+NAU_COLLECTING = "https://magic.wizards.com/en/news/feature/collecting-nauctis-the-sunken-realm"
+NAU_PRECON_CHECKED = "2026-11-24"
+# Official Amazon.com single-deck listings, collected 2026-11-24. Amazon names one commander
+# per deck; each deck has two foil mythic legends that can be commander, so the second stays unnamed.
+NAU_PRECON_DECKS = [
+    {"name": "Merfolk Regiment", "asin": "B0HNRGNYK5", "commander": "Captain Hanno Corolean",
+     "strategy": "Send out waves of Merfolk from Magic's history; press the attack and end the turn tapped to get additional Merfolk for free.",
+     "suits": "typal Merfolk and go-wide combat"},
+    {"name": "Terrors of the Abyss", "asin": "B0HNRT8VVZ", "commander": "The Noble Serpent",
+     "strategy": "Control colossal sea monsters; mill and discard them to the graveyard, then bring them back.",
+     "suits": "sea-monster, mill, discard and reanimation players"},
+    {"name": "Blood in the Water", "asin": "B0HNRWLLSX", "commander": "Shredmouth",
+     "strategy": "Create Blood tokens by attacking with Sharks, then spend those tokens on discard combos.",
+     "suits": "Shark typal and Blood-token / discard-combo players"},
+    {"name": "Seal the Deal", "asin": "B0HNR4L1NY", "commander": "Gallorte",
+     "strategy": "A mercantile, political deck: offer opponents pain for prizes, form alliances, then betray them.",
+     "suits": "players who like table deals, politics and group interaction"},
+]
+NAU_PRECON_BUNDLE_ASIN = "B0HNV3M7YV"  # 4-deck regular bundle; unavailable on 2026-11-24
+NAU_PRECON_PREMIUM_ASIN = "B0HNTSD5DQ"  # Premium Edition 4-deck bundle, $319.96 on 2026-11-24
+
+def singles_value_html(r):
+    """Owner-approved 'singles value vs box' line on Commander precon /p/ pages. Real prices only; no estimates."""
+    if r.get("type") != "Commander Precon" or r.get("placeholder"):
+        return ""
+    sv = r.get("singles_value")
+    default = ("Decklists aren't public yet, so we can't compare singles value to the box price. "
+               "We'll add a sourced comparison once the lists and street prices are out.")
+    if isinstance(sv, dict):
+        body = E(sv["text"])
+        src, label, checked = sv.get("source"), sv.get("source_label"), sv.get("checked")
+        if src:
+            body += f' Source: <a href="{E(src)}" rel=nofollow>{E(label or urllib.parse.urlsplit(src).netloc)}</a>.'
+        if checked:
+            body += f" Last checked {nice_iso(checked)}."
+        return f"<p><b>Singles value vs box:</b> {body}</p>"
+    return f"<p><b>Singles value vs box:</b> {E(sv or default)}</p>"
+
+def nauctis_precons_deepen():
+    """Expand /p/nauctis-commander.html into the Rank 1 precons guide. Facts from Wizards or official Amazon listings only."""
+    wiz = f'<a href="{E(NAU_COLLECTING)}">Wizards of the Coast</a>'
+    chk = nice_iso(NAU_PRECON_CHECKED)
+    intro = (
+        f'<p><b>What are the Nauctis precons?</b> Nauctis: The Sunken Realm has four Commander precons: '
+        "Merfolk Regiment, Terrors of the Abyss, Blood in the Water, and Seal the Deal. Each is $49.99 MSRP, "
+        "or $79.99 for the all-foil Premium Edition, and they release Feb 5, 2027. Preorders are open. "
+        f"<small>(Source: {wiz}. Last checked: {chk}.)</small></p>"
+    )
+    rows = []
+    for d in NAU_PRECON_DECKS:
+        rows.append(
+            "<tr>"
+            f"<td>{amz_a(d['asin'], d['name'])}</td>"
+            "<td>TBA</td>"
+            f"<td>{E(d['commander'])}</td>"
+            f"<td>{E(d['strategy'])}</td>"
+            f"<td>Official Amazon listing, {chk}</td>"
+            "</tr>"
+        )
+    glance = (
+        "<h2>All 4 Nauctis precons at a glance</h2>"
+        "<table><tr><th>Deck</th><th>Colors</th><th>Named commander</th><th>Strategy</th><th>Source, last checked</th></tr>"
+        + "".join(rows)
+        + "</table>"
+        "<p><small>Each deck has two Traditional Foil mythic legendary creatures that can be your commander "
+        f"(per the official Amazon listings, {chk}). Those listings name only one commander per deck; "
+        "the second commander, and each deck's colors, are not published yet (TBA). "
+        f"Deck names, MSRPs and the face/featured-commander package are also in {wiz}'s collecting article.</small></p>"
+    )
+    sections = []
+    for d in NAU_PRECON_DECKS:
+        sections.append(
+            f"<h3>{E(d['name'])}</h3>"
+            f"<p>The official Amazon listing names <b>{E(d['commander'])}</b> and describes the deck as follows: "
+            f"{E(d['strategy'])} That suits {E(d['suits'])}. "
+            "Amazon also says the deck includes 12 cards new to Magic, two Traditional Foil mythic legends that can be commander "
+            "(regular frame), 98 nonfoil cards, 10 double-sided tokens, a deck box, a strategy guide and a reference card, "
+            f"and that all cards in this regular deck are regular frame. {amz_a(d['asin'], 'Pre-order ' + d['name'] + ' on Amazon')} "
+            f"($49.99, sold by Amazon.com, releases Feb 5, 2027; checked {chk}).</p>"
+        )
+    which = (
+        "<h2>Which Nauctis precon should you buy?</h2>"
+        "<p>There is no best-deck call yet, and this is not a buy verdict. Full decklists still aren't out, so the page stays "
+        "<b>Wait for lists</b>. If you want to preorder anyway based only on the official Amazon blurbs:</p><ul>"
+        + "".join(
+            f"<li><b>If you like {E(d['suits'])},</b> pick {E(d['name'])} ({E(d['commander'])}).</li>"
+            for d in NAU_PRECON_DECKS
+        )
+        + "</ul><p>We'll replace this with a real pick once the lists are public.</p>"
+    )
+    vs = (
+        "<h2>Regular vs Premium Edition ($49.99 vs $79.99)</h2>"
+        "<p>Both editions are the same 100-card list. The Premium Edition is all foil, with borderless foil commanders. "
+        f"Contents per {wiz}:</p>"
+        "<table><tr><th></th><th>Commander Deck ($49.99)</th><th>Premium Edition ($79.99)</th></tr>"
+        "<tr><td>Commanders</td><td>1 traditional foil new-to-Magic face commander and 1 traditional foil new-to-Magic featured commander</td>"
+        "<td>The same two commanders, traditional foil borderless</td></tr>"
+        "<tr><td>Other cards</td><td>98 non-foil cards, including 10 new-to-Magic cards</td>"
+        "<td>98 traditional foil cards, including 10 new-to-Magic cards</td></tr>"
+        "<tr><td>Tokens and extras</td><td>10 non-foil double-sided tokens, 1 reference card, 1 deck box</td>"
+        "<td>10 double-sided tokens (foil on one side), 1 reference card, 1 deck box</td></tr>"
+        "</table>"
+        f"<p><small>Per {wiz}. Amazon's regular-deck listings also include a strategy guide (or strategy insert) in the box.</small></p>"
+    )
+    where = (
+        "<h2>Where to preorder (Amazon, TCGplayer, LGS)</h2>"
+        f"<p>Wizards listed preorders on Nov 13, 2026, at local game stores, TCGplayer, Amazon and elsewhere Magic is sold. "
+        f"On {chk}, each regular deck had its own official Amazon.com preorder at $49.99, releasing Feb 5, 2027 "
+        "(final sale, no returns). The four-deck regular bundle listing was unavailable that day "
+        f"(it was a $199.96 Amazon.com preorder when checked Nov 16, 2026). "
+        f"A Premium Edition four-deck bundle was $319.96 (4 × $79.99) on Amazon.com, also for Feb 5, 2027.</p><ul>"
+        + "".join(f"<li>{amz_a(d['asin'], d['name'] + ' — $49.99 on Amazon')}</li>" for d in NAU_PRECON_DECKS)
+        + f"<li>{amz_a(NAU_PRECON_PREMIUM_ASIN, 'Premium Edition Commander Deck Bundle — $319.96 on Amazon')}</li>"
+        + "</ul>"
+        f'<p><a href="{tcg("Nauctis Commander Deck")}" rel="sponsored nofollow">Check prices on TCGplayer</a>, or ask your local game store. '
+        "Street prices can differ from MSRP; these Amazon figures are the listing prices we saw, not a guarantee.</p>"
+    )
+    extra_faqs = [
+        ("What are the 4 Nauctis precons?",
+         "Nauctis: The Sunken Realm has four Commander precons: Merfolk Regiment, Terrors of the Abyss, Blood in the Water, and Seal the Deal. They release Feb 5, 2027."),
+        ("Who are the Nauctis commanders?",
+         "Each deck has two foil mythic legends that can be your commander. Official Amazon listings (checked Nov 24, 2026) name one per deck: Captain Hanno Corolean (Merfolk Regiment), The Noble Serpent (Terrors of the Abyss), Shredmouth (Blood in the Water), and Gallorte (Seal the Deal). The second commander in each deck has not been named on those listings or on Wizards' collecting page."),
+        ("Which Nauctis Commander deck is best?",
+         "Too early to say. Full decklists aren't out, so there is no best-deck or buy call. The page verdict stays Wait for lists. If you like typal Merfolk, look at Merfolk Regiment; sea monsters, mill and reanimation, Terrors of the Abyss; Sharks and Blood-token discard, Blood in the Water; political table deals, Seal the Deal."),
+        ("How much are Nauctis precons?",
+         "Each regular Commander deck is $49.99 MSRP, or $79.99 for the all-foil Premium Edition (Wizards). On Nov 24, 2026, Amazon.com listed each regular deck at $49.99 and the Premium Edition four-deck bundle at $319.96."),
+        ("Can I preorder Nauctis precons on Amazon?",
+         "Yes. As of Nov 24, 2026, each of the four regular decks had an official Amazon.com preorder at $49.99 for the Feb 5, 2027 release. The four-deck regular bundle listing was unavailable that day. A Premium Edition four-deck bundle was listed at $319.96. Wizards also listed preorders at local game stores and TCGplayer on Nov 13, 2026."),
+        ("When are Nauctis decklists revealed?",
+         "Wizards has not announced a decklist date. Commanders' colors and the full lists are still TBA. We'll update this page when official lists are out."),
+        ("Is it Nauctis or Nauticus?",
+         "The official name is Nauctis (Nauctis: The Sunken Realm). It is sometimes searched as Nauticus."),
+    ]
+    return intro, glance + "".join(sections) + which + vs + where, extra_faqs
+
 for r in data:
     sn = short_name(r); pu = f"{SITE_URL}/p/{r['slug']}.html"
     win = f"<p><b>Window:</b> {E(r['window'])}</p>" if r.get("window") else ""
+    nau_intro = ""
+    nau_body = ""
+    sv_html = singles_value_html(r)
     prices = r.get("prices") or []
     ptab = ("<table><tr><th>Item</th><th>Price (USD)</th></tr>" + "".join(f"<tr><td>{E(p['label'])}</td><td>{fmt(p)}</td></tr>" for p in prices) + "</table>") if prices else "<p>Price: TBA</p>"
     contents = ("<h2>What's inside</h2><ul>" + "".join(f"<li>{E(c)}</li>" for c in r["contents"]) + "</ul>") if r.get("contents") else ""
@@ -1056,6 +1224,10 @@ for r in data:
     if r["type"] == "Commander Precon":
         faq.append(("Is Commander also called EDH?", "Yes. Commander is also called EDH."))
     deepen_html = ""
+    if r["slug"] == "nauctis-commander":
+        nau_intro, nau_body, nau_faqs = nauctis_precons_deepen()
+        contents = ""  # Regular vs Premium table and per-deck contents live in the guide block
+        faq.extend(nau_faqs)
     phasers_ld = []
     if r["slug"] == PHASERS_SLUG:
         deepen_html, extra_faqs, itemlists = set_phasers_deepen()
@@ -1133,7 +1305,7 @@ for r in data:
     crumbs = f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a> › {(f'<a href="{BASE}/secret-lair.html">Secret Lair</a>' if r["type"] == "Secret Lair" else E(r["type"]))} › {E(sn)}</nav>{hubl}'
     desc = r.get("meta_desc") or f"{sn} release date: {nice_date(r)}. " + r["note"]
     page(title_for(r), desc,
-         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])}){f" · <b>Prerelease:</b> {E(r['prerelease'])}" if r.get("prerelease") else ""}{" · <b>Sold out</b> at the official store" if r.get("sold_out") else ""}{" · <b>Delayed</b>: stock may arrive after this date" if r.get("delayed") else ""}</p>{win}<h2>Price</h2>{ptab}{contents}{facts}<h2>Buy or skip?</h2><p>{E(r["note"])}{(" " + E(r["buy_guide_intro"])) if r.get("buy_guide_intro") else ""}</p>{("<ul>" + "".join(f"<li><b>{E(k)}:</b> {E(v)}</li>" for k, v in r["buy_guide"]) + "</ul>") if r.get("buy_guide") else ""}{pre_html}{f"<p><i>{E(r['preorder_call'])}</i></p>" if r.get("preorder_call") else ""}{("<p>Other Commander decks coming in 2027: " + ", ".join(plink(x, x["name"]) + f" ({nice_date(x)})" for x in h_cmd27 if x is not r) + ".</p>") if r.get("preorder_call") and r in h_cmd27 else ""}{deepen_html}<p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}<p class=disc><small>{DISCLOSURE_HTML}</small></p>{tinfo}{howto}{relhtml}{y27}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}{checked(r, with_sources=False)}<p><small>Last updated: {tdate()}</small></p>{FORM}',
+         f'{crumbs}<span class=t>{E(r["type"])}</span><h1>{E(r["name"])}</h1><p><b>Release:</b> {nice_date(r)} ({E(r["status"])}){f" · <b>Prerelease:</b> {E(r['prerelease'])}" if r.get("prerelease") else ""}{" · <b>Sold out</b> at the official store" if r.get("sold_out") else ""}{" · <b>Delayed</b>: stock may arrive after this date" if r.get("delayed") else ""}</p>{win}{nau_intro}<h2>Price</h2>{ptab}{sv_html}{contents}{facts}{nau_body}<h2>Buy or skip?</h2><p>{E(r["note"])}{(" " + E(r["buy_guide_intro"])) if r.get("buy_guide_intro") else ""}</p>{("<ul>" + "".join(f"<li><b>{E(k)}:</b> {E(v)}</li>" for k, v in r["buy_guide"]) + "</ul>") if r.get("buy_guide") else ""}{pre_html}{f"<p><i>{E(r['preorder_call'])}</i></p>" if r.get("preorder_call") else ""}{("<p>Other Commander decks coming in 2027: " + ", ".join(plink(x, x["name"]) + f" ({nice_date(x)})" for x in h_cmd27 if x is not r) + ".</p>") if r.get("preorder_call") and r in h_cmd27 else ""}{deepen_html}<p><a href="{tcg(r.get("tcg_query") or r["name"])}" rel="sponsored nofollow">Check prices on TCGplayer</a></p>{amz_btn(r)}<p class=disc><small>{DISCLOSURE_HTML}</small></p>{tinfo}{howto}{relhtml}{y27}{faqhtml}<p><small>Source: <a href="{E(r["source"])}">{E(r["source"])}</a></small></p>{fsrc}{checked(r, with_sources=False)}<p><small>Last updated: {tdate()}</small></p>{FORM}',
          f"p/{r['slug']}.html", main_ld + phasers_ld + [bc], noindex=bool(r.get("placeholder")), og=(card[1], 1200, 630) if card else None)
     if r["slug"] == PHASERS_SLUG: _assert_phasers_page(os.path.join("dist", f"p/{r['slug']}.html"))
     if r["slug"] == EL_SLUG: _assert_extra_life_page(os.path.join("dist", f"p/{r['slug']}.html"))
@@ -1150,6 +1322,21 @@ for r in data:
         if "also called EDH" not in _cmd_html: raise SystemExit(r["slug"] + " is missing the Commander/EDH note")
         _cmd_faq = dict(_assert_faq_match(_cmd_html, "<h2>FAQ</h2>"))
         if "Is Commander also called EDH?" not in _cmd_faq: raise SystemExit(r["slug"] + " FAQ is missing the EDH question")
+        _cmd_title = html.unescape(re.search(r"<title>(.*?)</title>", _cmd_html).group(1))
+        if len(_cmd_title) > 60: raise SystemExit(r["slug"] + f" title too long ({len(_cmd_title)}): " + _cmd_title)
+        if "Decklist" not in _cmd_title or "Value" not in _cmd_title or "Verdict" not in _cmd_title:
+            raise SystemExit(r["slug"] + " title is missing the Decklist, Value, and Verdict pattern: " + _cmd_title)
+        if "Singles value vs box" not in _cmd_html:
+            raise SystemExit(r["slug"] + " is missing the singles value vs box line")
+        if r["slug"] == "nauctis-commander":
+            for needle in ("Wait for lists", "Captain Hanno Corolean", "The Noble Serpent", "Shredmouth", "Gallorte",
+                           "Merfolk Regiment", "Terrors of the Abyss", "Blood in the Water", "Seal the Deal",
+                           "Nauticus", "B0HNRGNYK5", "B0HNRT8VVZ", "B0HNRWLLSX", "B0HNR4L1NY", "B0HNTSD5DQ",
+                           "tag=mtgdrops-20", "What are the 4 Nauctis precons?"):
+                if needle not in _cmd_html:
+                    raise SystemExit("nauctis-commander is missing: " + needle)
+            if "Zekes" in _cmd_html:
+                raise SystemExit("nauctis-commander must not invent unlisted commanders")
         if r["slug"] == "star-trek-commander":
             if "may ship or arrive after Nov 13" not in _cmd_html:
                 raise SystemExit("Star Trek Commander page is missing the may-ship-late note")
@@ -1967,7 +2154,7 @@ _n_faq = [
  ("Should I preorder Nauctis?", "Our early call, checked Nov 16, 2026: Wait on most sealed product until the full set is previewed, and Skip Collector Booster boxes priced above the "
   + f"{fmt({'usd': _n_cbox})} pack-math MSRP. Preorder now only if you want a product on day one. This is a timing call, not a final buy/skip verdict."),
  ("What is Abyssal Lotus and how rare is it?", "Abyssal Lotus is a card in Nauctis: The Sunken Realm. Its textless raised foil headliner version appears only in Collector Boosters, in English only (in Collector Boosters of any language), and Wizards says about 500 will be printed."),
- ("What are the Nauctis Commander decks and how much do they cost?", "Four decks: " + ", ".join(_n_decks[:-1]) + f" and {_n_decks[-1]}. Each is {fmt({'usd': _n_cmd})} MSRP, or {fmt({'usd': _n_pe})} for the all-foil Premium Edition. Commanders and decklists are not revealed yet."),
+ ("What are the Nauctis Commander decks and how much do they cost?", "Four decks: " + ", ".join(_n_decks[:-1]) + f" and {_n_decks[-1]}. Each is {fmt({'usd': _n_cmd})} MSRP, or {fmt({'usd': _n_pe})} for the all-foil Premium Edition. Official Amazon listings name one commander per deck; the second commander, colors and full decklists are still TBA."),
  ("Is Nauctis on MTG Arena, and when?", tense(nau_set, "Yes. Wizards lists the MTG Arena release on Feb 2, 2027, three days before the Feb 5 tabletop release.", "Yes. Nauctis arrived on MTG Arena on Feb 2, 2027, three days before the Feb 5 tabletop release.")),
  ("Does Standard rotate with Nauctis?", "Yes. Wizards lists Standard rotation on Jan 29, 2027, the first day of Nauctis prerelease events. Check Wizards' announcements for which sets leave Standard."),
 ]
@@ -1996,7 +2183,7 @@ nau_body = (f'<nav class=bc aria-label=Breadcrumb><a href="{BASE}/">MTG Drops</a
   f'<p>Wizards confirmed four Nauctis: The Sunken Realm Commander decks: ' + ", ".join(f"<b>{E(x)}</b>" for x in _n_decks[:-1]) + f' and <b>{E(_n_decks[-1])}</b>. '
   f'The regular deck is {fmt({"usd": _n_cmd})} MSRP: a ready-to-play 100-card deck with traditional foil new-to-Magic face and featured commanders, 98 non-foil cards (10 new to Magic), 10 tokens and a deck box. '
   f'The Premium Edition is {fmt({"usd": _n_pe})}: the same deck with borderless foil commanders and all 98 other cards in traditional foil. '
-  f'Commanders, colors and decklists are not revealed yet (TBA). Commander is also called EDH. Details: {_n_cmd_link}.</p>'
+  f'Full decklists and color identities are not revealed yet (TBA). Official Amazon listings (checked {nice_iso(NAU_PRECON_CHECKED)}) name one commander and a short strategy for each deck; the second commander in each deck is still unnamed. Commander is also called EDH. All four decks, named commanders and which to pick (the call stays Wait for lists): {_n_cmd_link}.</p>'
   "<h2>Booster Fun and chase: Abyssal Lotus and Sunken Treasures</h2><ul>"
   "<li><b>Abyssal Lotus headliner:</b> a textless raised foil version, only in Collector Boosters. Wizards says about 500 will be printed. It is English only, in Collector Boosters of any language.</li>"
   "<li><b>Sunken treasures box toppers:</b> reprints of famous Magic artifacts (Wizards' example: Crucible of Worlds). There are 15 classic reprints and 5 new-to-Magic cards. Every Booster Pack box and Collector Booster box has a Box Topper with 1 pearlescent sunken treasures card, a version found only in box toppers. Undersea foil versions are only in Collector Boosters.</li>"
