@@ -619,6 +619,12 @@
       ],
       "checked": "2026-11-08",
       "match_reason": "Official Wizards of the Coast listing fetched 2026-11-08: Manufacturer Wizards of the Coast, model/part D58990000, UPC 195166335988, set name Star Trek, Model Year 2026. Title and Included Components read 'Includes all 4 Decks (Federation Fleet, Landing Party, Klingon Fury, We Are the Borg)', matching this four-deck release. Bullets and product description: all four 100-card decks, each with 33 new-to-Magic Commander cards and a Traditional Foil Borderless commander, plus 10 double-sided token cards, a deck box, a strategy guide, and a reference card per deck. This is the regular 4-deck bundle (offers $264.97-$274.95, far below a Collector's Edition 4 x $159.99 = $639.96 set), same approach as the Darkhold Destiny Commander Deck Bundle."
+    },
+    "singles_value": {
+      "text": "As of Nov 23, 2026, The Pod Companion totaled TCGplayer market prices for the exact printings in each regular deck against the $74.99 MSRP: Landing Party $85.14, We Are the Borg $65.53, Federation Fleet $50.61, and Klingon Fury $44.22. Those are retail market sums, not buylist or what you would get by selling the deck, and prices move.",
+      "source": "https://thepodcompanion.com/precons/prices/",
+      "source_label": "The Pod Companion precon price index (TCGplayer market)",
+      "checked": "2026-11-23"
     }
   },
   {
@@ -634,7 +640,8 @@
     "amazon_query": "Spider-Mania Commander Deck MTG",
     "short_name": "Spider-Mania Commander Deck",
     "verdict": "wait",
-    "last_checked": "2026-10-17"
+    "last_checked": "2026-10-17",
+    "singles_value": "No official decklist or MSRP yet — the product is still only a leak — so we can't compare singles value to a box price."
   },
   {
     "slug": "zeta-set-rerelease",
@@ -748,9 +755,9 @@
     "name": "Nauctis Commander Decks (4)",
     "type": "Commander Precon",
     "release_date": "2027-02-05",
-    "window": "Wizards listed preorders on Nov 13, 2026; each deck also has a $79.99 Premium Edition",
+    "window": "Wizards listed preorders on Nov 13, 2026; each deck also has a $79.99 Premium Edition. On Nov 24, 2026, Amazon.com listed each regular deck at $49.99; the four-deck regular bundle listing was unavailable.",
     "source": "https://magic.wizards.com/en/news/feature/collecting-nauctis-the-sunken-realm",
-    "note": "Four decks confirmed: Merfolk Regiment, Terrors of the Abyss, Blood in the Water, and Seal the Deal, at $49.99 MSRP each ($79.99 for the all-foil Premium Edition). Wait for lists.",
+    "note": "Four decks: Merfolk Regiment, Terrors of the Abyss, Blood in the Water, and Seal the Deal, at $49.99 MSRP each ($79.99 all-foil Premium Edition). Official Amazon listings name one commander per deck; the second commander, colors and full decklists are still TBA. Wait for lists.",
     "status": "confirmed",
     "amazon_query": "Nauctis Commander Deck MTG",
     "prices": [
@@ -769,9 +776,9 @@
       "Blood in the Water",
       "Seal the Deal"
     ],
-    "last_checked": "2026-11-16",
-    "preorder_call": "This is a preorder-stage page: the four decks are Merfolk Regiment, Terrors of the Abyss, Blood in the Water, and Seal the Deal, at $49.99 MSRP each or $79.99 for the Premium Edition, but no decklists or commanders yet, so there is no verdict and preordering means buying blind. We'll make the call once the lists are out.",
-    "meta_desc": "Nauctis Commander Decks (Feb 5, 2027): Merfolk Regiment, Terrors of the Abyss, Blood in the Water, Seal the Deal. $49.99 each, $79.99 Premium Edition.",
+    "last_checked": "2026-11-24",
+    "preorder_call": "This is a preorder-stage page: the four decks are Merfolk Regiment, Terrors of the Abyss, Blood in the Water, and Seal the Deal, at $49.99 MSRP each or $79.99 for the Premium Edition. Official Amazon listings name one commander per deck (Captain Hanno Corolean, The Noble Serpent, Shredmouth, and Gallorte); each deck also has a second foil mythic commander who has not been named yet. Full decklists and colors are still TBA, so there is no buy verdict and preordering still means buying without the lists. Wait for lists. We'll make the call once the lists are out.",
+    "meta_desc": "Nauctis precons (Feb 5, 2027): Merfolk Regiment, Terrors of the Abyss, Blood in the Water, Seal the Deal. $49.99 each, $79.99 Premium Edition. Wait for lists.",
     "amazon_asin": "B0HNV3M7YV",
     "amazon_evidence": {
       "asin": "B0HNV3M7YV",
@@ -788,11 +795,11 @@
       [
         "The four decks",
         [
-          "Merfolk Regiment",
-          "Terrors of the Abyss",
-          "Blood in the Water",
-          "Seal the Deal",
-          "Commanders, colors and decklists: not revealed yet (TBA)"
+          "Merfolk Regiment (named commander: Captain Hanno Corolean, official Amazon listing)",
+          "Terrors of the Abyss (named commander: The Noble Serpent, official Amazon listing)",
+          "Blood in the Water (named commander: Shredmouth, official Amazon listing)",
+          "Seal the Deal (named commander: Gallorte, official Amazon listing)",
+          "Each deck has two foil mythic commanders; Amazon names only one. Colors and full decklists: not revealed yet (TBA)"
         ]
       ],
       [
@@ -814,8 +821,15 @@
       ]
     ],
     "field_sources": {
-      "first report": "https://www.thepopverse.com/gaming-magic-the-gathering-2027-sets-commander-decks-magiccon-amsterdam"
-    }
+      "first report": "https://www.thepopverse.com/gaming-magic-the-gathering-2027-sets-commander-decks-magiccon-amsterdam",
+      "contents": "https://magic.wizards.com/en/news/feature/collecting-nauctis-the-sunken-realm",
+      "Merfolk Regiment listing": "https://www.amazon.com/dp/B0HNRGNYK5?tag=mtgdrops-20",
+      "Terrors of the Abyss listing": "https://www.amazon.com/dp/B0HNRT8VVZ?tag=mtgdrops-20",
+      "Blood in the Water listing": "https://www.amazon.com/dp/B0HNRWLLSX?tag=mtgdrops-20",
+      "Seal the Deal listing": "https://www.amazon.com/dp/B0HNR4L1NY?tag=mtgdrops-20",
+      "Premium Edition bundle listing": "https://www.amazon.com/dp/B0HNTSD5DQ?tag=mtgdrops-20"
+    },
+    "singles_value": "Decklists aren't public yet, so we can't compare singles value to the $49.99 (or $79.99 Premium Edition) box price. We'll add a sourced comparison once the lists are out."
   },
   {
     "slug": "marvel-darkhold-destiny",
@@ -999,7 +1013,8 @@
       ],
       "checked": "2026-11-01",
       "match_reason": "Official Wizards of the Coast listing (UPC 195166349619, model D64660000), pre-order for the Apr 9, 2027 release, matching our release_date. Bullets: includes 1 of each deck (Strange Academy, Gods of Asgard, Midnight Sons, Lords of Hel), 30 new Commander cards per deck, 2 Traditional Foil legendary commanders per deck (1 Borderless), 10 double-sided tokens, deck box, strategy guide and reference card per deck, matching the four decks and contents in this entry. The regular 4-deck bundle (not the $639.96 Collector's Edition set) stands in as the single Amazon link for this four-deck release, same approach as the Star Trek and Darkhold set Bundles."
-    }
+    },
+    "singles_value": "Decklists aren't public yet, so we can't compare singles value to the $74.99 (or $159.99 Collector's Edition) box price. We'll add a sourced comparison once the lists are out."
   },
   {
     "slug": "kamigawa-titanbreach",
@@ -1027,7 +1042,8 @@
     "short_name": "Titanbreach Commander Decks",
     "last_checked": "2026-10-16",
     "preorder_call": "This is a preorder-stage page: Wizards has confirmed four decks, but no decklists, commanders or prices yet, so there is no verdict and preordering means buying blind. We'll make the call once the lists and prices are out.",
-    "meta_desc": "Titanbreach Commander Decks release date: Jun 4, 2027. Wizards confirmed four decks; decklists, commanders and prices are TBA, so no verdict yet."
+    "meta_desc": "Titanbreach Commander Decks release date: Jun 4, 2027. Wizards confirmed four decks; decklists, commanders and prices are TBA, so no verdict yet.",
+    "singles_value": "Decklists and prices aren't public yet, so we can't compare singles value to a box price. We'll add a sourced comparison once the lists and MSRPs are out."
   },
   {
     "slug": "unannounced-ub-aug-2027",
