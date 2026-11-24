@@ -386,7 +386,7 @@
     "release_date": "2026-11-30",
     "window": "On sale Nov 30, 2026, 9 AM PT / 11 AM CT (pre-queue from 8 AM PT), only at MagicSecretLair.com · while supplies last · one foil Reliquary Tower as \"Emperor's Hutment\" promo per $149.99 spent · orders over $99 ship free",
     "source": "https://magic.wizards.com/en/news/announcements/secret-lair-my-arrakis-my-superdrop",
-    "note": "No verdict yet. Wizards announced Nov 18, 2026: three drops, Dune: Balance of Power (8 new legendary creatures), Dune: Deserts of Arrakis (new Shai-Hulud) and Dune: Spice (all halo foil). Balance and Deserts are $39.99 non-foil / $49.99 foil; Spice is $59.99; Desert Power Everything Bundle (Balance + Deserts, foil and non-foil) is $174.99. Non-foil Balance and Deserts reach WPN stores later.",
+    "note": "Mixed — Spice is the reprint-value buy; wait on non-foil Balance of Power and Deserts of Arrakis for WPN stores; foil editions and the bundle are collector calls.",
     "status": "confirmed",
     "prices": [
       {
@@ -413,12 +413,39 @@
       "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-my-arrakis-my-superdrop",
       "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-my-arrakis-my-superdrop"
     },
-    "last_checked": "2026-11-23",
+    "last_checked": "2026-11-24",
     "inside_source": "https://magic.wizards.com/en/news/announcements/secret-lair-my-arrakis-my-superdrop",
     "seo_name": "Secret Lair x Dune: My Arrakis, My Superdrop",
-    "meta_desc": "Secret Lair x Dune: My Arrakis, My Superdrop goes on sale Nov 30, 2026 at 9 AM PT at MagicSecretLair.com: three Dune drops, $39.99–$174.99. No verdict yet.",
+    "meta_desc": "Secret Lair x Dune: My Arrakis, My Superdrop goes on sale Nov 30, 2026 at 9 AM PT. Mixed: Spice is the reprint-value buy; wait on the non-foils.",
     "facts": [
       "Secret Lair x Dune: Wizards announced the My Arrakis, My Superdrop crossover on Nov 18, 2026 (Dune: Balance of Power, Dune: Deserts of Arrakis, Dune: Spice)."
+    ],
+    "verdict": "mixed",
+    "buy_guide": [
+      [
+        "Balance of Power, non-foil ($39.99)",
+        "Wait: the eight legends are new-to-Magic and have no market prices yet (Scryfall), and Wizards says the non-foil edition reaches WPN stores later, so there's no need to rush the Nov 30 web sale unless you want them on day one."
+      ],
+      [
+        "Balance of Power, foil ($49.99)",
+        "Buy only if you really like Dune; otherwise skip. The foil edition is not part of the later WPN-store plan, so the Secret Lair window is the known way to get it, but there are still no singles prices — this is a fan and collectible purchase, not a value buy."
+      ],
+      [
+        "Deserts of Arrakis, non-foil ($39.99)",
+        "Wait: the four reprints total $6.93 at their cheapest current printings (Scryfall, Nov 24) against the $39.99 drop, and the non-foil edition reaches WPN stores later. Shai-Hulud is new and unpriced, so don't treat this as a reprint-value buy unless you want that card on sale day."
+      ],
+      [
+        "Deserts of Arrakis, foil ($49.99)",
+        "Buy only if you want foil Shai-Hulud or the Dune art; otherwise skip. The cheapest existing foils of the four reprints total $13.93 against $49.99 (Scryfall, Nov 24), and you can buy the playable reprints as singles for much less."
+      ],
+      [
+        "Spice (halo foil only) ($59.99)",
+        "Buy if you need Darksteel Forge or Revel in Riches; skip as sealed speculation. The five reprints' cheapest non-foil printings total $70.67, $10.68 above the $59.99 halo-foil drop (Scryfall, Nov 24); those two cards alone are $60.55. If you already own them, the rest of the drop does not cover the price."
+      ],
+      [
+        "Desert Power Everything Bundle ($174.99)",
+        "Skip unless you already want all four editions; if you do, the bundle is the slightly better official buy. Buying Balance of Power and Deserts of Arrakis in foil and non-foil separately is $179.96, so $174.99 saves $4.97 and is one SKU that clears the $149.99 Reliquary Tower promo and free shipping over $99. The bundle excludes Spice, the only drop whose current reprint prices beat list, so the discount is not a reason to buy editions you don't want."
+      ]
     ]
   },
   {

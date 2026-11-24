@@ -226,8 +226,11 @@ h_sold = [r for r in public if r.get("sold_out")]
 # Curated wording for drops whose sale time/verdict we re-checked by hand. Each entry is used only while its anchors are still
 # in that release's data (window/note), so editing the data can't make the copy contradict it; otherwise the generic copy is used.
 # Verdict phrases are the ones already in each release's note (no new verdicts).
-SL_NEXT_CHECKED = "2026-11-02"  # date the curated next-drop facts below were re-checked against their release entries
+SL_NEXT_CHECKED = "2026-11-24"  # date the curated next-drop facts below were re-checked against their release entries
 SL_NEXT_COPY = {
+    "secret-lair-my-arrakis-my-superdrop": dict(win=("9 AM PT", "pre-queue from 8 AM PT", "while supplies last"), anchor="Mixed — Spice is the reprint-value buy",
+        time="9 AM PT / 11 AM CT", home_time="9 AM PT / 11 AM CT, pre-queue from 8 AM PT", extra=" (while supplies last; the pre-queue opens at 8 a.m. PT)", lead="Mixed — Spice is the reprint-value buy; wait on non-foil Balance of Power and Deserts of Arrakis for WPN stores; foil editions and the bundle are collector calls.",
+        after="mixed: Spice is the reprint-value buy; wait on the non-foils"),
     "countdown-kit-marvels-history-of-heroes": dict(win=("9 AM PT", "limited quantity"), anchor="Wait unless you're a Marvel collector",
         time="9 AM PT", home_time="9 AM PT", extra=" (limited quantity)", lead="Wait unless you're a Marvel collector, and price out the singles.",
         after="wait unless you're a Marvel collector"),
@@ -1297,6 +1300,88 @@ def spider_mania_expand(r):
         ("Is Commander also called EDH?", "Yes. Commander is also called EDH."),
     ]
     return lead, mid, deepen, faqs
+
+ARRAKIS_SLUG = "secret-lair-my-arrakis-my-superdrop"
+ARRAKIS_ANN = "https://magic.wizards.com/en/news/announcements/secret-lair-my-arrakis-my-superdrop"
+# Owner-approved public wording from /workspace/mtgdrops/drafts/2026-11-24-dune-verdicts.md (t187s1187).
+ARRAKIS_MIXED = ("Mixed — Spice is the reprint-value buy; wait on non-foil Balance of Power and "
+                 "Deserts of Arrakis for WPN stores; foil editions and the bundle are collector calls.")
+ARRAKIS_CAVEAT = ("Reprint prices are live Scryfall TCGplayer market prices (prices.usd / prices.usd_foil) "
+                  "for the cheapest current paper printing of each card, pulled at 12:37 AM CT (America/Chicago) "
+                  "on Nov 24, 2026. The unreleased Secret Lair printings have no Scryfall price and are left out "
+                  "of the totals. These are replacement-cost figures for older printings, not a forecast of what "
+                  "the Dune printings will sell for, and they do not include selling fees, shipping, or tax.")
+
+def arrakis_deepen():
+    """Bundle/promo math and the dated reprint-price caveat. Per-SKU calls live in releases.json buy_guide."""
+    wiz = phasers_link(ARRAKIS_ANN, "Wizards announcement")
+    rows = [
+        ("One $39.99 or $49.99 drop", "$39.99 / $49.99", "No", "No"),
+        ("Both non-foil drops", "$79.98", "No", "No"),
+        ("Both foil drops", "$99.98", "Yes", "No"),
+        ("Spice alone", "$59.99", "No", "No"),
+        ("Both non-foils + Spice", "$139.97", "Yes", "No"),
+        ("Both foils + Spice", "$159.97", "Yes", "Yes (1)"),
+        ("Bundle", "$174.99", "Yes", "Yes (1)"),
+        ("Bundle + Spice", "$234.98", "Yes", "Yes (1); $234.98 / $149.99 is 1.56, so still one promo"),
+    ]
+    table = (
+        "<table><tr><th>Cart</th><th>Total</th><th>Free shipping ($99+)?</th>"
+        "<th>Reliquary Tower promo ($149.99)?</th></tr>"
+        + "".join(f"<tr><td>{E(a)}</td><td>{E(b)}</td><td>{E(c)}</td><td>{E(d)}</td></tr>" for a, b, c, d in rows)
+        + "</table>"
+    )
+    return (
+        f"<h2>About these reprint prices</h2><p>{E(ARRAKIS_CAVEAT)}</p>"
+        "<h2>Bundle, promo, and shipping math</h2>"
+        "<p>Buying the four bundle editions separately: $39.99 + $49.99 + $39.99 + $49.99 = <b>$179.96</b>. "
+        "The bundle is <b>$174.99</b>, a <b>$4.97</b> official discount (~2.8%). "
+        f"Source: {wiz} prices.</p>"
+        "<p>Promo and shipping, also from that announcement:</p>"
+        "<ul>"
+        '<li>One foil Reliquary Tower as "Emperor\'s Hutment" <b>per $149.99 spent</b>, while supplies last.</li>'
+        "<li>Orders <b>over $99 ship free</b>.</li>"
+        "</ul>"
+        "<p>How the SKUs clear those lines:</p>"
+        + table
+        + "<p>The \"Emperor's Hutment\" printing itself has <b>no market price yet</b>. For context only, not a forecast: "
+        "the cheapest foil Reliquary Tower on Scryfall right now is $3.82 (Love Your LGS 2020); the cheapest non-foil "
+        "is $2.20 (the new Star Trek Commander printing, released Nov 13, 2026). Existing Secret Lair Reliquary Towers "
+        "have current Scryfall prices of $15.90 / $18.74 foil (SLD #7104), $15.95 / $22.12 foil (SLD #1536), and "
+        "$112.37 foil (SLD #695). Reliquary Tower is widely played (EDHREC: 3,092,384 decks), but a generic copy is "
+        "cheap because it was just reprinted. Do not treat the promo as covering a weak cart.</p>"
+        "<p>A collector who wants both foils <b>and</b> Spice can hit the promo and free shipping at $159.97 without "
+        "the bundle, and that cart includes the only drop whose reprints currently beat list.</p>"
+    )
+
+def _assert_arrakis_page(path):
+    html_text = open(path).read()
+    if ARRAKIS_MIXED not in html_text:
+        raise SystemExit("Arrakis page is missing the approved Mixed line")
+    if ARRAKIS_CAVEAT not in html_text:
+        raise SystemExit("Arrakis page is missing the dated reprint-price caveat")
+    if "No verdict yet" in html_text:
+        raise SystemExit("Arrakis page still says No verdict yet")
+    for banned in ("Draft — pending owner OK", "Proposed public wording", "pending owner", "awaiting owner"):
+        if banned in html_text:
+            raise SystemExit("draft label still public on Arrakis page: " + banned)
+    needles = [
+        "Wait: the eight legends are new-to-Magic and have no market prices yet (Scryfall)",
+        "Buy only if you really like Dune; otherwise skip.",
+        "Wait: the four reprints total $6.93",
+        "Buy only if you want foil Shai-Hulud or the Dune art; otherwise skip.",
+        "Buy if you need Darksteel Forge or Revel in Riches; skip as sealed speculation.",
+        "Skip unless you already want all four editions; if you do, the bundle is the slightly better official buy.",
+        "$179.96",
+        "$4.97",
+        "$159.97",
+        "12:37 AM CT",
+        "Emperor's Hutment",
+    ]
+    missing = [n for n in needles if n not in html_text]
+    if missing:
+        raise SystemExit("Arrakis page is missing: " + "; ".join(missing))
+
 for r in data:
     sn = short_name(r); pu = f"{SITE_URL}/p/{r['slug']}.html"
     win = f"<p><b>Window:</b> {E(r['window'])}</p>" if r.get("window") else ""
@@ -1366,6 +1451,11 @@ for r in data:
         faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{a}</p>" for q, a in shown)
         phasers_ld = [{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
             {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in shown]}]
+    elif r["slug"] == ARRAKIS_SLUG:
+        deepen_html = arrakis_deepen()
+        faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in faq)
+        phasers_ld = [{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in faq]}]
     else:
         faqhtml = "<h2>FAQ</h2>" + "".join(f"<h3>{E(q)}</h3><p>{E(a)}</p>" for q, a in faq)
         if r["type"] == "Commander Precon" or r["slug"] == "countdown-kit-marvels-history-of-heroes":
@@ -1434,6 +1524,7 @@ for r in data:
          f"p/{r['slug']}.html", main_ld + phasers_ld + [bc], noindex=bool(r.get("placeholder")), og=(card[1], 1200, 630) if card else None)
     if r["slug"] == PHASERS_SLUG: _assert_phasers_page(os.path.join("dist", f"p/{r['slug']}.html"))
     if r["slug"] == EL_SLUG: _assert_extra_life_page(os.path.join("dist", f"p/{r['slug']}.html"))
+    if r["slug"] == ARRAKIS_SLUG: _assert_arrakis_page(os.path.join("dist", f"p/{r['slug']}.html"))
     if r["slug"] == "countdown-kit-marvels-history-of-heroes":
         _kit_html = open(os.path.join("dist", f"p/{r['slug']}.html")).read()
         if "#black-friday-2026" not in _kit_html or "Black Friday 2026: buy now or wait" not in _kit_html:
