@@ -86,7 +86,9 @@ def sl_bucket(r):
     if r.get("sold_out") and dated(r) and r["release_date"] <= today: return "past"
     if r.get("retail") and dated(r) and r["release_date"] <= today: return "past"  # retail-only product (stores, not a MagicSecretLair.com sale): released, not an upcoming drop
     if not dated(r) or r["release_date"] > today: return "up"
-    if r.get("sale_end"): return "now" if r["sale_end"] >= today else "past"
+    if r.get("sale_end") and r["sale_end"] < today: return "past"
+    if r.get("on_sale"): return "now"  # leftover / while-supplies-last stock confirmed on the official store
+    if r.get("sale_end"): return "now"
     return "now" if (TODAY - datetime.date.fromisoformat(r["release_date"])).days <= SL_ONSALE_DAYS else "past"
 def is_up(r): return r["release_date"] >= today or bool(r.get("delayed"))  # TBA sorts after digits, so counts as upcoming
 OG_IMAGE = f"{SITE_URL}/og.png"
@@ -778,6 +780,7 @@ def extra_life_facts():
     if EL_SETTLED not in r["note"]: raise SystemExit("Extra Life settled verdict missing")
     win = r.get("window") or ""
     if "On sale now through Nov 30" not in win or "1 a.m. PT" not in win: raise SystemExit("Extra Life window must say on sale now through Nov 30")
+    if "Dec 2, 2026" not in win: raise SystemExit("Extra Life window must cite the storefront Dec 2 ship date")
     if "opened Nov 16" not in win: raise SystemExit("Extra Life window missing opened Nov 16")
     if "Nov 13–15" not in win: raise SystemExit("Extra Life window missing MagicCon early dates")
     if re.search(r"9\s*a\.?m\.?\s*PT", win, flags=re.I): raise SystemExit("Extra Life window invents a 9 AM PT start")
@@ -807,9 +810,13 @@ def extra_life_charity_answer():
     return ("Online, fifty percent (50%) of the sales price (less third-party transaction fees) is donated to Children's Miracle Network via Our Change Foundation for Seattle Children's Hospital ("
             + phasers_link(EL_WIZ, "Wizards")
             + "). At the MagicCon: Atlanta booth, Wizards says 100% of proceeds from Extra Life merchandise and this drop (minus third-party fees) go to Extra Life. Last checked Nov 9, 2026.")
+EL_STORE = "https://secretlair.wizards.com/us/en/product/1256026/rise-of-the-polygons-extra-life-2026"
 def extra_life_ship_answer():
-    return ("Not announced. The " + phasers_link(EL_WIZ, "Wizards")
-            + " announcement does not give a shipping window for Rise of the Polygons. Treat holiday delivery as unknown, and don't count on it as a Christmas gift. Last checked Nov 9, 2026.")
+    return ("The Secret Lair storefront listed shipping as Dec 2, 2026, as of Nov 27, 2026 ("
+            + phasers_link(EL_STORE, "MagicSecretLair.com")
+            + "). That is a ship date from the store, not a delivery-by date, so we can't promise it arrives before Christmas. The "
+            + phasers_link(EL_WIZ, "Wizards")
+            + " announcement does not give a shipping window. Last checked Nov 27, 2026.")
 def extra_life_extra_faqs(f):
     return [
         (EL_SALE_Q, extra_life_sale_answer()),
@@ -833,7 +840,7 @@ def extra_life_deepen():
         + ", and limited early copies were at the MagicCon: Atlanta Extra Life / merch booth Nov 13–15. It's four reprints plus an Elemental token (Balefire Dragon, Big Score, Young Pyromancer, Sword of Truth and Justice) at "
         + f"{f['nonfoil']} non-foil / {f['foil']} foil ("
         + phasers_link(EL_WIZ, "Wizards")
-        + "). Online, 50% of the sales price (less third-party fees) supports Extra Life / Children's Miracle Network for Seattle Children's Hospital; Wizards says 100% of booth proceeds for this drop and Extra Life merch (minus fees) go to Extra Life. Buy it if you want to support Extra Life or like the art. Skip it as sealed speculation — price the singles if you only want one or two of the playable cards. <i>Last checked: Nov 27, 2026 (sale status and bundle); contents, singles and charity details last checked Nov 9, 2026.</i></p>")
+        + "). Online, 50% of the sales price (less third-party fees) supports Extra Life / Children's Miracle Network for Seattle Children's Hospital; Wizards says 100% of booth proceeds for this drop and Extra Life merch (minus fees) go to Extra Life. Buy it if you want to support Extra Life or like the art. Skip it as sealed speculation — price the singles if you only want one or two of the playable cards. The Secret Lair storefront listed shipping as Dec 2, 2026, as of Nov 27, 2026. <i>Last checked: Nov 27, 2026 (sale status, bundle, and shipping); contents, singles and charity details last checked Nov 9, 2026.</i></p>")
     magiccon = (
         "<h2 id=magiccon-early>MagicCon: Atlanta early window (Nov 13–15)</h2>"
         + checked({"last_checked": EL_CHECKED, "source": EL_WIZ}, with_sources=True)
@@ -860,7 +867,11 @@ def extra_life_deepen():
         + ". The sale opened Nov 16. The " + phasers_link(EL_WIZ, "Wizards") + " announcement does not state a start hour on Nov 16.</li>"
         + f"<li><b>Price:</b> {f['nonfoil']} non-foil / {f['foil']} foil, or {f['bundle']} for the Full Party Everything Bundle (foil + non-foil).</li>"
         + "<li><b>Account:</b> have a Wizards account ready, with shipping and payment saved. Recent Secret Lair sales say a cart does not reserve a drop; the order is secured only when checkout is completed.</li>"
-        + "<li><b>Shipping window:</b> not announced. The " + phasers_link(EL_WIZ, "Wizards") + " announcement does not say when these orders ship. Treat holiday delivery as unknown.</li>"
+        + "<li><b>Shipping:</b> the Secret Lair storefront listed shipping as Dec 2, 2026, as of Nov 27, 2026 ("
+        + phasers_link(EL_STORE, "MagicSecretLair.com")
+        + "). That is a ship date from the store, not a promised delivery date. The "
+        + phasers_link(EL_WIZ, "Wizards")
+        + " announcement does not give a shipping window.</li>"
         + "<li><b>Charity split (online):</b> 50% of the sales price, less third-party transaction fees, supports Extra Life / Children's Miracle Network for Seattle Children's Hospital.</li>"
         + "</ol>")
     arena = (
@@ -890,7 +901,8 @@ def _assert_extra_life_page(path):
     if "on sale now through nov 30" not in html_text.lower(): raise SystemExit("Extra Life page must say on sale now through Nov 30")
     if EL_SETTLED not in html_text: raise SystemExit("Extra Life settled verdict missing from the page")
     if re.search(r"9\s*a\.?m\.?\s*PT", html_text, flags=re.I): raise SystemExit("Extra Life page invents a 9 AM PT start")
-    if "not announced" not in html_text.lower(): raise SystemExit("Extra Life shipping window must stay not announced")
+    if "dec 2, 2026" not in html_text.lower(): raise SystemExit("Extra Life page must cite the storefront Dec 2 ship date")
+    if "shipping window:</b> not announced" in html_text.lower(): raise SystemExit("Extra Life shipping window still says not announced")
     avails = set()
     for obj in _page_ld(html_text):
         def _walk(o):
@@ -1407,7 +1419,10 @@ for r in data:
     if r["slug"] in ("nauctis-the-sunken-realm", "nauctis-commander"):
         hubl += f'<p>Deciding what to preorder? Read the <a href="{BASE}/guides/nauctis-the-sunken-realm-release-guide.html">Nauctis: The Sunken Realm release guide</a>: key dates, every MSRP, the Commander decks and our early preorder call.</p>'
     facts = ("<h2>Key facts</h2><ul>" + "".join(f"<li>{E(f)}</li>" for f in r["facts"]) + "</ul>") if r.get("facts") else ""
-    ti = TYPE_INFO.get(r["type"]); tinfo = f"<h2>{E(ti[0])}</h2><p>{E(ti[1])}</p>" if ti else ""
+    if r["slug"] == "mood-swings-1st-edition":
+        tinfo = "<h2>Is Mood Swings a Magic Secret Lair drop?</h2><p>No. Mood Swings is a Mark Rosewater prototype trading card game sold in the Secret Lair Chaos Vault. It is not a Magic: The Gathering Secret Lair drop and contains no Magic cards.</p>"
+    else:
+        ti = TYPE_INFO.get(r["type"]); tinfo = f"<h2>{E(ti[0])}</h2><p>{E(ti[1])}</p>" if ti else ""
     howto = f"<h2>{HOWTO[0]}</h2><p>{E(HOWTO[1])}</p>" if not r.get("placeholder") and (not dated(r) or r["release_date"] > today or r.get("delayed")) else ""
     rel = related(r)
     relhtml = "<h2>Related releases</h2><ul>" + "".join(f'<li><a href="{BASE}/p/{x["slug"]}.html">{E(x["name"])}</a> — {nice_date(x)}</li>' for x in rel) + "</ul>"

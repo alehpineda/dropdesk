@@ -333,9 +333,9 @@
     "type": "Secret Lair",
     "release_date": "2026-11-16",
     "status": "confirmed",
-    "window": "On sale now through Nov 30, 2026, 1 a.m. PT (sale ends), only at MagicSecretLair.com (opened Nov 16); also limited quantities at MagicCon: Atlanta Extra Life / merch booth Nov 13–15, 2026",
+    "window": "On sale now through Nov 30, 2026, 1 a.m. PT (sale ends), only at MagicSecretLair.com (opened Nov 16); also limited quantities at MagicCon: Atlanta Extra Life / merch booth Nov 13–15, 2026. The Secret Lair storefront listed shipping as Dec 2, 2026 (checked Nov 27, 2026)",
     "source": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
-    "note": "Extra Life 2026 charity drop: 4 reprints plus an Elemental token in low-poly art (Balefire Dragon, Big Score, Young Pyromancer, Sword of Truth and Justice). Non-foil $39.99 / foil $49.99 (Wizards); 50% of the sales price (less third-party fees) supports Extra Life / Children's Miracle Network for Seattle Children's Hospital. On sale now through Nov 30, 2026 at 1 a.m. PT; limited early copies were at MagicCon Atlanta Nov 13–15. Buy if you want to support Extra Life or like the art; skip as sealed speculation.",
+    "note": "Extra Life 2026 charity drop: 4 reprints plus an Elemental token in low-poly art (Balefire Dragon, Big Score, Young Pyromancer, Sword of Truth and Justice). Non-foil $39.99 / foil $49.99 (Wizards); 50% of the sales price (less third-party fees) supports Extra Life / Children's Miracle Network for Seattle Children's Hospital. On sale now through Nov 30, 2026 at 1 a.m. PT; limited early copies were at MagicCon Atlanta Nov 13–15. The Secret Lair storefront listed shipping as Dec 2, 2026, as of Nov 27, 2026. Buy if you want to support Extra Life or like the art; skip as sealed speculation.",
     "prices": [
       {
         "label": "Non-foil",
@@ -378,7 +378,8 @@
       "window": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
       "charity split": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
       "store status": "https://secretlair.wizards.com/us/en/product/1256026/rise-of-the-polygons-extra-life-2026",
-      "bundle price": "https://secretlair.wizards.com/us/en/product/1256122/full-party-everything-bundle"
+      "bundle price": "https://secretlair.wizards.com/us/en/product/1256122/full-party-everything-bundle",
+      "shipping": "https://secretlair.wizards.com/us/en/product/1256026/rise-of-the-polygons-extra-life-2026"
     },
     "verdict": "buy",
     "last_checked": "2026-11-27",
@@ -1659,6 +1660,58 @@
     },
     "short_name": "Perfectly Normal Superdrop",
     "last_checked": "2026-10-17"
+  },
+  {
+    "slug": "mood-swings-1st-edition",
+    "name": "Mood Swings™ - 1st Edition",
+    "type": "Secret Lair",
+    "release_date": "2026-06-01",
+    "status": "confirmed",
+    "window": "On sale now in the Chaos Vault at MagicSecretLair.com, while supplies last, limit 5 per customer (checked Nov 27, 2026). Went on sale June 1, 2026. The Emotional Support Bundle is five 1st Edition boxes.",
+    "source": "https://magic.wizards.com/en/news/announcements/introducing-mood-swings",
+    "note": "Mood Swings is a Mark Rosewater prototype trading card game sold in the Secret Lair Chaos Vault; it is not a Magic: The Gathering Secret Lair drop and contains no Magic cards. 1st Edition is $24.99 (one deckbox of 45 randomized cards from a 133-card pool). The Emotional Support Bundle is $119.99 (the store showed a $124.95 list price) for five boxes. On sale now while supplies last, limit 5 per customer. No buy/skip verdict from us on this one.",
+    "prices": [
+      {
+        "label": "Mood Swings™ - 1st Edition",
+        "usd": 24.99
+      },
+      {
+        "label": "Emotional Support Bundle (5 boxes)",
+        "usd": 119.99
+      }
+    ],
+    "contents": [
+      "1 Mood Swings Deckbox with 45 randomized cards from a 133-card pool (23 common, 14 uncommon, 6 rare, 2 mythic rare)",
+      "Emotional Support Bundle: 5 Mood Swings Deckboxes"
+    ],
+    "inside": [
+      [
+        "Mood Swings™ - 1st Edition ($24.99)",
+        [
+          "1 Mood Swings Deckbox (45 randomized cards from a pool of 133)",
+          "Playable out of the box for 2–4 players"
+        ]
+      ],
+      [
+        "Emotional Support Bundle ($119.99)",
+        [
+          "5 Mood Swings Deckboxes"
+        ]
+      ]
+    ],
+    "inside_source": "https://secretlair.wizards.com/us/en/product/1250052/mood-swings-1st-edition",
+    "short_name": "Mood Swings 1st Edition",
+    "field_sources": {
+      "release_date": "https://magic.wizards.com/en/news/announcements/introducing-mood-swings",
+      "prices": "https://secretlair.wizards.com/us/en/product/1250052/mood-swings-1st-edition",
+      "bundle price": "https://secretlair.wizards.com/us/en/product/1253139/mood-swings-emotional-support-bundle",
+      "contents": "https://magic.wizards.com/en/news/announcements/introducing-mood-swings",
+      "bundle contents": "https://secretlair.wizards.com/us/en/product/1253139/mood-swings-emotional-support-bundle",
+      "store status": "https://secretlair.wizards.com/us/en/product/1250052/mood-swings-1st-edition",
+      "not a Magic drop": "https://magic.wizards.com/en/news/announcements/introducing-mood-swings"
+    },
+    "on_sale": true,
+    "last_checked": "2026-11-27"
   },
   {
     "slug": "zhalfir",
