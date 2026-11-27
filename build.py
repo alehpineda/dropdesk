@@ -505,7 +505,8 @@ PHASERS_SHIP = "https://secretlair-support.wizards.com/hc/en-us/articles/5149533
 PHASERS_SHIP_CHECKED = "2026-11-16"
 PHASERS_SCRYFALL = "https://scryfall.com/"
 PHASERS_ACCOUNT = "https://myaccounts.wizards.com/registration"
-PHASERS_CHECKED = "2026-11-09"
+PHASERS_CHECKED = "2026-11-09"  # contents, singles, and sale-day announcement details
+PHASERS_SALE_CHECKED = "2026-11-27"  # live storefront stock / still-on-sale check
 PHASERS_OPEN = sl_sale_open(next(x for x in data if x["slug"] == PHASERS_SLUG))  # past tense once the Nov 9 9 AM PT sale has opened
 PHASERS_TIME_Q = "When did the Star Trek Secret Lair go on sale?" if PHASERS_OPEN else "What time does the Star Trek Secret Lair go on sale?"
 PHASERS_PICK_ONE = "Lower Decks if you want the Thrasios and Silas Renn partners; otherwise Beam Me Up for blink and enter-the-battlefield staples."
@@ -539,7 +540,7 @@ def phasers_facts():
     r = next(x for x in data if x["slug"] == PHASERS_SLUG)
     st = next(x for x in data if x["slug"] == "star-trek")
     cmd = next(x for x in data if x["slug"] == "star-trek-commander")
-    if r.get("last_checked") != PHASERS_CHECKED: raise SystemExit("Set Phasers last_checked must be " + PHASERS_CHECKED)
+    if r.get("last_checked") != PHASERS_SALE_CHECKED: raise SystemExit("Set Phasers last_checked must be " + PHASERS_SALE_CHECKED)
     if PHASERS_SETTLED not in r["note"]: raise SystemExit("Set Phasers settled verdict missing")
     if PHASERS_SET_VERDICT not in st["note"]: raise SystemExit("Star Trek set verdict missing")
     if PHASERS_CMD_VERDICT not in cmd["note"]: raise SystemExit("Star Trek Commander verdict missing")
@@ -547,6 +548,7 @@ def phasers_facts():
         raise SystemExit("Set Phasers window is missing the bonus threshold")
     if "not a new sale" not in (r.get("window") or ""): raise SystemExit("Set Phasers window must say Dec 16 is not a new sale")
     if "December 17, 2026" not in (r.get("window") or "") and "Dec 17, 2026" not in (r.get("window") or ""): raise SystemExit("Set Phasers window is missing the official US shipping window")
+    if "low stock on Assimilation and New Worlds" not in (r.get("window") or ""): raise SystemExit("Set Phasers window is missing the Nov 27 storefront stock note")
     if PHASERS_SHIP not in (r.get("field_sources") or {}).values(): raise SystemExit("Set Phasers field_sources must cite the shipping-status page")
     if len(r.get("inside") or []) != 6: raise SystemExit("Set Phasers should list all six revealed drops")
     if not any("Assimilation" in c for c in r.get("contents") or []): raise SystemExit("Set Phasers contents should name Assimilation")
@@ -669,7 +671,7 @@ def set_phasers_deepen():
         + f"), and spending {f['threshold']}+ adds the Transporter Boondoggle bonus while supplies last. Buy it if you really like Star Trek. Otherwise skip — a "
         + phasers_link(f["st_path"], "Star Trek Bundle")
         + " or " + phasers_link(f["cmd_path"], "regular Commander deck")
-        + " usually gives more playable Magic for the money. Dec 16, 2026 is the US release and ship date, not a new sale; Wizards expects US orders to ship Dec 17, 2026 – Mar 17, 2027. <i>Last checked: Nov 9, 2026 (shipping window checked Nov 16, 2026).</i></p>")
+        + " usually gives more playable Magic for the money. Dec 16, 2026 is the US release and ship date, not a new sale; Wizards expects US orders to ship Dec 17, 2026 – Mar 17, 2027. <i>Last checked: Nov 27, 2026 (store stock); contents and singles last checked Nov 9, 2026; shipping window checked Nov 16, 2026.</i></p>")
     suits = (
         "<h2 id=one-or-two-drops>If you only buy one or two drops</h2>"
         "<p>Who each revealed drop suits. These notes are not a ranking. There is no approved pick for Assimilation.</p><ul>"
@@ -729,7 +731,7 @@ def set_phasers_deepen():
         f"The Transporter Boondoggle promo is a foil Secret Lair Return of the Wildspeaker. Scryfall's non-foil printing was about {f['promo']} on Nov 7, 2026. Do not equate that with the promo.</p>")
     sale = (
         "<h2 id=sale-day-checklist>Sale-day checklist</h2>"
-        + checked({"last_checked": PHASERS_CHECKED, "source": PHASERS_WIZ}, with_sources=True)
+        + checked({"last_checked": PHASERS_SALE_CHECKED, "source": SL_STORE}, with_sources=True)
         + "<ol>"
         + (f"<li><b>Sale:</b> went on sale Nov 9, 2026, 9 a.m. PT / 11 a.m. CT / 12 p.m. ET, only at {phasers_link(SL_STORE, 'MagicSecretLair.com')}, while supplies last.</li>"
            if PHASERS_OPEN else
@@ -740,6 +742,7 @@ def set_phasers_deepen():
         f"<li><b>Shipping window:</b> Dec 16, 2026 is the US release and ship date, not a new sale. Official window, per Wizards' {phasers_link(PHASERS_SHIP, 'Secret Lair shipping-status page')}: US store release Dec 16, 2026; expected shipping Dec 17, 2026 – Mar 17, 2027 (EU/UK release Jan 25, 2027; shipping Jan 26, 2027 – Apr 26, 2027). Last checked Nov 16, 2026.</li>"
         f"<li><b>Shipping cost:</b> orders over $99 ship free under Wizards' terms (see {phasers_link(SL_STORE, 'MagicSecretLair.com')} for details). That is not a delivery date.</li>"
         "<li><b>While supplies last,</b> including the Transporter Boondoggle promo.</li>"
+        f"<li><b>Store stock as of Nov 27, 2026:</b> the Secret Lair storefront shows low stock on Assimilation and New Worlds (foil and non-foil) and on all five official bundles. Beam Me Up, tlhIngan maH!, KHAAAAAAAAN, and Lower Decks remain on sale. Check {phasers_link(SL_STORE, 'MagicSecretLair.com')} before you buy.</li>"
         "</ol>")
     html_out = answer + suits + bonus + vs + singles + sale
     anchor = self_abs
@@ -757,7 +760,7 @@ EL_SLUG = "secret-lair-extra-life-rise-of-the-polygons"
 EL_WIZ = "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026"
 EL_SETTLED = "Buy if you want to support Extra Life or like the art; skip as sealed speculation."
 EL_CHECKED = "2026-11-09"  # MagicCon, singles, and charity details
-EL_SALE_CHECKED = "2026-11-16"  # live store CTA / sale-open check
+EL_SALE_CHECKED = "2026-11-27"  # live storefront still-on-sale / bundle check
 EL_SALE_Q = "Is the Extra Life Secret Lair on sale now?"
 EL_SCRYFALL = "https://scryfall.com/"
 # Cheapest listed non-foil printings on Scryfall, Nov 9, 2026, in cents USD.
@@ -778,21 +781,21 @@ def extra_life_facts():
     if "opened Nov 16" not in win: raise SystemExit("Extra Life window missing opened Nov 16")
     if "Nov 13–15" not in win: raise SystemExit("Extra Life window missing MagicCon early dates")
     if re.search(r"9\s*a\.?m\.?\s*PT", win, flags=re.I): raise SystemExit("Extra Life window invents a 9 AM PT start")
-    nonfoil, foil = _usd_cents(r, "Non-foil"), _usd_cents(r, "Foil")
-    if (nonfoil, foil) != (3999, 4999): raise SystemExit(f"Extra Life prices drifted: {nonfoil} {foil}")
+    nonfoil, foil, bundle = _usd_cents(r, "Non-foil"), _usd_cents(r, "Foil"), _usd_cents(r, "Full Party Everything Bundle (foil + non-foil)")
+    if (nonfoil, foil, bundle) != (3999, 4999, 8998): raise SystemExit(f"Extra Life prices drifted: {nonfoil} {foil} {bundle}")
     singles = sum(c for _, c in EL_SINGLES)
     if singles != 4390: raise SystemExit(f"Extra Life Scryfall totals drifted: {singles}")
     blob = json.dumps(r.get("inside")) + " " + " ".join(r.get("contents") or [])
     for needle in ("Balefire Dragon", "Big Score", "Young Pyromancer", "Sword of Truth and Justice", "Elemental Token"):
         if needle not in blob: raise SystemExit("Extra Life contents missing " + needle)
-    return dict(r=r, nonfoil=money_c(nonfoil), foil=money_c(foil), singles=money_c(singles),
+    return dict(r=r, nonfoil=money_c(nonfoil), foil=money_c(foil), bundle=money_c(bundle), singles=money_c(singles),
                 self_path=f"{BASE}/p/{EL_SLUG}.html", hub_path=f"{BASE}/secret-lair.html")
 def extra_life_sale_answer():
     return ("Yes. Secret Lair: Rise of the Polygons | Extra Life 2026 is on sale now through Nov 30, 2026 at 1 a.m. PT (3 a.m. CT) at "
             + phasers_link(SL_STORE, "MagicSecretLair.com")
             + ". The "
             + phasers_link(EL_WIZ, "Wizards")
-            + " announcement does not state a start hour on Nov 16. Limited early copies were also at the MagicCon: Atlanta Extra Life / merch booth Nov 13–15, while supplies last. Last checked Nov 16, 2026.")
+            + " announcement does not state a start hour on Nov 16. Limited early copies were also at the MagicCon: Atlanta Extra Life / merch booth Nov 13–15, while supplies last. Last checked Nov 27, 2026.")
 def extra_life_magiccon_answer():
     return ("Yes, in limited quantities at the Extra Life / merch booth at MagicCon: Atlanta, Nov 13–15, 2026, while supplies last ("
             + phasers_link(EL_WIZ, "Wizards")
@@ -830,7 +833,7 @@ def extra_life_deepen():
         + ", and limited early copies were at the MagicCon: Atlanta Extra Life / merch booth Nov 13–15. It's four reprints plus an Elemental token (Balefire Dragon, Big Score, Young Pyromancer, Sword of Truth and Justice) at "
         + f"{f['nonfoil']} non-foil / {f['foil']} foil ("
         + phasers_link(EL_WIZ, "Wizards")
-        + "). Online, 50% of the sales price (less third-party fees) supports Extra Life / Children's Miracle Network for Seattle Children's Hospital; Wizards says 100% of booth proceeds for this drop and Extra Life merch (minus fees) go to Extra Life. Buy it if you want to support Extra Life or like the art. Skip it as sealed speculation — price the singles if you only want one or two of the playable cards. <i>Last checked: Nov 16, 2026 (sale status); contents, singles and charity details last checked Nov 9, 2026.</i></p>")
+        + "). Online, 50% of the sales price (less third-party fees) supports Extra Life / Children's Miracle Network for Seattle Children's Hospital; Wizards says 100% of booth proceeds for this drop and Extra Life merch (minus fees) go to Extra Life. Buy it if you want to support Extra Life or like the art. Skip it as sealed speculation — price the singles if you only want one or two of the playable cards. <i>Last checked: Nov 27, 2026 (sale status and bundle); contents, singles and charity details last checked Nov 9, 2026.</i></p>")
     magiccon = (
         "<h2 id=magiccon-early>MagicCon: Atlanta early window (Nov 13–15)</h2>"
         + checked({"last_checked": EL_CHECKED, "source": EL_WIZ}, with_sources=True)
@@ -855,7 +858,7 @@ def extra_life_deepen():
         + "<li><b>Online window:</b> on sale now through Nov 30, 2026 at 1 a.m. PT (3 a.m. CT), only at "
         + phasers_link(SL_STORE, "MagicSecretLair.com")
         + ". The sale opened Nov 16. The " + phasers_link(EL_WIZ, "Wizards") + " announcement does not state a start hour on Nov 16.</li>"
-        + f"<li><b>Price:</b> {f['nonfoil']} non-foil / {f['foil']} foil (Wizards).</li>"
+        + f"<li><b>Price:</b> {f['nonfoil']} non-foil / {f['foil']} foil, or {f['bundle']} for the Full Party Everything Bundle (foil + non-foil).</li>"
         + "<li><b>Account:</b> have a Wizards account ready, with shipping and payment saved. Recent Secret Lair sales say a cart does not reserve a drop; the order is secured only when checkout is completed.</li>"
         + "<li><b>Shipping window:</b> not announced. The " + phasers_link(EL_WIZ, "Wizards") + " announcement does not say when these orders ship. Treat holiday delivery as unknown.</li>"
         + "<li><b>Charity split (online):</b> 50% of the sales price, less third-party transaction fees, supports Extra Life / Children's Miracle Network for Seattle Children's Hospital.</li>"

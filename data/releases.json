@@ -211,7 +211,7 @@
     "type": "Secret Lair",
     "release_date": "2026-11-09",
     "status": "confirmed",
-    "window": "On sale since Nov 9, 2026, 9 AM PT / 12 PM ET, only at MagicSecretLair.com · while supplies last · one foil Return of the Wildspeaker as \"Transporter Boondoggle\" promo for every $199.99 spent, while supplies last. Dec 16, 2026 is the US release and ship date, not a new sale. US store release Dec 16, 2026; expected shipping Dec 17, 2026 – Mar 17, 2027 (EU/UK release Jan 25, 2027; shipping Jan 26, 2027 – Apr 26, 2027), per the Secret Lair shipping-status page",
+    "window": "On sale since Nov 9, 2026, 9 AM PT / 12 PM ET, only at MagicSecretLair.com · while supplies last · one foil Return of the Wildspeaker as \"Transporter Boondoggle\" promo for every $199.99 spent, while supplies last. Dec 16, 2026 is the US release and ship date, not a new sale. US store release Dec 16, 2026; expected shipping Dec 17, 2026 – Mar 17, 2027 (EU/UK release Jan 25, 2027; shipping Jan 26, 2027 – Apr 26, 2027), per the Secret Lair shipping-status page. As of Nov 27, 2026, the Secret Lair storefront shows low stock on Assimilation and New Worlds (foil and non-foil) and on all five official bundles; Beam Me Up, tlhIngan maH!, KHAAAAAAAAN, and Lower Decks remain on sale",
     "source": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop",
     "note": "6 Star Trek drops at $29.99 non-foil / $39.99 foil each (Wizards), on sale Nov 9: Beam Me Up (4 reversible blink cards incl. Momentary Blink), KHAAAAAAAAN (6 Wrath of Khan cards incl. Buried Alive, Genesis Wave), Lower Decks (Thrasios and Silas Renn's Secret Lair debut, Weatherlight), tlhIngan maH (5 reversible English/Klingon red cards incl. Seething Song), New Worlds (10 basic lands by Alayna Danner), and Assimilation (5 Borg-themed cards incl. Hive Mind, Gix, and K'rrik). Buy only if you really like Star Trek; otherwise skip. Fan-collectible and theme play, not a speculative pickup.",
     "prices": [
@@ -317,14 +317,15 @@
       "bonus card": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop",
       "window": "https://magic.wizards.com/en/news/announcements/secret-lair-set-phasers-to-superdrop",
       "store_offer": "https://secretlair.wizards.com/us/en/product/1255841/secret-lair-x-star-trek-assimilation",
-      "shipping": "https://secretlair-support.wizards.com/hc/en-us/articles/5149533669652-Secret-Lair-Production-and-Shipping-Status"
+      "shipping": "https://secretlair-support.wizards.com/hc/en-us/articles/5149533669652-Secret-Lair-Production-and-Shipping-Status",
+      "store stock": "https://secretlair.wizards.com/us/en/product/1255841/secret-lair-x-star-trek-assimilation"
     },
     "short_name": "Star Trek Superdrop",
     "verdict": "buy",
     "gift_for": "Star Trek fans who want the themed Secret Lair drops: skip if you're not into Trek",
     "sold_out": null,
     "store_offer": "PreOrder",
-    "last_checked": "2026-11-09"
+    "last_checked": "2026-11-27"
   },
   {
     "slug": "secret-lair-extra-life-rise-of-the-polygons",
@@ -343,6 +344,10 @@
       {
         "label": "Foil",
         "usd": 49.99
+      },
+      {
+        "label": "Full Party Everything Bundle (foil + non-foil)",
+        "usd": 89.98
       }
     ],
     "contents": [
@@ -372,10 +377,11 @@
       "contents": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
       "window": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
       "charity split": "https://magic.wizards.com/en/news/announcements/magic-levels-up-with-extra-life-for-2026",
-      "store status": "https://secretlair.wizards.com/us/en/product/1256026/rise-of-the-polygons-extra-life-2026"
+      "store status": "https://secretlair.wizards.com/us/en/product/1256026/rise-of-the-polygons-extra-life-2026",
+      "bundle price": "https://secretlair.wizards.com/us/en/product/1256122/full-party-everything-bundle"
     },
     "verdict": "buy",
-    "last_checked": "2026-11-16",
+    "last_checked": "2026-11-27",
     "store_offer": "PreOrder",
     "sale_end": "2026-11-30"
   },
@@ -463,7 +469,7 @@
       "storefront listing (Coming Soon)": "https://secretlair.wizards.com/us/en/"
     },
     "verdict": "wait",
-    "last_checked": "2026-10-17"
+    "last_checked": "2026-11-27"
   },
   {
     "slug": "star-trek",
@@ -1300,7 +1306,7 @@
     "type": "Secret Lair",
     "release_date": "2026-10-12",
     "status": "confirmed",
-    "window": "On sale since Oct 12, 2026, 9 AM PT, only at MagicSecretLair.com · while supplies last · free foil Maze of Ith promo per $199 spent (while supplies last) · US orders expected to ship Dec 15, 2026 – Mar 15, 2027 (EU/UK from Jan 19, 2027)",
+    "window": "On sale since Oct 12, 2026, 9 AM PT, only at MagicSecretLair.com · while supplies last · free foil Maze of Ith promo per $199 spent (while supplies last) · US orders expected to ship Dec 15, 2026 – Mar 15, 2027 (EU/UK from Jan 19, 2027). As of Nov 27, 2026, Through the Labyrinth non-foil ($29.99) remains on sale at MagicSecretLair.com with a low-stock label; other Corn Maze drops were not confirmed on the main storefront in this check",
     "source": "https://magic.wizards.com/en/news/announcements/secret-lair-corn-maze-superdrop",
     "note": "8 Halloween-season drops at $29.99 non-foil / $39.99 foil each: three Jim Henson's Labyrinth drops, KPop Demon Hunters, Marvel Zombies, Veronique Meignaud, See Machine artifact lands and a Treefolk drop. No buy/skip verdict from us on this one yet. Price out the singles you'd play before buying a whole drop. Don't count on it as a holiday gift: Wizards expects US orders to ship Dec 15, 2026 – Mar 15, 2027.",
     "prices": [
@@ -1421,10 +1427,11 @@
       "release_date": "https://magic.wizards.com/en/news/announcements/secret-lair-corn-maze-superdrop",
       "prices": "https://magic.wizards.com/en/news/announcements/secret-lair-corn-maze-superdrop",
       "contents": "https://magic.wizards.com/en/news/announcements/secret-lair-corn-maze-superdrop",
-      "shipping": "https://secretlair-support.wizards.com/hc/en-us/articles/5149533669652-Secret-Lair-Production-and-Shipping-Status"
+      "shipping": "https://secretlair-support.wizards.com/hc/en-us/articles/5149533669652-Secret-Lair-Production-and-Shipping-Status",
+      "leftover stock (Through the Labyrinth non-foil)": "https://secretlair.wizards.com/us/en/product/1253728/secret-lair-x-jim-hensons-labyrinth-through-the-labyrinth"
     },
     "short_name": "Corn Maze Superdrop",
-    "last_checked": "2026-10-23"
+    "last_checked": "2026-11-27"
   },
   {
     "slug": "secret-lair-most-powerful-superdrop",
